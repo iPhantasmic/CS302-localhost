@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "pre-commit": "lint-staged",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format": "yarn prettier --write --plugin-search-dir=. ."
   },
   "dependencies": {
     "next": "12.3.1",
