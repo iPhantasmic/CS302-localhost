@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  ui-test:
+      build:
+        context: ./
+        dockerfile: Dockerfile
