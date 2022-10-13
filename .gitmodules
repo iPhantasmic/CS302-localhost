@@ -1,0 +1,3 @@
+[submodule "protobuf_schemas"]
+	path = protobuf_schemas
+	url = https://gitlab.com/cs302-2022/g2-team3/protobuf_schemas.git
