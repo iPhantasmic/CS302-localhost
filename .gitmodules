@@ -1,0 +1,3 @@
+[submodule "protobuf_schemas"]
+  path = protobuf_schemas
+  url = ../../protobuf_schemas.git
