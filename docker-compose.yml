@@ -1,0 +1,20 @@
+version: "3.1"
+ 
+services:
+  db:
+    image: postgres:14.5
+    restart: always
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@cs302.com
+      PGADMIN_DEFAULT_PASSWORD: cs302_password
+    ports:
+      - 5431:80

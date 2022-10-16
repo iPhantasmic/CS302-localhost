@@ -17,12 +17,12 @@ class BookingServiceStub(object):
         self.GetBookingByUser = channel.unary_unary(
                 '/BookingService/GetBookingByUser',
                 request_serializer=bookings__pb2.BookingUserId.SerializeToString,
-                response_deserializer=bookings__pb2.Booking.FromString,
+                response_deserializer=bookings__pb2.BookingArray.FromString,
                 )
         self.CreateBooking = channel.unary_unary(
                 '/BookingService/CreateBooking',
                 request_serializer=bookings__pb2.Booking.SerializeToString,
-                response_deserializer=bookings__pb2.ReturnMessage.FromString,
+                response_deserializer=bookings__pb2.Booking.FromString,
                 )
 
 
@@ -30,8 +30,7 @@ class BookingServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetBookingByUser(self, request, context):
-        """Sends a greeting
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -48,12 +47,12 @@ def add_BookingServiceServicer_to_server(servicer, server):
             'GetBookingByUser': grpc.unary_unary_rpc_method_handler(
                     servicer.GetBookingByUser,
                     request_deserializer=bookings__pb2.BookingUserId.FromString,
-                    response_serializer=bookings__pb2.Booking.SerializeToString,
+                    response_serializer=bookings__pb2.BookingArray.SerializeToString,
             ),
             'CreateBooking': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateBooking,
                     request_deserializer=bookings__pb2.Booking.FromString,
-                    response_serializer=bookings__pb2.ReturnMessage.SerializeToString,
+                    response_serializer=bookings__pb2.Booking.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -78,7 +77,7 @@ class BookingService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/BookingService/GetBookingByUser',
             bookings__pb2.BookingUserId.SerializeToString,
-            bookings__pb2.Booking.FromString,
+            bookings__pb2.BookingArray.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -95,6 +94,6 @@ class BookingService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/BookingService/CreateBooking',
             bookings__pb2.Booking.SerializeToString,
-            bookings__pb2.ReturnMessage.FromString,
+            bookings__pb2.Booking.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
