@@ -1,29 +1,26 @@
 syntax = "proto3";
 
 service BookingService {
-    // Sends a greeting
-    rpc GetBookingByUser (BookingUserId) returns (Booking) {}
-
-    rpc CreateBooking (Booking) returns (Booking){}
+  rpc GetBookingByUser (BookingUserId) returns (Booking) {}
+  rpc CreateBooking (Booking) returns (Booking){}
 }
 
-
 message Booking {
-    int32 userId = 1;
-    int32 listingId = 2;
-    int32 hostId = 3;
-    string start = 4;
-    string end = 5;
-    // Status status = 6;
-    int32 paymentId = 6;
+  int32 user_id = 1;
+  int32 listing_id = 2;
+  int32 host_id = 3;
+  string start = 4;
+  string end = 5;
+  // Status status = 6;
+  int32 payment_id = 6;
 }
 
 message BookingUserId{
-    int32 userId = 1;
+  int32 user_id = 1;
 }
 
 message ReturnMessage{
-    string message = 1;
+  string message = 1;
 }
 
 // enum Status{
