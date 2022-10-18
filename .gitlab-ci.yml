@@ -37,25 +37,17 @@ include:
 
 semgrep:
   # A Docker image with Semgrep installed.
-  stage: test
   image: returntocorp/semgrep
+  # Run the "semgrep ci" command on the command line of the docker image.
+  script: semgrep ci
 
   rules:
-    # Scan changed files in MRs (diff-aware scanning):
-    - if: $CI_MERGE_REQUEST_IID
-    # Scan all files on the default branch and report any findings:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  # Scan changed files in MRs, (diff-aware scanning):
+  - if: $CI_MERGE_REQUEST_IID
+
+  # Scan mainline (default) branches and report all findings.
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
   variables:
-    # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable. 
-    SEMGREP_RULES: p/default # See more rules at semgrep.dev/explore.
-    # Uncomment SEMGREP_TIMEOUT to set this job's timeout (in seconds):
-    # Default timeout is 1800 seconds (30 minutes).
-    # Set to 0 to disable the timeout.
-    # SEMGREP_TIMEOUT: 300
-    # Upload findings to GitLab SAST Dashboard
-    SEMGREP_GITLAB_JSON: "1"
-    script: semgrep ci --gitlab-sast > gl-sast-report.json || true
-    artifacts:
-      reports:
-        sast: gl-sast-report.json
+    # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable.
+    SEMGREP_RULES: p/default p/jwt p/golang p/r2c-security-audit # See more at semgrep.dev/explore.
