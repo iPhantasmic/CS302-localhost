@@ -18,6 +18,9 @@ format:
   - go fmt $(go list ./...)
   - go vet $(go list ./...)
 
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
 compile:
   stage: build
   script:
