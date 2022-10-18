@@ -28,15 +28,15 @@ compile:
     - auth_service
 
 sast:
+  stage: test
   variables:
     SAST_EXCLUDED_ANALYZERS: bandit, brakeman, eslint, flawfinder, kubesec, nodejs-scan,
       phpcs-security-audit, pmd-apex, security-code-scan, sobelow, spotbugs
-  stage: test
 include:
 - template: Security/SAST.gitlab-ci.yml
 
 semgrep:
-  # A Docker image with Semgrep installed.
+  stage: test
   image: returntocorp/semgrep
   # Run the "semgrep ci" command on the command line of the docker image.
   script: semgrep ci
