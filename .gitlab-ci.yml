@@ -27,13 +27,13 @@ compile:
     paths:
     - auth_service
 
-sast:
-  stage: test
-  variables:
-    SAST_EXCLUDED_ANALYZERS: bandit, brakeman, eslint, flawfinder, kubesec, nodejs-scan,
-      phpcs-security-audit, pmd-apex, security-code-scan, sobelow, spotbugs
-include:
-- template: Security/SAST.gitlab-ci.yml
+# sast:
+#   stage: test
+#   variables:
+#     SAST_EXCLUDED_ANALYZERS: bandit, brakeman, eslint, flawfinder, kubesec, nodejs-scan,
+#       phpcs-security-audit, pmd-apex, security-code-scan, sobelow, spotbugs
+# include:
+# - template: Security/SAST.gitlab-ci.yml
 
 semgrep:
   stage: test
@@ -50,4 +50,4 @@ semgrep:
 
   variables:
     # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable.
-    SEMGREP_RULES: p/default p/jwt p/golang p/r2c-security-audit # See more at semgrep.dev/explore.
+    SEMGREP_RULES: "p/default p/jwt p/golang p/r2c-security-audit" # See more at semgrep.dev/explore.
