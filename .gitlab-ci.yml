@@ -29,6 +29,9 @@ compile:
   artifacts:
     paths:
     - auth_service
+  
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
 sast:
   stage: test
