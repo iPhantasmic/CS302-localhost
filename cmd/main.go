@@ -7,7 +7,7 @@ import (
 
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/config"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/db"
-	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/pb"
+	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/pb/auth"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/services"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/utils"
 	"google.golang.org/grpc"
