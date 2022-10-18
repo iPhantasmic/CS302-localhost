@@ -3,6 +3,10 @@ syntax = "proto3";
 service BookingService {
   rpc GetBookingByUser (BookingUserId) returns (BookingArray) {}
   rpc CreateBooking (Booking) returns (Booking){}
+  rpc GetBookingByListing (BookingListingId) returns (BookingArray){}
+  rpc DeleteBookingByUserId (BookingUserId) returns (ReturnMessage){}
+  rpc DeleteBookingByListingId(BookingListingId) returns (ReturnMessage){}
+  rpc UpdateBookingById(UpdateBookingPayload) returns (ReturnMessage){}
 }
 
 message Booking {
@@ -23,9 +27,24 @@ message BookingUserId{
   int32 user_id = 1;
 }
 
-message ReturnMessage{
-  string message = 1;
+message BookingListingId{
+  int32 listing_id = 1;
 }
+
+message ReturnMessage{
+  string return_message = 1;
+}
+
+message UpdateBookingPayload{
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 listing_id = 3;
+  int32 host_id = 4;
+  string start_date = 5;
+  string end_date = 6;
+  int32 payment_id = 7;
+}
+
 
 // enum Status{
 //     ACTIVE = 0;
