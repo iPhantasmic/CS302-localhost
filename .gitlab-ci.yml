@@ -6,14 +6,18 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 image: golang:latest
+
 stages:
+- lint
 - test
 - build
+
 format:
-  stage: test
+  stage: lint
   script:
   - go fmt $(go list ./...)
   - go vet $(go list ./...)
+
 compile:
   stage: build
   script:
@@ -22,6 +26,7 @@ compile:
   artifacts:
     paths:
     - auth_service
+
 sast:
   variables:
     SAST_EXCLUDED_ANALYZERS: bandit, brakeman, eslint, flawfinder, kubesec, nodejs-scan,
@@ -29,3 +34,28 @@ sast:
   stage: test
 include:
 - template: Security/SAST.gitlab-ci.yml
+
+semgrep:
+  # A Docker image with Semgrep installed.
+  stage: test
+  image: returntocorp/semgrep
+
+  rules:
+    # Scan changed files in MRs (diff-aware scanning):
+    - if: $CI_MERGE_REQUEST_IID
+    # Scan all files on the default branch and report any findings:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+  variables:
+    # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable. 
+    SEMGREP_RULES: p/default # See more rules at semgrep.dev/explore.
+    # Uncomment SEMGREP_TIMEOUT to set this job's timeout (in seconds):
+    # Default timeout is 1800 seconds (30 minutes).
+    # Set to 0 to disable the timeout.
+    # SEMGREP_TIMEOUT: 300
+    # Upload findings to GitLab SAST Dashboard
+    SEMGREP_GITLAB_JSON: "1"
+    script: semgrep ci --gitlab-sast > gl-sast-report.json || true
+    artifacts:
+      reports:
+        sast: gl-sast-report.json
