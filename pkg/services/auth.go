@@ -2,93 +2,74 @@ package services
 
 import (
 	"context"
-	"net/http"
-
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/db"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/models"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/pb/auth"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/utils"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-type Server struct {
+type AuthServer struct {
 	H   db.Handler
 	Jwt utils.JwtWrapper
-	pb.UnimplementedAuthServiceServer
+	auth_proto.UnimplementedAuthServiceServer
 }
 
-func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+func (s *AuthServer) Register(ctx context.Context, req *auth_proto.RegisterRequest) (*auth_proto.RegisterResponse, error) {
 	var user models.User
 
 	if result := s.H.DB.Where(&models.User{Email: req.Email}).First(&user); result.Error == nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusConflict,
-			Error:  "Email already exists",
-		}, nil
+		return nil, status.Error(codes.AlreadyExists, "Email already in use")
 	}
 
 	user.Email = req.Email
 	user.Password = utils.HashPassword(req.Password)
 
 	if s.H.DB.Create(&user).Error != nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusInternalServerError,
-		}, nil
+		return nil, status.Error(codes.Internal, "Internal Server Error")
 	}
 
-	return &pb.RegisterResponse{
-		Status: http.StatusCreated,
+	return &auth_proto.RegisterResponse{
+		Message: "Created",
 	}, nil
 }
 
-func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (s *AuthServer) Login(ctx context.Context, req *auth_proto.LoginRequest) (*auth_proto.LoginResponse, error) {
 	var user models.User
 
 	if result := s.H.DB.Where(&models.User{Email: req.Email}).First(&user); result.Error != nil {
-		return &pb.LoginResponse{
-			Status: http.StatusNotFound,
-			Error:  "User not found",
-		}, nil
+		return nil, status.Error(codes.NotFound, "User not found")
 	}
 
 	match := utils.CheckPasswordHash(req.Password, user.Password)
 
 	if !match {
-		return &pb.LoginResponse{
-			Status: http.StatusUnauthorized,
-			Error:  "Invalid credentials",
-		}, nil
+		return nil, status.Error(codes.Unauthenticated, "Invalid credentials")
 	}
 
 	token, _ := s.Jwt.GenerateToken(user)
 
-	return &pb.LoginResponse{
-		Status: http.StatusOK,
+	return &auth_proto.LoginResponse{
+		UserId: user.UUID.String(),
 		Token:  token,
 	}, nil
 }
 
-func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
+func (s *AuthServer) Validate(ctx context.Context, req *auth_proto.ValidateRequest) (*auth_proto.ValidateResponse, error) {
 	claims, err := s.Jwt.ValidateToken(req.Token)
 
 	if err != nil {
-		return &pb.ValidateResponse{
-			Status: http.StatusBadRequest,
-			Error:  "Invalid JWT",
-			//Error:  err.Error(),
-		}, nil
+		return nil, status.Error(codes.Unauthenticated, "Invalid JWT")
 	}
 
 	var user models.User
 
 	if result := s.H.DB.Where(&models.User{Email: claims.Email}).First(&user); result.Error != nil {
-		return &pb.ValidateResponse{
-			Status: http.StatusNotFound,
-			Error:  "User not found",
-		}, nil
+		return nil, status.Error(codes.NotFound, "User not found")
 	}
 
-	return &pb.ValidateResponse{
-		Status: http.StatusOK,
+	return &auth_proto.ValidateResponse{
 		UserId: user.UUID.String(),
 	}, nil
 }
