@@ -8,6 +8,7 @@ import (
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/config"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/db"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/pb/auth"
+	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/pb/users"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/services"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/utils"
 	"google.golang.org/grpc"
@@ -31,19 +32,24 @@ func main() {
 	lis, err := net.Listen("tcp", c.Port)
 
 	if err != nil {
-		log.Fatalln("Failed to listing:", err)
+		log.Fatalln("Failed to listen:", err)
 	}
 
-	fmt.Println("Auth Svc on", c.Port)
+	fmt.Println("Authentication and User Service listening on", c.Port)
 
-	s := services.Server{
+	authServer := services.AuthServer{
 		H:   h,
 		Jwt: jwt,
 	}
 
+	userServer := services.UserServer{
+		H: h,
+	}
+
 	grpcServer := grpc.NewServer()
 
-	pb.RegisterAuthServiceServer(grpcServer, &s)
+	auth_proto.RegisterAuthServiceServer(grpcServer, &authServer)
+	users_proto.RegisterUserServiceServer(grpcServer, &userServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalln("Failed to serve:", err)
