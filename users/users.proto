@@ -16,10 +16,8 @@ message GetUserRequest {
 }
 
 message GetUserResponse {
-  int64 status = 1;
-  string error = 2;
-  string user_id = 3;
-  string email = 4;
+  string user_id = 1;
+  string email = 2;
 }
 //
 
@@ -31,10 +29,8 @@ message UpdateUserRequest {
 }
 
 message UpdateUserResponse {
-  int64 status = 1;
-  string error = 2;
-  string user_id = 3;
-  string email = 4;
+  string user_id = 1;
+  string email = 2;
 }
 //
 
@@ -44,6 +40,5 @@ message DeleteUserRequest {
 }
 
 message DeleteUserResponse {
-  int64 status = 1;
-  string error = 2;
+  string message = 1;
 }
