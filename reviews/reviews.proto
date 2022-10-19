@@ -32,7 +32,7 @@ message GetReviewResponse {
 message CreateReviewRequest {
   string user_id = 1;
   string listing_id = 2;
-  string rating = 3;
+  uint32 rating = 3;
   string review = 4;
 }
 
@@ -40,7 +40,7 @@ message CreateReviewResponse {
   string review_id = 1;
   string user_id = 2;
   string listing_id = 3;
-  string rating = 4;
+  uint32 rating = 4;
   string review = 5;
   google.protobuf.Timestamp created_at = 6;
 }
