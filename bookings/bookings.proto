@@ -2,11 +2,14 @@ syntax = "proto3";
 
 service BookingService {
   rpc CreateBooking (CreateBookingRequest) returns (Booking){}
-  rpc GetBookingByUser (BookingByUserRequest) returns (GetBookingArrayResponse) {}
-  rpc GetBookingByListing (BookingByListingRequest) returns (GetBookingArrayResponse){}
+  rpc GetBookingByUser (BookingByUserRequest)
+      returns (GetBookingArrayResponse) {}
+  rpc GetBookingByListing (BookingByListingRequest)
+      returns (GetBookingArrayResponse){}
   rpc UpdateBookingById(UpdateBookingRequest) returns (ReturnMessage){}
   rpc DeleteBookingByUserId (BookingByUserRequest) returns (ReturnMessage){}
-  rpc DeleteBookingByListingId(BookingByListingRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByListingId(BookingByListingRequest)
+      returns (ReturnMessage){}
 }
 
 message Booking {

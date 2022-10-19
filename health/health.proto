@@ -1,5 +1,9 @@
 syntax = "proto3";
 
+package health;
+
+option go_package = "./health.proto";
+
 // Proto file for /health endpoints in services
 service Health {
   rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
@@ -10,6 +14,8 @@ message HealthCheckRequest {
 }
 
 message HealthCheckResponse {
+  // protolint:disable ENUM_FIELD_NAMES_PREFIX
+  // protolint:disable ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
   enum ServingStatus {
     UNKNOWN = 0;
     SERVING = 1;
