@@ -3,12 +3,12 @@ package services
 import (
 	"context"
 	"github.com/gofrs/uuid"
-	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/utils"
-	"net/http"
-
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/db"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/models"
 	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/pb/users"
+	"gitlab.com/cs302-2022/g2-team3/services/authentication/pkg/utils"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UserServer struct {
@@ -21,14 +21,10 @@ func (s *UserServer) GetUser(ctx context.Context, req *users_proto.GetUserReques
 	reqUuid := uuid.FromStringOrNil(req.GetUserId())
 
 	if result := s.H.DB.Where(&models.User{UUID: reqUuid}).First(&user); reqUuid == uuid.Nil || result.Error != nil {
-		return &users_proto.GetUserResponse{
-			Status: http.StatusNotFound,
-			Error:  "User not found",
-		}, nil
+		return nil, status.Error(codes.NotFound, "User not found")
 	}
 
 	return &users_proto.GetUserResponse{
-		Status: http.StatusOK,
 		UserId: user.UUID.String(),
 		Email:  user.Email,
 	}, nil
@@ -40,17 +36,11 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *users_proto.UpdateUser
 	reqUuid := uuid.FromStringOrNil(req.GetUserId())
 
 	if result := s.H.DB.Where(&models.User{UUID: reqUuid}).First(&user); reqUuid == uuid.Nil || result.Error != nil {
-		return &users_proto.UpdateUserResponse{
-			Status: http.StatusNotFound,
-			Error:  "User not found",
-		}, nil
+		return nil, status.Error(codes.NotFound, "User not found")
 	}
 
 	if result := s.H.DB.Where(&models.User{Email: req.Email}).First(&temp); req.Email != user.Email && result.RowsAffected != 0 {
-		return &users_proto.UpdateUserResponse{
-			Status: http.StatusBadRequest,
-			Error:  "Email already in use",
-		}, nil
+		return nil, status.Error(codes.AlreadyExists, "Email already in use")
 	}
 
 	user.Email = req.Email
@@ -62,7 +52,6 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *users_proto.UpdateUser
 	s.H.DB.Save(&user)
 
 	return &users_proto.UpdateUserResponse{
-		Status: http.StatusOK,
 		UserId: user.UUID.String(),
 		Email:  user.Email,
 	}, nil
@@ -73,15 +62,12 @@ func (s *UserServer) DeleteUser(ctx context.Context, req *users_proto.DeleteUser
 	reqUuid := uuid.FromStringOrNil(req.GetUserId())
 
 	if result := s.H.DB.Where(&models.User{UUID: reqUuid}).First(&user); reqUuid == uuid.Nil || result.Error != nil {
-		return &users_proto.DeleteUserResponse{
-			Status: http.StatusNotFound,
-			Error:  "User not found",
-		}, nil
+		return nil, status.Error(codes.NotFound, "User not found")
 	}
 
 	s.H.DB.Delete(&user)
 
 	return &users_proto.DeleteUserResponse{
-		Status: http.StatusOK,
+		Message: "Deleted",
 	}, nil
 }
