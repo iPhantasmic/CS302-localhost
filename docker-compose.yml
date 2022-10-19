@@ -1,20 +1,38 @@
 version: "3.1"
- 
 services:
-  db:
-    image: postgres:14.5
-    restart: always
+  grpc_api:
+    command: dockerize -wait tcp://postgres.app.site:5432 ./scripts/run-grpc-api.dev.sh
+    image: app
+    depends_on:
+      - postgres
     environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: test123
+      # must bind to [::] for port forwarding to work properly
+      - HOST=[::]
+      - PORT=50051
+      - DATABASE_URL=postgresql://postgres@postgres.app.site:5432/app
+    networks:
+      default:
+        aliases:
+          - grpc_api.app.site
     ports:
-      - 5432:5432
-
+      - "50051:50051"
+    volumes:
+      - ./:/opt/grpc_python_example/
+  
+  postgres:
+    image: postgres:9.6
+    networks:
+      default:
+        aliases:
+          - postgres.grpc_python_example.site
+    ports:
+      - "5432:5432"
+  
   pgadmin:
-    image: dpage/pgadmin4:6
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@cs302.com
-      PGADMIN_DEFAULT_PASSWORD: cs302_password
-    ports:
-      - 5431:80
+  image: dpage/pgadmin4:6
+  restart: always
+  environment:
+    PGADMIN_DEFAULT_EMAIL: user@cs302.com
+    PGADMIN_DEFAULT_PASSWORD: cs302_password
+  ports:
+    - 5431:80
