@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package bookings;
+
 service BookingService {
   rpc CreateBooking (CreateBookingRequest) returns (Booking){}
   rpc GetBookingByUser (BookingByUserRequest)

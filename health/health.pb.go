@@ -20,6 +20,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// protolint:disable ENUM_FIELD_NAMES_PREFIX
+// protolint:disable ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
 type HealthCheckResponse_ServingStatus int32
 
 const (

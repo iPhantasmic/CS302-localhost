@@ -1,11 +1,16 @@
 syntax = "proto3";
 
+package listings;
+
 service ListingService {
   rpc CreateListing(CreateListingRequest) returns (Listing) {}
-  rpc GetBookingByCity(ListingByCityRequest) returns (GetListingArrayResponse) {}
-  // rpc GetBookingByListing(BookingByListingRequest) returns (GetListingArrayResponse) {}
+  rpc GetBookingByCity(ListingByCityRequest)
+      returns (GetListingArrayResponse) {}
+  // rpc GetBookingByListing(BookingByListingRequest)
+  // returns (GetListingArrayResponse) {}
   rpc UpdateListingById(Listing) returns (ReturnMessage) {}
-  rpc DeleteListingByListingId(BookingByListingRequest) returns (ReturnMessage) {}
+  rpc DeleteListingByListingId(BookingByListingRequest)
+      returns (ReturnMessage) {}
   rpc DeleteBookingByHostId(BookingByHostRequest) returns (ReturnMessage) {}
 }
 
