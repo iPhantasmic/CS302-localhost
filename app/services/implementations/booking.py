@@ -1,13 +1,13 @@
 import logging
 import grpc
-from app.services.stubs import bookings_pb2
+from app.services.protobuf_schemas.bookings import bookings_pb2_grpc, bookings_pb2
 from app.services.implementations.database import (
         connection as db, models)
 
 log = logging.getLogger(__name__)
 
 
-class BookingServicer(bookings_pb2.BookingServicer):
+class BookingServicer(bookings_pb2_grpc.BookingServicer):
     """Implements Booking protobuf service interface."""
     
     def GetBookingByUser(self,request, context):

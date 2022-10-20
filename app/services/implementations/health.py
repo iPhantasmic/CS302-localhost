@@ -1,9 +1,9 @@
 import threading
 import grpc
-from grpc_python_example.services.stubs import health_pb2
+from app.services.protobuf_schemas.health import health_pb2_grpc, health_pb2
 
 
-class HealthServicer(health_pb2.HealthServicer):
+class HealthServicer(health_pb2_grpc.HealthServicer):
     """Implements Health protobuf service interface.
     Notes:
         Taken from https://github.com/grpc/grpc/tree/master/src/python/grpcio_health_checking

@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   grpc_api:
-    command: dockerize -wait tcp://postgres.app.site:5432 ./scripts/run-grpc-api.dev.sh
+    command: dockerize -wait tcp://postgres.app.site:5432 ./scripts/run-grpc-api.sh
     image: app
     depends_on:
       - postgres
@@ -25,8 +25,11 @@ services:
       default:
         aliases:
           - postgres.app.site
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
     ports:
-      - "5432:5432"
+      - 5432:5432
   
   pgadmin:
     image: dpage/pgadmin4:6
