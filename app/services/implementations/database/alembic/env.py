@@ -23,7 +23,7 @@ def get_database_url():
     """Get database url from environment variable.
     Replaces alembic's default of using `sqlalchemy.url` in alembic.ini.
     """
-    return os.environ['DATABASE_URL']
+    return "postgresql://test_user:test123@postgres.app.site:5432/localhost_bookings"
 
 
 def run_migrations_offline():

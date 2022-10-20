@@ -26,8 +26,6 @@ install:
 lint:
 	pre-commit run pylint --all-files
 
-# Usage: make run-text-api ARGS="check_health"
-# 			 make run-text-api ARGS="get_item 1"
 .PHONY: run-grpc-api
 run-grpc-api:
 	python -m $(PROJECT_NAME).apis.grpc

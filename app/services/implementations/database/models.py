@@ -1,28 +1,12 @@
 """Module with booking model."""
-from sqlalchemy import DateTime, func
-from sqlalchemy.inspection import inspect as _inspect
+from sqlalchemy import DateTime, func, inspect
 from app.services.implementations.database import (
         connection as db)
 
 
 __all__ = ['Booking']
 
-# Mixin to augment a base class
-class _BaseMixin(object):
-    """Encapsulating shared functionality of models."""
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    created_at = db.Column(DateTime, default=func.now())
-
-    def to_dict(self):
-        """Returns model as dict of properties.
-        Note:
-            Removes SQLAlchemy fields included in self.__dict__
-        """
-        column_names = _inspect(self.__class__).columns.keys()
-        return {k: self.__dict__[k] for k in column_names}
-
-
-class Booking(_BaseMixin, db.Model):
+class Booking(db.Model):
     """Represents an item.
     Attributes:
         id (int) - From Base
@@ -36,6 +20,8 @@ class Booking(_BaseMixin, db.Model):
         payment_id (int):
     """
     __tablename__ = 'bookings'
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    created_at = db.Column(DateTime, default=func.now())
     user_id = db.Column(db.Integer)
     listing_id = db.Column(db.Integer)
     host_id = db.Column(db.Integer)
@@ -50,3 +36,14 @@ class Booking(_BaseMixin, db.Model):
         self.start_date = start_date
         self.end_date = end_date
         self.payment_id = payment_id
+
+    def __repr__(self):
+        return f'Booking(id={self.id}, user_id={self.user_id}, listing_id={self.listing_id}), start_date={self.start_date}'
+    
+    def to_dict(self):
+        """Returns model as dict of properties.
+        Note:
+            Removes SQLAlchemy fields included in self.__dict__
+        """
+        column_names = inspect(self.__class__).columns.keys()
+        return {k: self.__dict__[k] for k in column_names}

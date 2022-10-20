@@ -1,5 +1,26 @@
 version: "3.1"
 services:
+  postgres:
+    image: postgres:14.5
+    networks:
+      default:
+        aliases:
+          - postgres.app.site
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
+    ports:
+      - "5432:5432"
+  
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@cs302.com
+      PGADMIN_DEFAULT_PASSWORD: cs302_password
+    ports:
+      - "5431:80"
+  
   grpc_api:
     command: dockerize -wait tcp://postgres.app.site:5432 ./scripts/run-grpc-api.sh
     image: app
@@ -17,26 +38,3 @@ services:
           - grpc_api.app.site
     ports:
       - "50051:50051"
-    volumes:
-      - ./:/opt/app/
-  
-  postgres:
-    image: postgres:14.5
-    networks:
-      default:
-        aliases:
-          - postgres.app.site
-    environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: test123
-    ports:
-      - 5432:5432
-  
-  pgadmin:
-    image: dpage/pgadmin4:6
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@cs302.com
-      PGADMIN_DEFAULT_PASSWORD: cs302_password
-    ports:
-      - 5431:80

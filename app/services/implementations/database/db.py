@@ -10,7 +10,9 @@ def _create():
     """Create database."""
     if not database_exists(db.engine.url):
         create_database(db.engine.url)
-
+    print(f'db exists? : {database_exists(db.engine.url)}')
+    print(str(db.engine.url))
+    
 def _drop_tables():
     """Drop all database tables."""
     db.drop_all()
