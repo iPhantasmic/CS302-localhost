@@ -20,19 +20,19 @@ services:
       - ./:/opt/grpc_python_example/
   
   postgres:
-    image: postgres:9.6
+    image: postgres:14.5
     networks:
       default:
         aliases:
-          - postgres.grpc_python_example.site
+          - postgres.app.site
     ports:
       - "5432:5432"
   
   pgadmin:
-  image: dpage/pgadmin4:6
-  restart: always
-  environment:
-    PGADMIN_DEFAULT_EMAIL: user@cs302.com
-    PGADMIN_DEFAULT_PASSWORD: cs302_password
-  ports:
-    - 5431:80
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@cs302.com
+      PGADMIN_DEFAULT_PASSWORD: cs302_password
+    ports:
+      - 5431:80

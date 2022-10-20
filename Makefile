@@ -7,6 +7,7 @@ SERVICE_STUB_DIR=./$(PROJECT_NAME)/services/stubs
 build:
 	docker build \
     --build-arg GIT_COMMIT=${GIT_COMMIT} \
+	--platform linux/arm64 \
     -t $(PROJECT_NAME):latest \
     -t $(PROJECT_NAME):${GIT_COMMIT} \
     .

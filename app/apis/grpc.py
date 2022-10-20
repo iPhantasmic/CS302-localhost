@@ -34,7 +34,7 @@ def serve():
     server.start()
 
     # mark server as healthy
-    health_servicer.set('', health_pb2.HealthCheckResponse.SERVING)
+    health_servicer.set('Bookings', health_pb2.HealthCheckResponse.SERVING)
     logging.info('grpc listening at %s', address)
 
     # start() does not block so sleep-loop
