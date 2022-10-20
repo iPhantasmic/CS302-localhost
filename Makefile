@@ -27,8 +27,8 @@ install:
 lint:
 	pre-commit run pylint --all-files
 
-.PHONY: protogen
-protogen:
+.PHONY: protopy
+protopy:
 	python -m grpc.tools.protoc \
 				 -I=$(SERVICE_DEFN_DIR) \
 				 --python_out=$(SERVICE_STUB_DIR) \
