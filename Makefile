@@ -1,7 +1,8 @@
 .PHONY: health
 health:
 	protoc ./health.proto --go_out=./health --go_opt=paths=source_relative --go-grpc_out=./health --go-grpc_opt=paths=source_relative
-	python3 -m grpc.tools.protoc -I health=./ --python_out=./health --grpc_python_out=. health.proto
+	python3 -m grpc.tools.protoc -I=./ --python_out=./health --grpc_python_out=./health health.proto
+	protol --exclude-google-imports --in-place -o ./health protoc --proto-path=. ./health.proto
 
 .PHONY: auth
 auth:
@@ -9,7 +10,8 @@ auth:
 
 .PHONY: bookings
 bookings:
-	python3 -m grpc.tools.protoc -I bookings=./ --python_out=./bookings --grpc_python_out=. ./bookings.proto
+	python3 -m grpc.tools.protoc -I=./ --python_out=./bookings --grpc_python_out=./bookings ./bookings.proto
+	protol --exclude-google-imports --in-place -o ./bookings protoc --proto-path=. ./bookings.proto
 
 .PHONY: users
 users:
