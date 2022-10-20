@@ -19,7 +19,10 @@ func Init(url string) Handler {
 		log.Fatalln(err)
 	}
 
-	db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		panic(err)
+	}
 
 	return Handler{db}
 }
