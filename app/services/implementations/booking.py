@@ -7,7 +7,7 @@ from app.services.implementations.database import (
 log = logging.getLogger(__name__)
 
 
-class BookingServicer(bookings_pb2_grpc.BookingServicer):
+class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
     """Implements Booking protobuf service interface."""
     
     def GetBookingByUser(self,request, context):

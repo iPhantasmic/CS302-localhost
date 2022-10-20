@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo 'Creating database...'
-python -m app.services.implementations.database.db -create
+python3 -m app.services.implementations.database.db -create
 
 echo 'Running database migrations...'
 alembic upgrade head

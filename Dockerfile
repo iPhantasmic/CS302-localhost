@@ -7,8 +7,14 @@ ENV PYTHONUNBUFFERED 1
 # Add dockerize, which will add a command we can use to wait for
 # dependent containers to finish setup (instead of just startup)
 RUN apt-get update && apt-get install -y wget
-RUN wget https://github.com/jwilder/dockerize/releases/download/v0.1.0/dockerize-linux-amd64-v0.1.0.tar.gz
-RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.1.0.tar.gz
+
+# For M1 Macs
+RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-armhf-v0.6.1.tar.gz
+RUN tar -C /usr/local/bin -xzvf dockerize-linux-armhf-v0.6.1.tar.gz
+
+# For Intel Machines
+# RUN wget https://github.com/jwilder/dockerize/releases/download/v0.1.0/dockerize-linux-amd64-v0.1.0.tar.gz
+# RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.1.0.tar.gz
 
 RUN mkdir /opt/app/
 WORKDIR /opt/app/

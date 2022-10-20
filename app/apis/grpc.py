@@ -23,7 +23,7 @@ def serve():
     booking_services = BookingServicer()
     health_servicer = HealthServicer()
 
-    bookings_pb2_grpc.add_BookingServicer_to_server(booking_services,
+    bookings_pb2_grpc.add_BookingServiceServicer_to_server(booking_services,
                                                server)
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
 

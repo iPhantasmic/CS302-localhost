@@ -9,7 +9,8 @@ services:
       # must bind to [::] for port forwarding to work properly
       - HOST=[::]
       - PORT=50051
-      - DATABASE_URL=postgresql://postgres@postgres.app.site:5432/app
+      - DATABASE_URL=postgresql://test_user:test123@postgres.app.site:5432/localhost_bookings
+      - GRPC_API_URL=localhost:50051
     networks:
       default:
         aliases:
@@ -17,7 +18,7 @@ services:
     ports:
       - "50051:50051"
     volumes:
-      - ./:/opt/grpc_python_example/
+      - ./:/opt/app/
   
   postgres:
     image: postgres:14.5
