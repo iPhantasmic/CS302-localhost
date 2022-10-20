@@ -19,7 +19,8 @@ users:
 
 .PHONY: listings
 listings:
-	python3 -m grpc.tools.protoc -I listings=./ --python_out=./listings --grpc_python_out=. ./listings.proto
+	python3 -m grpc.tools.protoc -I=./ --python_out=./listings --grpc_python_out=./listings ./listings.proto
+	protol --exclude-google-imports --in-place -o ./listings protoc --proto-path=. ./listings.proto
 
 .PHONY: reviews
 reviews:
