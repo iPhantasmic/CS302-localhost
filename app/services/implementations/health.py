@@ -1,6 +1,6 @@
 import threading
 import grpc
-from app.services.protobuf_schemas.health import health_pb2_grpc, health_pb2
+from app.services.pb.health import health_pb2_grpc, health_pb2
 
 
 class HealthServicer(health_pb2_grpc.HealthServicer):

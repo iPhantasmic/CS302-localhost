@@ -5,8 +5,8 @@ import time
 import logging
 from concurrent import futures
 import grpc
-from app.services.protobuf_schemas.bookings import bookings_pb2_grpc
-from app.services.protobuf_schemas.health import health_pb2, health_pb2_grpc
+from app.services.pb.bookings import bookings_pb2_grpc
+from app.services.pb.health import health_pb2_grpc, health_pb2
 from app.services.implementations import (
     BookingServicer, HealthServicer)
 

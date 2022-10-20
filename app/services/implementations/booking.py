@@ -1,6 +1,6 @@
 import logging
 import grpc
-from app.services.protobuf_schemas.bookings import bookings_pb2_grpc, bookings_pb2
+from app.services.pb.bookings import bookings_pb2_grpc, bookings_pb2
 from app.services.implementations.database import (
         connection as db, models)
 
