@@ -1,13 +1,75 @@
 syntax = "proto3";
 
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (Listing) returns (Listing) {}
+service ListingService {
+  rpc CreateListing(CreateListingRequest) returns (Listing) {}
+  rpc GetBookingByCity(ListingByCityRequest) returns (GetListingArrayResponse) {}
+  // rpc GetBookingByListing(BookingByListingRequest) returns (GetListingArrayResponse) {}
+  rpc UpdateListingById(Listing) returns (ReturnMessage) {}
+  rpc DeleteListingByListingId(BookingByListingRequest) returns (ReturnMessage) {}
+  rpc DeleteBookingByHostId(BookingByHostRequest) returns (ReturnMessage) {}
 }
 
-// The request message containing the user's name.
+// Listing Model
 message Listing {
-  string address = 1;
+  int32 list_id = 1;
+  int32 host_id = 2;
+  string title = 3;
+  float cost = 4; // per night
+  repeated Image images = 5;
+  Type type = 6;
+  string address = 7;
+  string city = 8;
+  string country = 9;
+  int32 room = 10;
+  int32 bed = 11;
+}
+
+message Image {
+  int32 width = 1;
+  int32 height = 2;
+  bytes image_data = 3;
+}
+
+enum Type {
+  TYPE_UNSPECIFIED = 0;
+  TYPE_FLAT = 1;
+  TYPE_CONDOMINIUM = 2;
+  TYPE_LANDED_PROPERTY = 3;
+}
+
+// Create Listing
+message CreateListingRequest {
+  int32 host_id = 1;
   string title = 2;
-  string cost = 3;
+  float cost = 3;
+  repeated Image images = 4;
+  Type type = 5;
+  string address = 6;
+  string city = 7;
+  string country = 8;
+  int32 room = 9;
+  int32 bed = 10;
+}
+
+// Get Listing by City
+message ListingByCityRequest {
+  string city = 1;
+}
+
+message GetListingArrayResponse {
+  repeated Listing listings = 1;
+}
+
+message ReturnMessage{
+  string return_message = 1;
+}
+
+// Delete Listing by Listing Id
+message BookingByListingRequest {
+  int32 list_id = 1;
+}
+
+// Delete Listing by Host Id
+message BookingByHostRequest {
+  int32 host_id = 1;
 }
