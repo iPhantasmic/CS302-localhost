@@ -1,6 +1,3 @@
-# scalar DateTime
-
-
 # type Post {
 #   _id: ID
 #   title: String
@@ -34,12 +31,12 @@
 # }
 
 type User {
-  user_id: String
+  userId: String
   email: String
 }
 
 input GetUserRequest {
-  user_id: String
+  userId: String
 }
 
 type Query {
