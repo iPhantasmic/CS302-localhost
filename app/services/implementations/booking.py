@@ -23,10 +23,11 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         if bookings:
             for booking in bookings:
                 booking_array.bookings.extend([bookings_pb2.Booking(id=booking.id, user_id=booking.user_id, listing_id = booking.listing_id, host_id = booking.host_id,start_date= booking.start_date.strftime('%m/%d/%Y, %H:%M:%S'), end_date=booking.end_date.strftime('%m/%d/%Y, %H:%M:%S') ,payment_id = booking.payment_id)])
+            context.set_code(grpc.StatusCode.OK)
             return booking_array
         else:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('Bookings with user id {request.user_id} not found')
+            context.set_details(f'Bookings with user id {request.user_id} not found')
             return bookings_pb2.GetBookingArrayResponse()
 
     def GetBookingByListing(self,request,context):
@@ -36,10 +37,11 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         if bookings:
             for booking in bookings:
                 booking_array.extend([bookings_pb2.Booking(id=booking.id, user_id=booking.user_id, listing_id = booking.listing_id, host_id = booking.host_id,start_date= booking.start_date.strftime('%m/%d/%Y, %H:%M:%S'), end_date=booking.end_date.strftime('%m/%d/%Y, %H:%M:%S') ,payment_id = booking.payment_id)])
+            context.set_code(grpc.StatusCode.OK)
             return booking_array
         else:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('Bookings with listing id {request.listing_id} not found')
+            context.set_details(f'Bookings with listing id {request.listing_id} not found')
             return bookings_pb2.GetBookingArrayResponse()
 
     def CreateBooking(self, request, context):
@@ -53,6 +55,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         try:
             db.add(new_booking)
             db.commit()
+            context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.Booking(**booking_request)
         except:
             context.set_code(grpc.StatusCode.INTERNAL)
@@ -65,11 +68,12 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             for booking in result:
                 db.delete(booking)
             db.commit()
+            context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(return_message=f"All bookings for user id {request.user_id} deleted")
         except:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details('Delete Failed')
-            return bookings_pb2.ReturnMessage(return_message="Bookings for user id {request.user_id} FAILED to be deleted")
+            return bookings_pb2.ReturnMessage(return_message=f"Bookings for user id {request.user_id} FAILED to be deleted")
 
     def DeleteBookingByListingId(self,request,context):
         result = db.query(models.Booking).filter(models.Booking.listing_id==request.listing_id).all()
@@ -77,11 +81,12 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             for booking in result:
                 db.delete(booking)
             db.commit()
+            context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(return_message="All bookings for listing id {request.listing_id} deleted")
         except:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details('Delete Failed')
-            return bookings_pb2.ReturnMessage(return_message="Bookings for listing id {request.listing_id} FAILED to be deleted")
+            return bookings_pb2.ReturnMessage(return_message=f"Bookings for listing id {request.listing_id} FAILED to be deleted")
 
     def UpdateBookingById(self,request, context):
         booking_dict = json_format.MessageToDict(request, preserving_proto_field_name=True)
@@ -90,8 +95,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             result = db.query(models.Booking) \
                     .filter(models.Booking.id==request.id).update(booking_dict)
             db.commit()
-            return bookings_pb2.ReturnMessage(return_message="Booking with id {request.id} updated")
+            context.set_code(grpc.StatusCode.OK)
+            return bookings_pb2.ReturnMessage(return_message=f"Booking with id {request.id} updated")
         except:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details('Update Failed')
-            return bookings_pb2.ReturnMessage(return_message="Bookings with id {request.id} FAILED to be updated")
+            return bookings_pb2.ReturnMessage(return_message=f"Bookings with id {request.id} FAILED to be updated")
