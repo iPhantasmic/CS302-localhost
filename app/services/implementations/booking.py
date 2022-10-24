@@ -2,10 +2,14 @@ import logging
 import grpc
 from app.services.pb.bookings import bookings_pb2_grpc, bookings_pb2
 from app.services.implementations.database import (
-        connection as db, models)
+        engine, models)
 from google.protobuf import json_format
 
 log = logging.getLogger(__name__)
+
+from sqlalchemy.orm import Session
+
+session = Session(engine)
 
 
 class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
@@ -18,7 +22,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             context (grpc.ServicerContext)
         """
         booking_array = bookings_pb2.GetBookingArrayResponse()
-        bookings = db.query(models.Booking).filter(models.Booking.user_id==request.user_id).all()
+        bookings = session.query(models.Booking).filter(models.Booking.user_id==request.user_id).all()
 
         if bookings:
             for booking in bookings:
@@ -32,7 +36,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
 
     def GetBookingByListing(self,request,context):
         booking_array = bookings_pb2.GetBookingArrayResponse()
-        bookings = db.query(models.Booking).filter(models.Booking.listing_id==request.listing_id).all()
+        bookings = session.query(models.Booking).filter(models.Booking.listing_id==request.listing_id).all()
 
         if bookings:
             for booking in bookings:
@@ -53,13 +57,14 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_request = json_format.MessageToDict(request, preserving_proto_field_name=True)
         new_booking = models.Booking(**booking_request)
         try:
-            db.add(new_booking)
-            db.commit()
-            db.refresh(new_booking)
+            session.add(new_booking)
+            session.commit()
+            session.refresh(new_booking)
             booking_request["id"] = new_booking.id
             context.set_code(grpc.StatusCode.OK)
-            return bookings_pb2.Booking(**new_booking)
-        except:
+            return bookings_pb2.Booking(**booking_request)
+        except Exception as e:
+            print(e)
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details('Booking failed to be created')
             return bookings_pb2.CreateBookingRequest()
@@ -67,8 +72,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
     def GetAvailableListings(self, request, context):
         listing_request = json_format.MessageToDict(request, preserving_proto_field_name=True)
 
-        corresponding_bookings = db.query(models.Booking) \
+        corresponding_bookings = session.query(models.Booking) \
             .filter(models.Booking.listing_id.in_(request.listing_ids)).group_by(models.Booking.listing_id).all()
+        
         print(corresponding_bookings)
 
     #     a_busy = [
@@ -119,18 +125,17 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
     #             free_time.append(tup)
         if corresponding_bookings:
             pass
-
         else:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details(f'No available listing between {request.start_date} and {request.start_date}')
             return bookings_pb2.GetBookingArrayResponse()
     
     def DeleteBookingByUserId(self,request,context):
-        result = db.query(models.Booking).filter(models.Booking.user_id==request.user_id).all()
+        result = session.query(models.Booking).filter(models.Booking.user_id==request.user_id).all()
         try:
             for booking in result:
-                db.delete(booking)
-            db.commit()
+                session.delete(booking)
+            session.commit()
             context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(return_message=f"All bookings for user id {request.user_id} deleted")
         except:
@@ -139,11 +144,11 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             return bookings_pb2.ReturnMessage(return_message=f"Bookings for user id {request.user_id} FAILED to be deleted")
 
     def DeleteBookingByListingId(self,request,context):
-        result = db.query(models.Booking).filter(models.Booking.listing_id==request.listing_id).all()
+        result = session.query(models.Booking).filter(models.Booking.listing_id==request.listing_id).all()
         try:
             for booking in result:
-                db.delete(booking)
-            db.commit()
+                session.delete(booking)
+            session.commit()
             context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(return_message="All bookings for listing id {request.listing_id} deleted")
         except:
@@ -155,9 +160,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_dict = json_format.MessageToDict(request, preserving_proto_field_name=True)
 
         try:
-            result = db.query(models.Booking) \
+            result = session.query(models.Booking) \
                     .filter(models.Booking.id==request.id).update(booking_dict)
-            db.commit()
+            session.commit()
             context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(return_message=f"Booking with id {request.id} updated")
         except:
