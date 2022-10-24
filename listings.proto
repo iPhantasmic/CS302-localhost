@@ -55,6 +55,8 @@ message FilterLocationRoomRequest {
   string country = 1;
   string city = 2;
   uint32 rooms = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
 }
 //
 
