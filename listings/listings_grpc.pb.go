@@ -25,7 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ListingServiceClient interface {
 	GetListing(ctx context.Context, in *GetListingRequest, opts ...grpc.CallOption) (*Listing, error)
 	GetAllListings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Listings, error)
-	GetListingsLocationRoom(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error)
+	GetAvailableListings(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error)
 	CreateListing(ctx context.Context, in *CreateListingRequest, opts ...grpc.CallOption) (*Listing, error)
 	UpdateListing(ctx context.Context, in *UpdateListingRequest, opts ...grpc.CallOption) (*Listing, error)
 	DeleteListing(ctx context.Context, in *DeleteListingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -57,9 +57,9 @@ func (c *listingServiceClient) GetAllListings(ctx context.Context, in *emptypb.E
 	return out, nil
 }
 
-func (c *listingServiceClient) GetListingsLocationRoom(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error) {
+func (c *listingServiceClient) GetAvailableListings(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error) {
 	out := new(Listings)
-	err := c.cc.Invoke(ctx, "/listings.ListingService/GetListingsLocationRoom", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/listings.ListingService/GetAvailableListings", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func (c *listingServiceClient) DeleteListing(ctx context.Context, in *DeleteList
 type ListingServiceServer interface {
 	GetListing(context.Context, *GetListingRequest) (*Listing, error)
 	GetAllListings(context.Context, *emptypb.Empty) (*Listings, error)
-	GetListingsLocationRoom(context.Context, *FilterLocationRoomRequest) (*Listings, error)
+	GetAvailableListings(context.Context, *FilterLocationRoomRequest) (*Listings, error)
 	CreateListing(context.Context, *CreateListingRequest) (*Listing, error)
 	UpdateListing(context.Context, *UpdateListingRequest) (*Listing, error)
 	DeleteListing(context.Context, *DeleteListingRequest) (*emptypb.Empty, error)
@@ -116,8 +116,8 @@ func (UnimplementedListingServiceServer) GetListing(context.Context, *GetListing
 func (UnimplementedListingServiceServer) GetAllListings(context.Context, *emptypb.Empty) (*Listings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllListings not implemented")
 }
-func (UnimplementedListingServiceServer) GetListingsLocationRoom(context.Context, *FilterLocationRoomRequest) (*Listings, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetListingsLocationRoom not implemented")
+func (UnimplementedListingServiceServer) GetAvailableListings(context.Context, *FilterLocationRoomRequest) (*Listings, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableListings not implemented")
 }
 func (UnimplementedListingServiceServer) CreateListing(context.Context, *CreateListingRequest) (*Listing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateListing not implemented")
@@ -177,20 +177,20 @@ func _ListingService_GetAllListings_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ListingService_GetListingsLocationRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ListingService_GetAvailableListings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FilterLocationRoomRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ListingServiceServer).GetListingsLocationRoom(ctx, in)
+		return srv.(ListingServiceServer).GetAvailableListings(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/listings.ListingService/GetListingsLocationRoom",
+		FullMethod: "/listings.ListingService/GetAvailableListings",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ListingServiceServer).GetListingsLocationRoom(ctx, req.(*FilterLocationRoomRequest))
+		return srv.(ListingServiceServer).GetAvailableListings(ctx, req.(*FilterLocationRoomRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -265,8 +265,8 @@ var ListingService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ListingService_GetAllListings_Handler,
 		},
 		{
-			MethodName: "GetListingsLocationRoom",
-			Handler:    _ListingService_GetListingsLocationRoom_Handler,
+			MethodName: "GetAvailableListings",
+			Handler:    _ListingService_GetAvailableListings_Handler,
 		},
 		{
 			MethodName: "CreateListing",

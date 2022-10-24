@@ -10,7 +10,7 @@ option go_package = "./listings.proto";
 service ListingService {
   rpc GetListing(GetListingRequest) returns (Listing) {}
   rpc GetAllListings(google.protobuf.Empty) returns (Listings) {}
-  rpc GetListingsLocationRoom(FilterLocationRoomRequest) returns (Listings) {}
+  rpc GetAvailableListings(FilterLocationRoomRequest) returns (Listings) {}
   rpc CreateListing(CreateListingRequest) returns (Listing) {}
   rpc UpdateListing(UpdateListingRequest) returns (Listing) {}
   rpc DeleteListing(DeleteListingRequest) returns (google.protobuf.Empty) {}
