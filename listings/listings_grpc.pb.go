@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ListingServiceClient interface {
 	GetListing(ctx context.Context, in *GetListingRequest, opts ...grpc.CallOption) (*Listing, error)
-	GetAllListings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetListingArrayResponse, error)
+	GetAllListings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Listings, error)
+	GetListingsLocationRoom(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error)
 	CreateListing(ctx context.Context, in *CreateListingRequest, opts ...grpc.CallOption) (*Listing, error)
 	UpdateListing(ctx context.Context, in *UpdateListingRequest, opts ...grpc.CallOption) (*Listing, error)
 	DeleteListing(ctx context.Context, in *DeleteListingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -47,9 +48,18 @@ func (c *listingServiceClient) GetListing(ctx context.Context, in *GetListingReq
 	return out, nil
 }
 
-func (c *listingServiceClient) GetAllListings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetListingArrayResponse, error) {
-	out := new(GetListingArrayResponse)
+func (c *listingServiceClient) GetAllListings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Listings, error) {
+	out := new(Listings)
 	err := c.cc.Invoke(ctx, "/listings.ListingService/GetAllListings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *listingServiceClient) GetListingsLocationRoom(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error) {
+	out := new(Listings)
+	err := c.cc.Invoke(ctx, "/listings.ListingService/GetListingsLocationRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +98,8 @@ func (c *listingServiceClient) DeleteListing(ctx context.Context, in *DeleteList
 // for forward compatibility
 type ListingServiceServer interface {
 	GetListing(context.Context, *GetListingRequest) (*Listing, error)
-	GetAllListings(context.Context, *emptypb.Empty) (*GetListingArrayResponse, error)
+	GetAllListings(context.Context, *emptypb.Empty) (*Listings, error)
+	GetListingsLocationRoom(context.Context, *FilterLocationRoomRequest) (*Listings, error)
 	CreateListing(context.Context, *CreateListingRequest) (*Listing, error)
 	UpdateListing(context.Context, *UpdateListingRequest) (*Listing, error)
 	DeleteListing(context.Context, *DeleteListingRequest) (*emptypb.Empty, error)
@@ -102,8 +113,11 @@ type UnimplementedListingServiceServer struct {
 func (UnimplementedListingServiceServer) GetListing(context.Context, *GetListingRequest) (*Listing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListing not implemented")
 }
-func (UnimplementedListingServiceServer) GetAllListings(context.Context, *emptypb.Empty) (*GetListingArrayResponse, error) {
+func (UnimplementedListingServiceServer) GetAllListings(context.Context, *emptypb.Empty) (*Listings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllListings not implemented")
+}
+func (UnimplementedListingServiceServer) GetListingsLocationRoom(context.Context, *FilterLocationRoomRequest) (*Listings, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListingsLocationRoom not implemented")
 }
 func (UnimplementedListingServiceServer) CreateListing(context.Context, *CreateListingRequest) (*Listing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateListing not implemented")
@@ -159,6 +173,24 @@ func _ListingService_GetAllListings_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ListingServiceServer).GetAllListings(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ListingService_GetListingsLocationRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilterLocationRoomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ListingServiceServer).GetListingsLocationRoom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/listings.ListingService/GetListingsLocationRoom",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ListingServiceServer).GetListingsLocationRoom(ctx, req.(*FilterLocationRoomRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -231,6 +263,10 @@ var ListingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllListings",
 			Handler:    _ListingService_GetAllListings_Handler,
+		},
+		{
+			MethodName: "GetListingsLocationRoom",
+			Handler:    _ListingService_GetListingsLocationRoom_Handler,
 		},
 		{
 			MethodName: "CreateListing",

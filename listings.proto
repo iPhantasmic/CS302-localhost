@@ -9,7 +9,8 @@ option go_package = "./listings.proto";
 
 service ListingService {
   rpc GetListing(GetListingRequest) returns (Listing) {}
-  rpc GetAllListings(google.protobuf.Empty) returns (GetListingArrayResponse) {}
+  rpc GetAllListings(google.protobuf.Empty) returns (Listings) {}
+  rpc GetListingsLocationRoom(FilterLocationRoomRequest) returns (Listings) {}
   rpc CreateListing(CreateListingRequest) returns (Listing) {}
   rpc UpdateListing(UpdateListingRequest) returns (Listing) {}
   rpc DeleteListing(DeleteListingRequest) returns (google.protobuf.Empty) {}
@@ -38,15 +39,24 @@ message Listing {
   string country = 8;
   string city = 9;
   uint32 rooms = 10;
-  uint32 beds = 11;
+  google.protobuf.Timestamp start_date = 11;
   google.protobuf.Timestamp created_at = 12;
 }
 //
 
 // Get all Listings
-message GetListingArrayResponse {
+message Listings {
   repeated Listing listings = 1;
 }
+//
+
+// Filter by Location and Rooms
+message FilterLocationRoomRequest {
+  string country = 1;
+  string city = 2;
+  uint32 rooms = 3;
+}
+//
 
 // Create Listing
 message CreateListingRequest {
@@ -65,7 +75,7 @@ message CreateListingRequest {
   string country = 8;
   string city = 9;
   uint32 rooms = 10;
-  uint32 beds = 11;
+  google.protobuf.Timestamp start_date = 11;
 }
 //
 
@@ -73,7 +83,8 @@ message CreateListingRequest {
 message UpdateListingRequest {
   message Image {
     uint32 position = 1;
-    bytes data = 2;
+    string filename = 2;
+    bytes data = 3;
   }
 
   string listing_id = 1;
@@ -85,7 +96,7 @@ message UpdateListingRequest {
   string country = 7;
   string city = 8;
   uint32 rooms = 9;
-  uint32 beds = 10;
+  google.protobuf.Timestamp start_date = 10;
 }
 //
 
