@@ -43,7 +43,6 @@ message CreateBookingRequest {
   int32 host_id = 3;
   string start_date = 4;
   string end_date = 5;
-  // Status status = 6;
   int32 payment_id = 6;
 }
 
