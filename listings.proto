@@ -28,15 +28,11 @@ message GetListingRequest {
 }
 
 message Listing {
-  message Image {
-    string s3_url = 1;
-  }
-
   string listing_id = 1;
   string user_id = 2;
   string title = 3;
   uint32 price = 4;
-  repeated Image images = 5;
+  repeated string images = 5;
   Type type = 6;
   string address = 7;
   string country = 8;
