@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package bookings;
 
+import "google/protobuf/timestamp.proto";
+
 service BookingService {
   rpc CreateBooking (CreateBookingRequest) returns (Booking){}
   rpc GetBookingByUser (BookingByUserRequest)
@@ -12,6 +14,7 @@ service BookingService {
   rpc DeleteBookingByUserId (BookingByUserRequest) returns (ReturnMessage){}
   rpc DeleteBookingByListingId(BookingByListingRequest)
       returns (ReturnMessage){}
+  rpc GetAvailableListings (GetAvailableListingsRequest) returns (GetAvailableListingsResponse){}
 }
 
 message Booking {
@@ -21,8 +24,17 @@ message Booking {
   int32 host_id = 4;
   string start_date = 5;
   string end_date = 6;
-  // Status status = 7;
   int32 payment_id = 7;
+}
+
+message GetAvailableListingsRequest {
+  repeated string listing_ids = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+
+message GetAvailableListingsResponse {
+  repeated string listing_ids = 1;
 }
 
 message CreateBookingRequest {
@@ -60,11 +72,4 @@ message UpdateBookingRequest{
 message ReturnMessage{
   string return_message = 1;
 }
-
-// enum Status{
-//     ACTIVE = 0;
-//     COMPLETED = 1;
-//     REFUNDED = 2;
-//     CANCELLED = 4;
-// }
   
