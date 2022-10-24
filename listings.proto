@@ -68,17 +68,16 @@ message CreateListingRequest {
     bytes data = 3;
   }
 
-  string listing_id = 1;
-  string user_id = 2;
-  string title = 3;
-  uint32 price = 4;
-  repeated Image images = 5;
-  Type type = 6;
-  string address = 7;
-  string country = 8;
-  string city = 9;
-  uint32 rooms = 10;
-  google.protobuf.Timestamp start_date = 11;
+  string user_id = 1;
+  string title = 2;
+  uint32 price = 3;
+  repeated Image images = 4;
+  Type type = 5;
+  string address = 6;
+  string country = 7;
+  string city = 8;
+  uint32 rooms = 9;
+  google.protobuf.Timestamp start_date = 10;
 }
 //
 
