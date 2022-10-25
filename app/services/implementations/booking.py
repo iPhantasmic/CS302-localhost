@@ -150,11 +150,24 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 session.delete(booking)
             session.commit()
             context.set_code(grpc.StatusCode.OK)
-            return bookings_pb2.ReturnMessage(return_message="All bookings for listing id {request.listing_id} deleted")
+            return bookings_pb2.ReturnMessage(return_message=f"All bookings for listing id {request.listing_id} deleted")
         except:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details('Delete Failed')
             return bookings_pb2.ReturnMessage(return_message=f"Bookings for listing id {request.listing_id} FAILED to be deleted")
+    
+    def DeleteBookingById(self,request,context):
+        result = session.query(models.Booking).filter(models.Booking.id==request.booking_id).all()
+        try:
+            for booking in result:
+                session.delete(booking)
+            session.commit()
+            context.set_code(grpc.StatusCode.OK)
+            return bookings_pb2.ReturnMessage(return_message=f"All bookings for id {request.booking_id} deleted")
+        except:
+            context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details('Delete Failed')
+            return bookings_pb2.ReturnMessage(return_message=f"Bookings for id {request.booking_id} FAILED to be deleted")
 
     def UpdateBookingById(self,request, context):
         booking_dict = json_format.MessageToDict(request, preserving_proto_field_name=True)
