@@ -15,6 +15,8 @@ service BookingService {
   rpc DeleteBookingByListingId(BookingByListingRequest)
       returns (ReturnMessage){}
   rpc GetAvailableListings (GetAvailableListingsRequest) returns (GetAvailableListingsResponse){}
+  rpc DeleteBookingById(BookingByIdRequest)
+      returns (ReturnMessage){}
 }
 
 message Booking {
@@ -56,6 +58,10 @@ message BookingByListingRequest{
 
 message BookingByUserRequest{
   int32 user_id = 1;
+}
+
+message BookingByIdRequest{
+  int32 booking_id = 1;
 }
 
 message UpdateBookingRequest{
