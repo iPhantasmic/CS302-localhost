@@ -63,9 +63,8 @@ message FilterLocationRoomRequest {
 // Create Listing
 message CreateListingRequest {
   message Image {
-    uint32 position = 1;
-    string filename = 2;
-    bytes data = 3;
+    string filename = 1;
+    bytes data = 2;
   }
 
   string user_id = 1;
@@ -84,9 +83,8 @@ message CreateListingRequest {
 // Update Listing
 message UpdateListingRequest {
   message Image {
-    uint32 position = 1;
-    string filename = 2;
-    bytes data = 3;
+    string filename = 1;
+    bytes data = 2;
   }
 
   string listing_id = 1;
