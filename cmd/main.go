@@ -19,7 +19,7 @@ func main() {
 		log.Fatalln("Failed to load configs", err)
 	}
 
-	h := db.Init(c.DBUrl, c.Schema)
+	h := db.Init(c.DBUrl)
 
 	lis, err := net.Listen("tcp", c.Port)
 	if err != nil {
@@ -30,6 +30,7 @@ func main() {
 
 	listingServer := services.ListingServer{
 		H: h,
+		C: c,
 	}
 
 	healthServer := services.HealthServer{}
