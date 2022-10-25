@@ -72,62 +72,21 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
     def GetAvailableListings(self, request, context):
         listing_request = json_format.MessageToDict(request, preserving_proto_field_name=True)
 
-        corresponding_bookings = session.query(models.Booking) \
-            .filter(models.Booking.listing_id.in_(request.listing_ids)).group_by(models.Booking.listing_id).all()
+        request_start_date = request.start_date.nanos
+        request_end_date = request.end_date.nanos
+
+        corresponding_bookings = session.query(models.Booking.listing_id, models.Booking.start_date, models.Booking.end_date) \
+                                .filter(models.Booking.listing_id.in_(request.listing_ids)) \
+                                .group_by(models.Booking.listing_id, models.Booking.start_date, models.Booking.end_date) \
+                                .all()
         
         print(corresponding_bookings)
 
-    #     a_busy = [
-    #     {'start': datetime.datetime(2020, 1, 1, 6), 'end': datetime.datetime(2020, 1, 1, 6, 30)},
-    #     {'start': datetime.datetime(2020, 1, 1, 7), 'end': datetime.datetime(2020, 1, 1, 8)},
-    #     {'start': datetime.datetime(2020, 1, 1, 7, 30), 'end': datetime.datetime(2020, 1, 1, 9, 30)},
-    #     {'start': datetime.datetime(2020, 1, 1, 11), 'end': datetime.datetime(2020, 1, 1, 12, 30)},
-    #     {'start': datetime.datetime(2020, 1, 1, 15), 'end': datetime.datetime(2020, 1, 1, 15, 45)},
-    #     {'start': datetime.datetime(2020, 1, 1, 16, 45), 'end': datetime.datetime(2020, 1, 1, 17, 30)}
-    # ]
-
-    # b_busy = [
-    #     {'start': datetime.datetime(2020, 1, 1, 5, 45), 'end': datetime.datetime(2020, 1, 1, 6, 30)},
-    #     {'start': datetime.datetime(2020, 1, 1, 7, 30), 'end': datetime.datetime(2020, 1, 1, 8)},
-    #     {'start': datetime.datetime(2020, 1, 1, 8), 'end': datetime.datetime(2020, 1, 1, 9)},
-    #     {'start': datetime.datetime(2020, 1, 1, 10, 30), 'end': datetime.datetime(2020, 1, 1, 13)},
-    #     {'start': datetime.datetime(2020, 1, 1, 14), 'end': datetime.datetime(2020, 1, 1, 15)},
-    #     {'start': datetime.datetime(2020, 1, 1, 15, 30), 'end': datetime.datetime(2020, 1, 1, 16, 30)}
-    # ]
-    # # free times: 6:30-7, 9:30-10:30, 13:00-14:00, 16:30-16:45
-    # tstart = datetime.datetime(2020, 1, 1, 6)
-    # tstop = datetime.datetime(2020, 1, 1, 17)
-
-    # together = sorted(a_busy + b_busy, key=lambda k: k['start'])
-    # tp = [(tstart, tstart)]
-    # free_time = []
-    # for t in together:
-    #     tp.append((t['start'], t['end']))
-    # tp.append((tstop, tstop))
-
-    # # This section added to resolve the case mentioned above
-    # i = 1
-    # while i < len(tp):
-    #     if tp[i][0] < tp[i - 1][1]:
-    #         start_times = [tp[i - 1][0], tp[i][0]]
-    #         end_times = [tp[i - 1][1], tp[i][1]]
-    #         tp[i - 1] = (min(start_times), max(end_times))
-    #         tp.pop(i)
-    #     else:
-    #         i += 1
-
-    # for i, v in enumerate(tp):
-    #     if i > 0:
-    #         if (tp[i][0] - tp[i - 1][1]) > datetime.timedelta(seconds=0):
-    #             tf_start = tp[i - 1][1]
-    #             delta = tp[i][0] - tp[i - 1][1]
-    #             tf_end = tf_start + delta
-    #             free_time.append(tup)
         if corresponding_bookings:
             pass
         else:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details(f'No available listing between {request.start_date} and {request.start_date}')
+            context.set_details(f'No available listing between {request.start_date} and {request.end_date}')
             return bookings_pb2.GetBookingArrayResponse()
     
     def DeleteBookingByUserId(self,request,context):
@@ -159,11 +118,15 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
     def DeleteBookingById(self,request,context):
         result = session.query(models.Booking).filter(models.Booking.id==request.booking_id).all()
         try:
-            for booking in result:
-                session.delete(booking)
-            session.commit()
-            context.set_code(grpc.StatusCode.OK)
-            return bookings_pb2.ReturnMessage(return_message=f"All bookings for id {request.booking_id} deleted")
+            if result:
+                for booking in result:
+                    session.delete(booking)
+                session.commit()
+                context.set_code(grpc.StatusCode.OK)
+                return bookings_pb2.ReturnMessage(return_message=f"All bookings for id {request.booking_id} deleted")
+            else:
+                context.set_code(grpc.StatusCode.OK)
+                return bookings_pb2.ReturnMessage(return_message=f"No bookings for id {request.booking_id} found to be deleted")
         except:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details('Delete Failed')
