@@ -1,11 +1,17 @@
 import GetUser from './getUser';
+import PublishBookingConfirmed from "./emailBookingConfirmed"
+import GetBookingByUser from './getBooking';
+import MakeBooking from './makeBooking';
 
 const resolvers: any  = {
 //   Mutation: {
 //     addPost
 //   },
   Query: {
-    GetUser
+    GetUser,
+    PublishBookingConfirmed,
+    GetBookingByUser,
+    MakeBooking
   },
 };
 

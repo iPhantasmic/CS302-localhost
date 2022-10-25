@@ -22,8 +22,10 @@
   "homepage": "https://gitlab.com/cs302-2022/g2-team3/api-gateway#readme",
   "dependencies": {
     "@apollo/server": "^4.0.2",
+    "@aws-sdk/client-sns": "^3.194.0",
     "@grpc/grpc-js": "^1.7.3",
-    "graphql": "^16.6.0"
+    "graphql": "^16.6.0",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.3",
