@@ -55,6 +55,8 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             context (grpc.ServicerContext)
         """
         booking_request = json_format.MessageToDict(request, preserving_proto_field_name=True)
+        print(booking_request)
+        print(request)
         new_booking = models.Booking(**booking_request)
         try:
             session.add(new_booking)
@@ -157,7 +159,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             return bookings_pb2.ReturnMessage(return_message=f"Bookings for listing id {request.listing_id} FAILED to be deleted")
     
     def DeleteBookingById(self,request,context):
+        print(request)
         result = session.query(models.Booking).filter(models.Booking.id==request.booking_id).all()
+        print(result)
         try:
             for booking in result:
                 session.delete(booking)
