@@ -8,20 +8,19 @@ const email_client = new SNSPublisher()
 export default (root: any, params: any) => {
     return new Promise((resolve: any, reject: any) => {
         console.log(params)
-        params.data = {
-            "end_date": "2022-04-23 10:34:23",
-            "host_id": -1706664529,
-            "listing_id": 1624135236,
-            "payment_id": -782025083,
-            "start_date": "2022-04-22 10:34:23",
-            "user_id": 1552476736
-        }
-        console.log(params)
-        console.log(params.data)
+        // params.data = {
+        //     "end_date": "2022-04-23 10:34:23",
+        //     "host_id": -1706664529,
+        //     "listing_id": 1624135236,
+        //     "payment_id": -782025083,
+        //     "start_date": "2022-04-22 10:34:23",
+        //     "user_id": 1552476736
+        // }
         client.CreateBooking(
             params.data,
             function (err: any, response: any) {
                 if (err) {
+                    console.log(params.data)
                     return reject(err)
                 }
                 const booking_id = response["id"]

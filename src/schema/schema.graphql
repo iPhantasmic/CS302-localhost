@@ -76,18 +76,21 @@ input BookingUserId{
   userId: Int
 }
 
-input BookingId{
-  bookingId: Int
+input MakeBookingRequest {
+    end_date: String
+    host_id: Int
+    listing_id: Int
+    payment_id: Int
+    start_date: String
+    user_id: Int
 }
-
 
 
 type Query {
     GetUser(data: GetUserRequest): User
     PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
     GetBookingByUser(data:BookingUserId): BookingResponse
-    MakeBooking(data:BookingUserId):BookingResponse
-    # DeleteBookingById(data:BookingId):DeleteReturnMessage
+    MakeBooking(data:MakeBookingRequest):DeleteReturnMessage 
 }
 
 schema {
