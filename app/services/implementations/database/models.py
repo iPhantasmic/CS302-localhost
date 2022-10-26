@@ -1,7 +1,9 @@
 """Module with booking model."""
 from sqlalchemy import DateTime, func, inspect
+from sqlalchemy.dialects.postgresql import UUID
 from app.services.implementations.database import (
         connection as db)
+import uuid
 
 
 __all__ = ['Booking']
@@ -9,25 +11,25 @@ __all__ = ['Booking']
 class Booking(db.Model):
     """Represents an item.
     Attributes:
-        id (int) - From Base
-        created_at (DateTime) - From Base
-        name (str): name of item
-        user_id (int): foreign key for user that is making booking
-        listing_id (int): foreign key for listing that this booking is being made for
-        host_id (int): foreign key for host that listed the corresponding listing
-        start_date (datetime): start date of the booking
-        end_date (datetime): end date of the booking
-        payment_id (int):
+        id (UUID String)
+        created_at (DateTime)
+        name (UUID String): name of item
+        user_id (UUID String): foreign key for user that is making booking
+        listing_id (UUID String): foreign key for listing that this booking is being made for
+        host_id (UUID String): foreign key for host that listed the corresponding listing
+        start_date (DateTime): start date of the booking
+        end_date (DateTime): end date of the booking
+        payment_id (UUID String): foreign key for payment that this booking is attached to
     """
     __tablename__ = 'bookings'
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)    
     created_at = db.Column(DateTime, default=func.now())
-    user_id = db.Column(db.Integer)
-    listing_id = db.Column(db.Integer)
-    host_id = db.Column(db.Integer)
+    user_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)    
+    listing_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
+    host_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
     start_date = db.Column(DateTime)
     end_date = db.Column(DateTime)
-    payment_id = db.Column(db.Integer)
+    payment_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
 
     def __init__(self,user_id,listing_id,host_id,start_date,end_date,payment_id) -> None:
         self.user_id = user_id
@@ -38,7 +40,7 @@ class Booking(db.Model):
         self.payment_id = payment_id
 
     def __repr__(self):
-        return f'Booking(id={self.id}, user_id={self.user_id}, listing_id={self.listing_id}), start_date={self.start_date}'
+        return f'Booking(id={self.id}, start_date={self.start_date}, end_date={self.end_date}'
     
     def to_dict(self):
         """Returns model as dict of properties.
