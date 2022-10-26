@@ -14,23 +14,23 @@ service BookingService {
   rpc DeleteBookingByUserId (BookingByUserRequest) returns (ReturnMessage){}
   rpc DeleteBookingByListingId(BookingByListingRequest)
       returns (ReturnMessage){}
-  rpc GetAvailableListings (GetAvailableListingsRequest) returns (GetAvailableListingsResponse){}
   rpc DeleteBookingById(BookingByIdRequest)
       returns (ReturnMessage){}
+  rpc GetAvailableListings (GetAvailableListingsRequest) returns (GetAvailableListingsResponse){}
 }
 
 message Booking {
-  int32 id = 1;
-  int32 user_id = 2;
-  int32 listing_id = 3;
-  int32 host_id = 4;
-  string start_date = 5;
-  string end_date = 6;
-  int32 payment_id = 7;
+  string id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string host_id = 4;
+  google.protobuf.Timestamp start_date = 5;
+  google.protobuf.Timestamp end_date = 6;
+  string payment_id = 7;
 }
 
 message GetAvailableListingsRequest {
-  repeated int32 listing_ids = 1;
+  repeated string listing_ids = 1;
   google.protobuf.Timestamp start_date = 2;
   google.protobuf.Timestamp end_date = 3;
 }
@@ -40,12 +40,12 @@ message GetAvailableListingsResponse {
 }
 
 message CreateBookingRequest {
-  int32 user_id = 1;
-  int32 listing_id = 2;
-  int32 host_id = 3;
-  string start_date = 4;
-  string end_date = 5;
-  int32 payment_id = 6;
+  string user_id = 1;
+  string listing_id = 2;
+  string host_id = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+  string payment_id = 6;
 }
 
 message GetBookingArrayResponse{
@@ -53,28 +53,27 @@ message GetBookingArrayResponse{
 }
 
 message BookingByListingRequest{
-  int32 listing_id = 1;
+  string listing_id = 1;
 }
 
 message BookingByUserRequest{
-  int32 user_id = 1;
+  string user_id = 1;
 }
 
 message BookingByIdRequest{
-  int32 booking_id = 1;
+  string booking_id = 1;
 }
 
 message UpdateBookingRequest{
-  int32 id = 1;
-  int32 user_id = 2;
-  int32 listing_id = 3;
-  int32 host_id = 4;
-  string start_date = 5;
-  string end_date = 6;
-  int32 payment_id = 7;
+  string id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string host_id = 4;
+  google.protobuf.Timestamp start_date = 5;
+  google.protobuf.Timestamp end_date = 6;
+  string payment_id = 7;
 }
 
 message ReturnMessage{
   string return_message = 1;
 }
-  
