@@ -33,7 +33,7 @@ import DarkModeToggle from "./DarkModeToggle";
 import { BsGlobe2 } from "react-icons/bs";
 import { HamburgerIcon, PhoneIcon, Search2Icon } from "@chakra-ui/icons";
 
-export function Navbar() {
+export function Navbar(props: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -47,9 +47,13 @@ export function Navbar() {
           w="100%"
           bg={useColorModeValue("white", "black")}
         >
-          <Container maxW="container.2xl" py="3" px="10">
+          <Container
+            maxW={props.main == true ? "container.2xl" : "container.xl"}
+            py="3"
+            px="7"
+          >
             <Flex>
-              <Box width="15%" py="2">
+              <Box width="25%" py="2">
                 <Image
                   src={useColorModeValue(Logo, LogoDark)}
                   height="31px"
@@ -57,21 +61,23 @@ export function Navbar() {
                 />
               </Box>
               <Spacer />
-              <Box
+              <Center
                 maxW="xs"
                 my="1"
                 py="1.5"
                 onClick={onOpen}
-                mx="40"
                 borderRadius="full"
                 px="5"
                 boxShadow="md"
-                width="full"
+                width="30%"
                 border="1px"
                 borderColor="gray.200"
               >
-                <HStack>
-                  <Text fontSize="13.5px" fontWeight="semibold">
+                <Flex flex="auto" alignItems="center">
+                  <Text fontSize="14px" fontWeight="semibold">
+                    Start your search
+                  </Text>
+                  {/* <Text fontSize="13.5px" fontWeight="semibold">
                     Anywhere
                   </Text>
                   <Spacer />
@@ -83,7 +89,7 @@ export function Navbar() {
                   <Spacer />
                   <Divider orientation="vertical" height="1px" py={4} />
                   <Spacer />
-                  <Text fontSize="13.5px">Guests</Text>
+                  <Text fontSize="13.5px">Guests</Text> */}
                   <Spacer />
                   <IconButton
                     aria-label="Search listings"
@@ -93,11 +99,11 @@ export function Navbar() {
                     borderRadius="full"
                     right="-2"
                   />
-                </HStack>
-              </Box>
+                </Flex>
+              </Center>
               <Spacer />
-              <Box>
-                <HStack spacing="2" py="2">
+              <Box width="25%">
+                <HStack spacing="1" py="2">
                   <Flex justify="space-between" flex="1" />
                   <Button
                     variant="ghost"
@@ -107,7 +113,7 @@ export function Navbar() {
                   >
                     Become a host
                   </Button>
-                  <DarkModeToggle />
+                  {/* <DarkModeToggle /> */}
                   <IconButton
                     icon={<BsGlobe2 />}
                     variant="ghost"
@@ -122,7 +128,7 @@ export function Navbar() {
                     boxShadow="sm"
                   >
                     <WrapItem>
-                      <HamburgerIcon alignSelf="center" mr={4} />
+                      <HamburgerIcon alignSelf="center" mr={3} />
                       <Avatar
                         size="sm"
                         name="Kent Dodds"
