@@ -106,8 +106,6 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_request = json_format.MessageToDict(
             request, preserving_proto_field_name=True
         )
-        print(booking_request)
-        print(request)
         new_booking = models.Booking(**booking_request)
         try:
             session.add(new_booking)
@@ -131,14 +129,8 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             return bookings_pb2.Booking()
 
     def GetAvailableListings(self, request, context):
-        # listing_request = json_format.MessageToDict(request, preserving_proto_field_name=True)
-        print(f"Request listing ids: {request.listing_ids}")
-
         request_start_datetime = datetime.fromtimestamp(int(request.start_date.seconds))
         request_end_datetime = datetime.fromtimestamp(int(request.end_date.seconds))
-
-        print(f'Start date:{request_start_datetime.strftime("%Y-%m-%d %H:%M")}')
-        print(f'End date:{request_end_datetime.strftime("%Y-%m-%d %H:%M")}')
 
         unavailable_listings = (
             session.query(models.Booking.listing_id)
@@ -162,12 +154,10 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         )
 
         unavailable_listings_set = {str(tup[0]) for tup in unavailable_listings}
-        print(f"Unavail listing ids: {unavailable_listings_set}")
 
         available_listings = list(
             set(request.listing_ids).difference(unavailable_listings_set)
         )
-        print(f"Available listing ids: {available_listings}")
 
         if len(available_listings) > 0:
             res_array = bookings_pb2.GetAvailableListingsResponse()
