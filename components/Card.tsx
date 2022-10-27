@@ -1,4 +1,4 @@
-import { Badge, Box, HStack, Spacer } from "@chakra-ui/react";
+import { Badge, Box, HStack, Skeleton, Spacer } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 
@@ -16,62 +16,78 @@ export const Card = () => {
   };
 
   return (
-    <Box maxW="xs" overflow="hidden" p={2}>
+    <Box maxW="17%" p="0.2%">
       <Box maxW="xs" borderRadius="lg">
-        <Image
-          src={property.imageUrl}
-          alt={property.imageAlt}
-          width="400px"
-          height="300px"
-        />
+        {property.imageUrl != undefined ? (
+          <Image
+            src={property.imageUrl}
+            alt={property.imageAlt}
+            objectFit="cover"
+            width="400px"
+            height="350px"
+            style={{ borderRadius: "15px" }}
+          />
+        ) : (
+          <Skeleton height="350px" />
+        )}
       </Box>
+
       <Box p="2">
-        <HStack alignItems="center">
-          <Box
-            fontWeight="semibold"
-            fontSize="14px"
-            as="h4"
-            lineHeight="tight"
-            noOfLines={1}
-          >
-            {property.title}
-          </Box>
-          <Badge
-            borderRadius="full"
-            px="2"
-            colorScheme="teal"
-            variant="outline"
-            ml={2}
-          >
-            New
-          </Badge>
-          <Spacer />
-          <Box display="flex" mt="2" alignItems="center">
-            <StarIcon color="teal.500" />
-            <Box as="span" ml="2" color="gray.600" fontSize="sm">
-              {property.reviewCount}
+        {property != undefined ? (
+          <>
+            <HStack alignItems="center">
+              <Box
+                fontWeight="semibold"
+                fontSize="14px"
+                as="h4"
+                lineHeight="tight"
+                noOfLines={1}
+              >
+                {property.title}
+              </Box>
+              <Badge
+                borderRadius="full"
+                px="2"
+                colorScheme="teal"
+                variant="outline"
+                ml={2}
+              >
+                New
+              </Badge>
+              <Spacer />
+              <Box display="flex" mt="2" alignItems="center">
+                <StarIcon color="teal.500" />
+                <Box as="span" ml="2" color="gray.600" fontSize="sm">
+                  {property.reviewCount}
+                </Box>
+              </Box>
+            </HStack>
+            <Box display="flex" alignItems="baseline">
+              <Box
+                color="gray.500"
+                fontWeight="normal"
+                letterSpacing="wide"
+                fontSize="xs"
+                textTransform="uppercase"
+              >
+                {property.beds} beds · {property.baths} baths
+              </Box>
             </Box>
-          </Box>
-        </HStack>
 
-        <Box display="flex" alignItems="baseline">
-          <Box
-            color="gray.500"
-            fontWeight="normal"
-            letterSpacing="wide"
-            fontSize="xs"
-            textTransform="uppercase"
-          >
-            {property.beds} beds · {property.baths} baths
-          </Box>
-        </Box>
-
-        <Box fontSize="15.5px" fontWeight="semibold">
-          {property.formattedPrice}&nbsp;SGD
-          <Box as="span" color="gray.600" fontSize="sm" fontWeight="normal">
-            &nbsp;night
-          </Box>
-        </Box>
+            <Box fontSize="15.5px" fontWeight="semibold">
+              {property.formattedPrice}&nbsp;SGD
+              <Box as="span" color="gray.600" fontSize="sm" fontWeight="normal">
+                &nbsp;night
+              </Box>
+            </Box>
+          </>
+        ) : (
+          <>
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+          </>
+        )}
       </Box>
     </Box>
   );
