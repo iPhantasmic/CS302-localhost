@@ -1,0 +1,17 @@
+repos:
+    - repo: https://github.com/pre-commit/mirrors-autopep8
+      rev: v1.5.4  # Use the sha / tag you want to point at
+      hooks:
+      - id: autopep8
+        exclude: app/services/pb/
+    - repo: https://github.com/PyCQA/pylint
+      rev: pylint-2.7.2  # Use the sha / tag you want to point at
+      hooks:
+      - id: pylint
+        name: pylint
+        exclude: app/services/pb/
+        language: system
+        args:
+          [
+            "--load-plugins=pylint-protobuf", # Load an extension
+          ]

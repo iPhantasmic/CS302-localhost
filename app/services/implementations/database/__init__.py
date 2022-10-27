@@ -1,4 +1,5 @@
 """Module that manages database connection."""
+from sqlalchemy import create_engine
 import os
 from sqlalchemy_wrapper import SQLAlchemy
 
@@ -6,8 +7,6 @@ from sqlalchemy_wrapper import SQLAlchemy
 # # Connect to the database
 connection = SQLAlchemy(os.environ['DATABASE_URL'])
 
-
-from sqlalchemy import create_engine
 
 # an Engine, which the Session will use for connection
 # resources
