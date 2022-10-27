@@ -20,12 +20,6 @@ stages:          # List of stages for jobs, and their order of execution
   - Static Analysis
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
-  script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
-
 flake8:
   stage: Static Analysis
   image: python:3.10-slim
@@ -37,6 +31,6 @@ flake8:
   artifacts:
     when: on_failure
     paths:
-      - flake8_report.txt
+      - pyflakes_report.txt
 
 
