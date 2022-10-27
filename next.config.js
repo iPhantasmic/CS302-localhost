@@ -13,6 +13,10 @@ module.exports = {
         protocol: "https",
         hostname: "a0.muscache.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+      },
     ],
   },
 };

@@ -83,7 +83,8 @@ export default function Types() {
               <Text
                 fontSize="13px"
                 letterSpacing={0.02}
-                color={useColorModeValue("black", "white")}
+                color="black"
+                _dark={{ color: "white" }}
               >
                 {value}
               </Text>
