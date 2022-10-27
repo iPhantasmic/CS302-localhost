@@ -33,6 +33,6 @@ class GrpcServiceConnector(object):
         """Getter for self._stub."""
         if self._stub is None:
             service_class_name = self._service_class.__name__
-            raise AttributeError("stub '%s' is empty" % service_class_name)
+            raise AttributeError(f"stub '{service_class_name}' is empty")
 
         return self._stub

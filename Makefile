@@ -28,7 +28,7 @@ lint:
 
 .PHONY: run-grpc-api
 run-grpc-api:
-	python -m $(PROJECT_NAME).apis.grpc
+	python -m $(PROJECT_NAME).apis.server
 
 .PHONY: up
 up:

@@ -13,5 +13,6 @@ repos:
         language: system
         args:
           [
-            "--load-plugins=pylint-protobuf", # Load an extension
+            "--rcfile=.pylintrc", # Link to your config file
+            "--load-plugins=pylint_protobuf", # Load an extension
           ]
