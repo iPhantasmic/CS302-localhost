@@ -1,9 +1,8 @@
 repos:
-    - repo: https://github.com/pre-commit/mirrors-autopep8
-      rev: v1.5.4  # Use the sha / tag you want to point at
+    - repo: https://github.com/ambv/black
+      rev: stable
       hooks:
-      - id: autopep8
-        exclude: app/services/pb/
+        - id: black
     - repo: https://github.com/PyCQA/pylint
       rev: pylint-2.7.2  # Use the sha / tag you want to point at
       hooks:
@@ -15,4 +14,6 @@ repos:
           [
             "--rcfile=.pylintrc", # Link to your config file
             "--load-plugins=pylint_protobuf", # Load an extension
+            --fail-under=9
           ]
+    

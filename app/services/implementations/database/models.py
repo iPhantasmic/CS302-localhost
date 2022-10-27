@@ -1,12 +1,11 @@
 """Module with booking model."""
 from sqlalchemy import DateTime, func, inspect
 from sqlalchemy.dialects.postgresql import UUID
-from app.services.implementations.database import (
-    connection as db)
+from app.services.implementations.database import connection as db
 import uuid
 
 
-__all__ = ['Booking']
+__all__ = ["Booking"]
 
 
 class Booking(db.Model):
@@ -22,7 +21,8 @@ class Booking(db.Model):
         end_date (DateTime): end date of the booking
         payment_id (UUID String): foreign key for payment that this booking is attached to
     """
-    __tablename__ = 'bookings'
+
+    __tablename__ = "bookings"
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     created_at = db.Column(DateTime, default=func.now())
     user_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
@@ -32,7 +32,9 @@ class Booking(db.Model):
     end_date = db.Column(DateTime)
     payment_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
 
-    def __init__(self, user_id, listing_id, host_id, start_date, end_date, payment_id) -> None:
+    def __init__(
+        self, user_id, listing_id, host_id, start_date, end_date, payment_id
+    ) -> None:
         self.user_id = user_id
         self.listing_id = listing_id
         self.host_id = host_id
@@ -41,7 +43,7 @@ class Booking(db.Model):
         self.payment_id = payment_id
 
     def __repr__(self):
-        return f'Booking(id={self.id}, start_date={self.start_date}, end_date={self.end_date}'
+        return f"Booking(id={self.id}, start_date={self.start_date}, end_date={self.end_date}"
 
     def to_dict(self):
         """Returns model as dict of properties.
