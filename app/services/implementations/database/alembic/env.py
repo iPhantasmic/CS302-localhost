@@ -1,5 +1,4 @@
 from __future__ import with_statement
-import os
 from alembic import context
 from sqlalchemy import create_engine
 from logging.config import fileConfig

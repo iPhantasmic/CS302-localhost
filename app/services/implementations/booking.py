@@ -3,7 +3,7 @@ import grpc
 from app.services.pb.bookings import bookings_pb2_grpc, bookings_pb2
 from app.services.implementations.database import (
         engine, models)
-from google.protobuf import json_format, timestamp_pb2
+from google.protobuf import json_format
 from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import datetime
 
@@ -167,7 +167,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_dict = json_format.MessageToDict(request, preserving_proto_field_name=True)
 
         try:
-            result = session.query(models.Booking) \
+            session.query(models.Booking) \
                     .filter(models.Booking.id==request.id).update(booking_dict)
             session.commit()
             context.set_code(grpc.StatusCode.OK)
