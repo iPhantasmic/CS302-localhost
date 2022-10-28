@@ -353,7 +353,7 @@ const Listing: NextPage = () => {
               >
                 <HStack>
                   <Text fontWeight="semibold" fontSize="sm">
-                    This is a rare find. Wayan's place on Airbnb is usually
+                    This is a rare find. Wayan&apos;s place on Airbnb is usually
                     fully booked.
                   </Text>
                   <svg
