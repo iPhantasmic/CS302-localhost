@@ -78,8 +78,8 @@ const Listing: NextPage = () => {
                 Request Sent
               </Heading>
               <Text fontSize="md" letterSpacing="tight">
-                This is not a confirmed booking - at least not yet. You'll get a
-                resopnse within 24 hours.
+                This is not a confirmed booking - at least not yet. You&apos;ll
+                get a resopnse within 24 hours.
               </Text>
             </VStack>
           </Center>
