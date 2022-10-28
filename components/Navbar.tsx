@@ -62,6 +62,7 @@ export function Navbar(props: any) {
               </Box>
               <Spacer />
               <Center
+                display={props.simple ? "none" : ""}
                 maxW="xs"
                 my="1"
                 py="1.5"
@@ -102,7 +103,7 @@ export function Navbar(props: any) {
                 </Flex>
               </Center>
               <Spacer />
-              <Box width="25%">
+              <Box width="25%" display={props.simple ? "none" : ""}>
                 <HStack spacing="1" py="2">
                   <Flex justify="space-between" flex="1" />
                   <Button
