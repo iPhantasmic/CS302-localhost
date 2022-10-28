@@ -1,26 +1,14 @@
-import { StarIcon, PlusSquareIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
-  Box,
   Button,
   Center,
   Container,
   Divider,
-  Flex,
-  FormLabel,
   Grid,
   GridItem,
   Heading,
   HStack,
-  Input,
-  Modal,
-  ModalBody,
   ModalCloseButton,
-  ModalContent,
-  ModalFooter,
   ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
   Spacer,
   Text,
   useColorModeValue,
@@ -44,7 +32,7 @@ import { BiBath } from "react-icons/bi";
 import Logo from "./../../public/localhost.png";
 import LogoDark from "./../../public/localhost_dark.png";
 
-const Listing: NextPage = () => {
+const Success: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [state, setState] = useState<Range[]>([
@@ -111,21 +99,8 @@ const Listing: NextPage = () => {
         </Container>
       </main>
       <Footer />
-
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent p={5}>
-          <DateRangePicker
-            editableDateInputs={true}
-            onChange={(item) => setState([item.selection])}
-            moveRangeOnFirstSelection={false}
-            ranges={state}
-          />
-          <Button onClick={onClose}>Close</Button>
-        </ModalContent>
-      </Modal>
     </div>
   );
 };
 
-export default Listing;
+export default Success;

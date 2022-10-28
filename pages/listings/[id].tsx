@@ -13,13 +13,8 @@ import {
   HStack,
   Input,
   Modal,
-  ModalBody,
-  ModalCloseButton,
   ModalContent,
-  ModalFooter,
-  ModalHeader,
   ModalOverlay,
-  SimpleGrid,
   Spacer,
   Text,
   useDisclosure,
@@ -28,17 +23,15 @@ import {
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { Card } from "../../components/Card";
 import Footer from "../../components/Footer";
 import { Navbar } from "../../components/Navbar";
-import Types from "../../components/Types";
 import { DateRangePicker, Range, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { useState } from "react";
 import { IoIosBed, IoIosPeople } from "react-icons/io";
 import { MdMeetingRoom } from "react-icons/md";
 import { BiBath } from "react-icons/bi";
+import { useState } from "react";
 
 const Listing: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

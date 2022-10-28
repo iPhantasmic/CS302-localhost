@@ -17,6 +17,10 @@ module.exports = {
         protocol: "https",
         hostname: "images.pexels.com",
       },
+      {
+        protocol: "https",
+        hostname: "media.nedigital.sg",
+      },
     ],
   },
 };
