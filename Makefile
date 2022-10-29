@@ -10,6 +10,7 @@ auth:
 
 .PHONY: bookings
 bookings:
+	protoc ./bookings.proto --go_out=./bookings --go_opt=paths=source_relative --go-grpc_out=./bookings --go-grpc_opt=paths=source_relative
 	python3 -m grpc.tools.protoc -I=./ --python_out=./bookings --grpc_python_out=./bookings ./bookings.proto
 	protol --exclude-google-imports --in-place -o ./bookings protoc --proto-path=. ./bookings.proto
 

@@ -4,6 +4,8 @@ package bookings;
 
 import "google/protobuf/timestamp.proto";
 
+option go_package = "./health.proto";
+
 service BookingService {
   rpc CreateBooking (CreateBookingRequest) returns (Booking){}
   rpc GetBookingByUser (BookingByUserRequest)
@@ -16,7 +18,8 @@ service BookingService {
       returns (ReturnMessage){}
   rpc DeleteBookingById(BookingByIdRequest)
       returns (ReturnMessage){}
-  rpc GetAvailableListings (GetAvailableListingsRequest) returns (GetAvailableListingsResponse){}
+  rpc GetAvailableListings (GetAvailableListingsRequest)
+      returns (GetAvailableListingsResponse){}
 }
 
 message Booking {
