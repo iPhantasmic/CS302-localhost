@@ -7,6 +7,15 @@
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 image: golang:latest
 
+# Build a Docker container and push it to Amazon ECR
+variables:
+  DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
+  AWS_DEFAULT_REGION: ap-southeast-1
+  APP_NAME: authentication
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
 stages:
 - lint
 - test
@@ -69,3 +78,20 @@ sonarqube-check:
   allow_failure: true
   only:
     - main # or the name of your main branch
+
+publish:
+  stage: build
+  image: 
+    name: docker:latest
+  services:
+    - docker:19-dind
+  before_script:
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
