@@ -4,7 +4,7 @@
 // - protoc             v3.21.7
 // source: bookings.proto
 
-package health_proto
+package bookings_proto
 
 import (
 	context "context"
