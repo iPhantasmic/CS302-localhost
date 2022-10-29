@@ -37,4 +37,4 @@ services:
         aliases:
           - grpc_api.app.site
     ports:
-      - "50052:50051"
+      - "50051:50051"
