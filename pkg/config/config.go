@@ -4,8 +4,11 @@ import "github.com/spf13/viper"
 
 type Config struct {
 	Port          string `mapstructure:"PORT"`
-	DBUrl         string `mapstructure:"DB_URL"`
-	Schema        string `mapstructure:"SCHEMA_NAME"`
+	DBUser        string `mapstructure:"DB_USER"`
+	DBPassword    string `mapstructure:"DB_PASSWORD"`
+	DBHost        string `mapstructure:"DB_HOST"`
+	DBPort        string `mapstructure:"DB_PORT"`
+	DBSchema      string `mapstructure:"DB_SCHEMA"`
 	AWSBucket     string `mapstructure:"AWS_BUCKET_NAME"`
 	AWSKeyID      string `mapstructure:"AWS_ACCESS_KEY_ID"`
 	AWSSecret     string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
@@ -22,6 +25,15 @@ func LoadConfig() (config Config, err error) {
 	err = viper.ReadInConfig()
 
 	if err != nil {
+		// production use
+		err = viper.BindEnv("PORT")
+		err = viper.BindEnv("DB_USER")
+		err = viper.BindEnv("DB_PASSWORD")
+		err = viper.BindEnv("DB_HOST")
+		err = viper.BindEnv("DB_PORT")
+		err = viper.BindEnv("DB_SCHEMA")
+		err = viper.BindEnv("JWT_SECRET_KEY")
+		err = viper.Unmarshal(&config)
 		return
 	}
 
