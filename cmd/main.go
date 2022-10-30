@@ -21,7 +21,8 @@ func main() {
 		log.Fatalln("Failed at config", err)
 	}
 
-	h := db.Init(c.DBUrl)
+	dbUrl := "postgres://" + c.DBUser + ":" + c.DBPassword + "@" + c.DBHost + ":" + c.DBPort + "/" + c.DBSchema
+	h := db.Init(dbUrl)
 
 	jwt := utils.JwtWrapper{
 		SecretKey:       c.JWTSecretKey,
