@@ -1,9 +1,5 @@
-
-############################
-# STEP 1 build executable binary
-############################
-
-FROM golang:alpine as builder
+# build
+FROM golang:alpine as build
 
 # Install git.
 # Git is required for fetching the dependencies.
@@ -13,23 +9,27 @@ WORKDIR $GOPATH/src/rpc/
 COPY . .
 
 # Fetch dependencies
-RUN go mod tidy
+RUN go mod download
 
-# Build the binary. for grpc gateway
-RUN go build ./cmd
+# Build the gRPC service binary
+RUN go build -o /reviewService ./cmd
 
-RUN pwd
-RUN echo $GOPATH
-
-#EXPOSE 9090
-# Run the hello binary.
 
 # final build
 FROM alpine:3.11.3
-RUN apk --no-cache add bash curl ca-certificates
-RUN apk update
-WORKDIR /root/
-COPY --from=builder /go/src .
-ENTRYPOINT ["./cmd"]
 
-# ENTRYPOINT ["bash", "-c", "/root/server -grpc-port=$grpc_port_env -db-host=$db_host -db-user=$db_user -db-password=$db_password -db-schema=$db_schema"]
+RUN apk --no-cache add bash wget ca-certificates
+RUN apk update
+
+WORKDIR /
+
+COPY --from=build /go/src/rpc/wait-for-it.sh .
+COPY --from=build /reviewService .
+COPY --from=build /go/src/rpc/pkg/config/envs/ ./pkg/config/envs/
+
+RUN chmod +x wait-for-it.sh
+
+EXPOSE 50051
+
+CMD ./wait-for-it.sh $DB_HOST:$DB_PORT -- bash -c /reviewService
+#ENTRYPOINT ["bash", "-c", "/reviewService"]
