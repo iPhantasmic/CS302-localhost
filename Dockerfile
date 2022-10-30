@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.10-slim
 
 # Ensure that Python outputs everything that's printed inside
 # the application rather than buffering it.
@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 
 # Add dockerize, which will add a command we can use to wait for
 # dependent containers to finish setup (instead of just startup)
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget libpq-dev gcc
 
 # For M1 Macs
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-armhf-v0.6.1.tar.gz
