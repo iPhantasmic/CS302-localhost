@@ -25,7 +25,6 @@ WORKDIR /
 
 COPY --from=build /go/src/rpc/wait-for-it.sh .
 COPY --from=build /reviewService .
-COPY --from=build /go/src/rpc/pkg/config/envs/ ./pkg/config/envs/
 
 RUN chmod +x wait-for-it.sh
 

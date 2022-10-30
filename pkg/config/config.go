@@ -21,6 +21,15 @@ func LoadConfig() (config Config, err error) {
 	err = viper.ReadInConfig()
 
 	if err != nil {
+		// production use
+		err = viper.BindEnv("PORT")
+		err = viper.BindEnv("DB_USER")
+		err = viper.BindEnv("DB_PASSWORD")
+		err = viper.BindEnv("DB_HOST")
+		err = viper.BindEnv("DB_PORT")
+		err = viper.BindEnv("DB_SCHEMA")
+		err = viper.BindEnv("JWT_SECRET_KEY")
+		err = viper.Unmarshal(&config)
 		return
 	}
 
