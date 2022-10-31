@@ -26,12 +26,13 @@ variables:
   DOCKER_TLS_CERTDIR: ""
 
 stages:          # List of stages for jobs, and their order of execution
-  - Static Analysis
+  - lint
+  - test
   - build
-  - deploy
+  - analysis
 
 flake8:
-  stage: Static Analysis
+  stage: lint
   image: python:3.10-slim
   before_script:
     - python -V
@@ -43,23 +44,22 @@ flake8:
     paths:
       - pyflakes_report.txt
 
-sonarqube-check:
-  stage: Static Analysis
-  image: 
-    name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [""]
+sast:
+  stage: test
   variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  cache:
-    key: "${CI_JOB_NAME}"
-    paths:
-      - .sonar/cache
-  script: 
-    - sonar-scanner
-  allow_failure: true
-  only:
-    - main # or the name of your main branch
+    SAST_EXCLUDED_ANALYZERS: brakeman, eslint, flawfinder, gosec, kubesec, nodejs-scan,
+      phpcs-security-audit, pmd-apex, security-code-scan, sobelow, spotbugs
+include:
+- template: Security/SAST.gitlab-ci.yml
+
+semgrep:
+  stage: test
+  image: returntocorp/semgrep
+  # Run the "semgrep ci" command on the command line of the docker image.
+  script: semgrep ci || true
+  variables:
+    # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable.
+    SEMGREP_RULES: p/default p/python p/r2c-security-audit # See more at semgrep.dev/explore.
 
 publish:
   stage: build
@@ -78,3 +78,20 @@ publish:
     - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
 
+sonarqube-check:
+  stage: analysis
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script: 
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - main # or the name of your main branch
