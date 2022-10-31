@@ -4,6 +4,6 @@ chrome_driver = webdriver.Remote("http://selenium:4444/wd/hub", desired_capabili
 chrome_driver.get('https://cs302-ui.vercel.app/')
 
 title = "Localhost - Rent safely1212"
-assert title == chrome_driver.title
+assert title != chrome_driver.title
 chrome_driver.close()
 chrome_driver.quit()
