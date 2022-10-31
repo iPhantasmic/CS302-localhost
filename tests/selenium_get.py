@@ -5,5 +5,6 @@ chrome_driver.get('https://cs302-ui.vercel.app/')
 
 title = "Localhost - Rent safely"
 assert title == chrome_driver.title
+assert 1==2
 chrome_driver.close()
 chrome_driver.quit()

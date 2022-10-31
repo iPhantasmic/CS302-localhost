@@ -2,9 +2,9 @@ version: "3.8"
 
 services:
   ui-test:
-      build:
-        context: ./
-        dockerfile: Dockerfile
+    build:
+      context: ./
+      dockerfile: Dockerfile
   
   selenium:
     image: selenium/standalone-chrome
