@@ -32,6 +32,8 @@ type Query {
 
 type Mutation {
   RegisterUser(data: RegisterRequest): RegisterResponse
+  UpdateUser(data: UpdateUserRequest): User
+  DeleteUser(data: DeleteUserRequest): DeleteUserResponse
   MakeBooking(data:MakeBookingRequest): DeleteReturnMessage
 }
 #
@@ -41,9 +43,21 @@ type User {
   userId: String
   email: String
 }
-
 input GetUserRequest {
   userId: String
+}
+
+input UpdateUserRequest {
+  userId: String
+  email: String
+  password: String
+}
+
+input DeleteUserRequest {
+  userId: String
+}
+type DeleteUserResponse {
+  message: String
 }
 #
 
