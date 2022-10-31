@@ -12,46 +12,80 @@
 #   nodes: [Post]
 # }
 
-# input addPostInput {
-#   title: String
-#   body: String
-# }
-
-# type addPostOutput {
-#   message: String
-#   result: Post
-# }
-
 # type Query {
 #   listPosts(page: Int limit: Int): Posts
 # }
 
-# type Mutation {
-#   addPost(data: addPostInput): addPostOutput
-# }
+# Setup
+schema {
+  query: Query
+  mutation: Mutation
+}
 
+type Query {
+  GetUser(data: GetUserRequest): User
+  LoginUser(data: LoginRequest): LoginResponse
+  ValidateToken(data: ValidateRequest): ValidateResponse
+  PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+  GetBookingByUser(data:BookingUserId): BookingResponse
+}
+
+type Mutation {
+  RegisterUser(data: RegisterRequest): RegisterResponse
+  MakeBooking(data:MakeBookingRequest): DeleteReturnMessage
+}
+#
+
+# User Service
 type User {
-    userId: String
-    email: String
+  userId: String
+  email: String
 }
 
 input GetUserRequest {
-    userId: String
+  userId: String
+}
+#
+
+# Auth Service
+input RegisterRequest {
+  email: String
+  password: String
+}
+type RegisterResponse {
+  message: String
 }
 
+input LoginRequest {
+  email: String
+  password: String
+}
+type LoginResponse {
+  userId: String
+  token: String
+}
+
+input ValidateRequest {
+  token: String
+}
+type ValidateResponse {
+  userId: String
+}
+#
+
 input PublishBookingConfirmedRequest {
-    receiverEmail: String
-    propertyName: String
-    receiptId: String
-    paymentDate: String
-    paymentTime: String
-    bookingStartDate: String
-    bookingEndDate: String
-    unitPrice: Float
-    numNights: Int
-    subTotal: Float
-    serviceFee: Float
-    totalPrice: Float
+  receiverEmail: String
+  propertyName: String
+  receiptId: String
+  paymentDate: String
+  paymentTime: String
+  bookingStartDate: String
+  bookingEndDate: String
+  unitPrice: Float
+  numNights: Int
+  subTotal: Float
+  serviceFee: Float
+  totalPrice: Float
 }
 
 type BookingResponse{
@@ -63,13 +97,13 @@ type DeleteReturnMessage{
 }
 
 type Booking {
-    id: Int
-    userId: Int
-    listingId: Int
-    hostId: Int
-    startDate: String
-    endDate: String
-    paymentId: Int
+  id: Int
+  userId: Int
+  listingId: Int
+  hostId: Int
+  startDate: String
+  endDate: String
+  paymentId: Int
 }
 
 input BookingUserId{
@@ -77,23 +111,10 @@ input BookingUserId{
 }
 
 input MakeBookingRequest {
-    userId: Int
-    listingId: Int
-    hostId: Int
-    startDate: String
-    endDate: String
-    paymentId: Int
-}
-
-
-type Query {
-    GetUser(data: GetUserRequest): User
-    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
-    GetBookingByUser(data:BookingUserId): BookingResponse
-    MakeBooking(data:MakeBookingRequest):DeleteReturnMessage 
-}
-
-schema {
-    query: Query
-    # mutation: Mutation
+  endDate: String
+  hostId: Int
+  listingId: Int
+  paymentId: Int
+  startDate: String
+  userId: Int
 }
