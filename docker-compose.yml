@@ -1,0 +1,42 @@
+version: "3.1"
+services:
+  postgres:
+    image: postgres:14.5
+    networks:
+      default:
+        aliases:
+          - postgres_db
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: localhost_users
+    ports:
+      - "5432:5432"
+  
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@cs302.com
+      PGADMIN_DEFAULT_PASSWORD: cs302_password
+    ports:
+      - "5431:80"
+  
+  auth_service:
+    image: auth_user
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - auth_service
+    environment:
+      PORT: 0.0.0.0:50051
+      DB_USER: test_user
+      DB_PASSWORD: test123
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_SCHEMA: localhost_users
+      JWT_SECRET_KEY: test_secret
+    ports:
+      - "50051:50051"
