@@ -20,7 +20,8 @@ func main() {
 		log.Fatalln("Failed to load configs", err)
 	}
 
-	h := db.Init(c.DBUrl)
+	dbUrl := "postgres://" + c.DBUser + ":" + c.DBPassword + "@" + c.DBHost + ":" + c.DBPort + "/" + c.DBSchema
+	h := db.Init(dbUrl)
 
 	lis, err := net.Listen("tcp", c.Port)
 	if err != nil {
