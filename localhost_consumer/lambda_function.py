@@ -12,6 +12,7 @@ def lambda_handler(event, context):
     message_attributes = event['Records'][0]['Sns']['MessageAttributes']
 
     print(event)
+    print("New changes wow!")
     
     
     message = Mail(
