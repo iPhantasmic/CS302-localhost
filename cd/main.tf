@@ -22,6 +22,10 @@ variable "DB_SCHEMA" {
   type = string
 }
 
+variable "JWT_SECRET_KEY" {
+  type = string
+}
+
 resource "aws_ecs_task_definition" "auth-service" {
   family = "auth-service"
   network_mode = "awsvpc"
@@ -46,7 +50,8 @@ resource "aws_ecs_task_definition" "auth-service" {
         { name = "DB_PASSWORD", value = var.DB_PASSWORD },
         { name = "DB_HOST", value = var.DB_HOST },
         { name = "DB_PORT", value = var.DB_PORT },
-        { name = "DB_SCHEMA", value = var.DB_SCHEMA }
+        { name = "DB_SCHEMA", value = var.DB_SCHEMA },
+        { name = "JWT_SECRET_KEY", value = var.JWT_SECRET_KEY }
       ]
     }
   ])
