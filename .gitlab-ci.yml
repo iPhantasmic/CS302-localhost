@@ -1,7 +1,7 @@
 image: golang:latest
 # Build a Docker container and push it to Amazon ECR
 variables:
-  TF_ROOT: ${CI_PROJECT_DIR}/cd/
+  TF_ROOT: ${CI_PROJECT_DIR}/cd
   TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/terraform.tfstate
   DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
   AWS_DEFAULT_REGION: ap-southeast-1
@@ -132,10 +132,13 @@ plan-terraform:
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
   script:
     - gitlab-terraform plan
+    - gitlab-terraform plan-json
   artifacts:
     name: plan
     paths:
       - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
 
 apply-terraform:
   stage: deploy
@@ -184,6 +187,8 @@ destroy-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
   script:
+    - pwd
+    - ls
     - gitlab-terraform destroy
   environment:
     name: production
