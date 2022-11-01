@@ -2,7 +2,6 @@ image: golang:latest
 # Build a Docker container and push it to Amazon ECR
 variables:
   TF_ROOT: ${CI_PROJECT_DIR}/cd
-  TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/terraform.tfstate
   DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
   AWS_DEFAULT_REGION: ap-southeast-1
   APP_NAME: reviews
@@ -14,7 +13,6 @@ stages:
 - lint
 - test
 - build
-- analysis
 - prep-deploy
 - deploy
 
@@ -43,27 +41,8 @@ semgrep:
     # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable.
     SEMGREP_RULES: p/default p/golang p/r2c-security-audit # See more at semgrep.dev/explore.
 
-publish:
-  stage: build
-  image: 
-    name: docker:latest
-  services:
-    - docker:19-dind
-  before_script:
-    - apk add --no-cache curl jq python3 py3-pip
-    - pip install awscli
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
-    - aws --version
-    - docker info
-    - docker --version
-  script:
-    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
-    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-
 sonarqube-check:
-  stage: analysis
+  stage: test
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -79,6 +58,27 @@ sonarqube-check:
   allow_failure: true
   only:
     - main # or the name of your main branch
+
+publish:
+  stage: build
+  image: 
+    name: docker:latest
+  services:
+    - docker:19-dind
+  before_script:
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME .
+    - docker push $DOCKER_REGISTRY/$APP_NAME
+    - docker tag $DOCKER_REGISTRY/$APP_NAME $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
 init-terraform:
   stage: prep-deploy
@@ -160,8 +160,6 @@ apply-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
   script:
-    - pwd
-    - ls
     - gitlab-terraform apply
   environment:
     name: production
