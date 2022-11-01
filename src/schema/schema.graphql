@@ -77,12 +77,12 @@ input BookingUserId{
 }
 
 input MakeBookingRequest {
-    end_date: String
-    host_id: Int
-    listing_id: Int
-    payment_id: Int
-    start_date: String
-    user_id: Int
+    userId: Int
+    listingId: Int
+    hostId: Int
+    startDate: String
+    endDate: String
+    paymentId: Int
 }
 
 
