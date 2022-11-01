@@ -1,7 +1,6 @@
 stages:
     - archiving
     - deploy
-    - apitest
 
 archive:
     stage: archiving
@@ -28,11 +27,3 @@ deploy:
         - aws --version
         - aws configure set region ap-southeast-1
         - aws lambda update-function-code --function-name localhost_consumer --zip-file fileb://$CI_PROJECT_NAME.zip
-
-apitest:
-    stage: apitest
-    image:
-        name: curl
-    script:
-        - curl https://o8117usef.execute-api.us-east-2.amazonaws.com/default/localhost_consumer
-        - if [[ $? -ge 0 ]]; then exit 99; fi
