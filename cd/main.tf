@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "auth-service" {
   container_definitions = jsonencode([
     {
       name = "auth-service"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/auth:latest"
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/authentication:latest"
       cpu = 512
       memory = 1024
       essential = true
