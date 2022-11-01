@@ -87,6 +87,11 @@ type ValidateResponse {
 }
 #
 
+input ProtobufTimestamp {
+    nanos: Int
+    seconds: String
+}
+
 input PublishBookingConfirmedRequest {
   receiverEmail: String
   propertyName: String
@@ -102,12 +107,12 @@ input PublishBookingConfirmedRequest {
   totalPrice: Float
 }
 
-type BookingResponse{
-  bookings:[Booking]
+type BookingResponse {
+    bookings: [Booking]
 }
 
-type DeleteReturnMessage{
-  returnMessage: String
+type DeleteReturnMessage {
+    returnMessage: String
 }
 
 type Booking {
@@ -120,25 +125,24 @@ type Booking {
   paymentId: Int
 }
 
-input BookingUserId{
-  userId: Int
+input BookingUserId {
+    userId: Int
 }
 
 input MakeBookingRequest {
-    userId: Int
-    listingId: Int
-    hostId: Int
-    startDate: String
-    endDate: String
-    paymentId: Int
+    userId: String
+    listingId: String
+    hostId: String
+    startDate: ProtobufTimestamp
+    endDate: ProtobufTimestamp
+    paymentId: String
 }
-
 
 type Query {
     GetUser(data: GetUserRequest): User
     PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
-    GetBookingByUser(data:BookingUserId): BookingResponse
-    MakeBooking(data:MakeBookingRequest):DeleteReturnMessage 
+    GetBookingByUser(data: BookingUserId): BookingResponse
+    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
 }
 
 schema {

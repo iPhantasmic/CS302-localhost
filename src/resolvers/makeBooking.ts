@@ -58,6 +58,9 @@ export default (root: any, params: any) => {
                     totalPrice: 721.0,
                 },
             }
+            email_client.publish_message_booking_confirmed(
+                test_data
+            )
 
             resolve(response)
         })
