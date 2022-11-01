@@ -23,6 +23,12 @@ import {
   Spacer,
   Icon,
   Divider,
+  Link,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import * as React from "react";
@@ -31,9 +37,21 @@ import LogoDark from "./../public/localhost_dark.png";
 import type { NextPage } from "next";
 import DarkModeToggle from "./DarkModeToggle";
 import { BsGlobe2 } from "react-icons/bs";
-import { HamburgerIcon, PhoneIcon, Search2Icon } from "@chakra-ui/icons";
+import {
+  CalendarIcon,
+  HamburgerIcon,
+  InfoOutlineIcon,
+  PhoneIcon,
+  Search2Icon,
+  SettingsIcon,
+  StarIcon,
+  UnlockIcon,
+} from "@chakra-ui/icons";
+import { signOut, useSession } from "next-auth/react";
+import Router from "next/router";
 
 export function Navbar(props: any) {
+  const { data: session } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -53,8 +71,10 @@ export function Navbar(props: any) {
             px="7"
           >
             <Flex>
-              <Box width="25%" py="2">
+              <Box width="30%" py="2">
                 <Image
+                  style={{ cursor: "pointer" }}
+                  onClick={() => Router.push("/")}
                   src={useColorModeValue(Logo, LogoDark)}
                   height="31px"
                   width="156.75px"
@@ -96,14 +116,14 @@ export function Navbar(props: any) {
                     aria-label="Search listings"
                     icon={<Search2Icon />}
                     size="sm"
-                    colorScheme="blue"
+                    colorScheme="linkedin"
                     borderRadius="full"
                     right="-2"
                   />
                 </Flex>
               </Center>
               <Spacer />
-              <Box width="25%" display={props.simple ? "none" : ""}>
+              <Box width="30%" display={props.simple ? "none" : ""}>
                 <HStack spacing="1" py="2">
                   <Flex justify="space-between" flex="1" />
                   <Button
@@ -112,31 +132,75 @@ export function Navbar(props: any) {
                     letterSpacing={0.1}
                     fontSize="14px"
                   >
-                    Become a host
+                    <Link href="/host">Become a host</Link>
                   </Button>
-                  {/* <DarkModeToggle /> */}
+                  <DarkModeToggle />
                   <IconButton
                     icon={<BsGlobe2 />}
                     variant="ghost"
                     borderRadius="full"
                     aria-label="lang"
                   />
-                  <IconButton
-                    variant="ghost"
-                    borderRadius="full"
-                    aria-label="lang"
-                    p={3}
-                    boxShadow="sm"
-                  >
-                    <WrapItem>
-                      <HamburgerIcon alignSelf="center" mr={3} />
-                      <Avatar
-                        size="sm"
-                        name="Kent Dodds"
-                        src="https://bit.ly/kent-c-dodds"
-                      />{" "}
-                    </WrapItem>
-                  </IconButton>
+                  {session == null ? (
+                    <>
+                      <Button variant="ghost" fontSize="sm">
+                        <Link href="/auth/signin">Sign In</Link>
+                      </Button>
+                      <Button variant="ghost" fontSize="sm">
+                        <Link href="/auth/signup">Sign Up</Link>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Menu>
+                        <MenuButton>
+                          <IconButton
+                            variant="ghost"
+                            borderRadius="full"
+                            aria-label="lang"
+                            p={3}
+                            boxShadow="sm"
+                          >
+                            <WrapItem>
+                              <HamburgerIcon alignSelf="center" mr={3} />
+                              <Avatar
+                                size="sm"
+                                name="Kent Dodds"
+                                src="https://bit.ly/kent-c-dodds"
+                              />{" "}
+                            </WrapItem>
+                          </IconButton>
+                        </MenuButton>
+                        <MenuList>
+                          <MenuItem>
+                            <CalendarIcon ml={1} mr={3} />
+                            Bookings
+                          </MenuItem>
+                          <MenuItem>
+                            <InfoOutlineIcon ml={1} mr={3} />
+                            Profile
+                          </MenuItem>
+                          <MenuItem>
+                            <SettingsIcon ml={1} mr={3} />
+                            Setting
+                          </MenuItem>
+                          <MenuItem>
+                            <StarIcon ml={1} mr={3} />
+                            Wishlist
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem
+                            textColor="red"
+                            fontWeight="semibold"
+                            onClick={() => signOut}
+                          >
+                            <UnlockIcon color="red" ml={1} mr={3} />
+                            Sign out
+                          </MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </>
+                  )}
                 </HStack>
               </Box>
             </Flex>

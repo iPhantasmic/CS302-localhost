@@ -1,15 +1,28 @@
 import { Box, Container, HStack } from "@chakra-ui/react";
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
+import Router from "next/router";
 import { Card } from "../components/Card";
 import DarkModeToggle from "../components/DarkModeToggle";
 import Footer from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import Types from "../components/Types";
 import styles from "../styles/Home.module.css";
+import { gql } from "@apollo/client";
+import gqlclient from "../GraphQL/graphQLClient";
 
-const Home: NextPage = () => {
+const Home: NextPage = (query_data) => {
+  // console.log(query_data.launches)
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      // The user is not authenticated, handle it here.
+      Router.push("/auth/signin");
+    },
+  });
+
   return (
     <div>
       <Head>
@@ -43,5 +56,27 @@ const Home: NextPage = () => {
     </div>
   );
 };
+
+export async function getStaticProps() {
+  var datas = { userId: "c2d29867-3d0b-d497-9191-18a9d8ee7830" };
+
+  const { data } = await gqlclient.query({
+    query: gql`
+      query GetUser($datas: GetUserRequest) {
+        GetUser(data: $datas) {
+          userId
+          email
+        }
+      }
+    `,
+    variables: { datas },
+  });
+
+  return {
+    props: {
+      launches: data,
+    },
+  };
+}
 
 export default Home;

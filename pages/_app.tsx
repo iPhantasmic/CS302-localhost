@@ -5,13 +5,16 @@ import { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 
-function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
+function MyApp({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps<{ session: Session }>) {
   return (
-    <ChakraProvider theme={theme}>
-      <SessionProvider session={pageProps.session}>
+    <SessionProvider session={session}>
+      <ChakraProvider theme={theme}>
         <Component {...pageProps} />
-      </SessionProvider>
-    </ChakraProvider>
+      </ChakraProvider>
+    </SessionProvider>
   );
 }
 
