@@ -1,3 +1,4 @@
+image: golang:latest
 # Build a Docker container and push it to Amazon ECR
 variables:
   TF_ROOT: ${CI_PROJECT_DIR}/cd/
@@ -17,7 +18,6 @@ stages:
 - deploy
 
 format:
-  image: golang:latest
   stage: lint
   script:
   - go fmt $(go list ./...)
@@ -81,8 +81,7 @@ sonarqube-check:
 
 init-terraform:
   stage: deploy
-  image: 
-    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   cache:
     key: production
     paths:
@@ -94,8 +93,7 @@ init-terraform:
 
 validate-terraform:
   stage: deploy
-  image: 
-    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   cache:
     key: production
     paths:
@@ -110,8 +108,7 @@ validate-terraform:
 
 plan-terraform:
   stage: deploy
-  image: 
-    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   cache:
     key: production
     paths:
@@ -126,8 +123,7 @@ plan-terraform:
 
 apply-terraform:
   stage: deploy
-  image: 
-    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   cache:
     key: production
     paths:
@@ -149,8 +145,7 @@ apply-terraform:
 
 destroy-terraform:
   stage: deploy
-  image: 
-    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   cache:
     key: production
     paths:
