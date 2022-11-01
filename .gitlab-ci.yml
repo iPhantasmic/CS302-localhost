@@ -120,6 +120,10 @@ plan-terraform:
         TF_VAR_SECRET_KEY: ${SECRET_KEY}
   script:
     - gitlab-terraform plan
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
 
 apply-terraform:
   stage: deploy

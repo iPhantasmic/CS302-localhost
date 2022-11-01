@@ -1,3 +1,27 @@
+variable "PORT" {
+  type = string
+}
+
+variable "DB_USER" {
+  type = string
+}
+
+variable "DB_PASSWORD" {
+  type = string
+}
+
+variable "DB_HOST" {
+  type = string
+}
+
+variable "DB_PORT" {
+  type = string
+}
+
+variable "DB_SCHEMA" {
+  type = string
+}
+
 resource "aws_ecs_task_definition" "reviews-service" {
   family = "reviews-service"
   network_mode = "awsvpc"
@@ -17,12 +41,12 @@ resource "aws_ecs_task_definition" "reviews-service" {
         hostPort = 50051
       }]
       environment = [
-        { name = "PORT", value = "0.0.0.0:50051" },
-        { name = "DB_USER", value = "postgres" },
-        { name = "DB_PASSWORD", value = "ilovecs302" },
-        { name = "DB_HOST", value = "lclhst-database.c34fol4t5wzq.ap-southeast-1.rds.amazonaws.com" },
-        { name = "DB_PORT", value = "5432" },
-        { name = "DB_SCHEMA", value = "localhost_reviews" }
+        { name = "PORT", value = var.PORT },
+        { name = "DB_USER", value = var.DB_USER },
+        { name = "DB_PASSWORD", value = var.DB_PASSWORD },
+        { name = "DB_HOST", value = var.DB_HOST },
+        { name = "DB_PORT", value = var.DB_PORT },
+        { name = "DB_SCHEMA", value = var.DB_SCHEMA }
       ]
     }
   ])
