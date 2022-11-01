@@ -9,6 +9,7 @@ image: golang:latest
 
 # Build a Docker container and push it to Amazon ECR
 variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/cd
   DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
   AWS_DEFAULT_REGION: ap-southeast-1
   APP_NAME: authentication
@@ -20,7 +21,8 @@ stages:
 - lint
 - test
 - build
-- analysis
+- prep-deploy
+- deploy
 
 format:
   stage: lint
@@ -48,27 +50,8 @@ semgrep:
     # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable.
     SEMGREP_RULES: p/default p/jwt p/golang p/r2c-security-audit # See more at semgrep.dev/explore.
 
-publish:
-  stage: build
-  image: 
-    name: docker:latest
-  services:
-    - docker:19-dind
-  before_script:
-    - apk add --no-cache curl jq python3 py3-pip
-    - pip install awscli
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
-    - aws --version
-    - docker info
-    - docker --version
-  script:
-    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
-    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-
 sonarqube-check:
-  stage: analysis
+  stage: test
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -84,3 +67,138 @@ sonarqube-check:
   allow_failure: true
   only:
     - main # or the name of your main branch
+
+publish:
+  stage: build
+  image: 
+    name: docker:latest
+  services:
+    - docker:19-dind
+  before_script:
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME .
+    - docker push $DOCKER_REGISTRY/$APP_NAME
+    - docker tag $DOCKER_REGISTRY/$APP_NAME $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+init-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  script:
+    - gitlab-terraform init
+
+validate-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  script:
+    - gitlab-terraform validate
+
+plan-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  script:
+    - gitlab-terraform plan
+    - gitlab-terraform plan-json
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+
+apply-terraform:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  script:
+    - gitlab-terraform apply
+  environment:
+    name: production
+  dependencies:
+    - plan-terraform
+  when: manual
+  only:
+    - main
+
+destroy-terraform:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+  script:
+    - gitlab-terraform destroy
+  environment:
+    name: production
+  dependencies:
+    - apply-terraform
+  when: manual
+  only:
+    - main
