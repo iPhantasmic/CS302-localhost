@@ -14,7 +14,7 @@ archive:
         - apt-get update
         - apt-get install zip -y
     script:
-        - zip -g $CI_PROJECT_NAME.zip localhost_consumer
+        - zip -r $CI_PROJECT_NAME.zip localhost_consumer
     artifacts:
         paths:
         - $CI_PROJECT_NAME.zip
