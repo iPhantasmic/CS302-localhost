@@ -28,7 +28,6 @@ func LoadConfig() (config Config, err error) {
 		err = viper.BindEnv("DB_HOST")
 		err = viper.BindEnv("DB_PORT")
 		err = viper.BindEnv("DB_SCHEMA")
-		err = viper.BindEnv("JWT_SECRET_KEY")
 		err = viper.Unmarshal(&config)
 		return
 	}
