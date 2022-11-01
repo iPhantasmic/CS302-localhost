@@ -141,7 +141,7 @@ apply-terraform:
     - plan-terraform
   when: manual
   only:
-    - master
+    - main
 
 destroy-terraform:
   stage: deploy
@@ -163,4 +163,4 @@ destroy-terraform:
     - apply-terraform
   when: manual
   only:
-    - master
+    - main
