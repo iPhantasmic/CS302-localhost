@@ -61,7 +61,9 @@ publish:
     - docker info
     - docker --version
   script:
-    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME .
+    - docker push $DOCKER_REGISTRY/$APP_NAME
+    - docker tag $DOCKER_REGISTRY/$APP_NAME $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
