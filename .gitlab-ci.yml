@@ -14,7 +14,7 @@ archive:
         - apt-get update
         - apt-get install zip -y
     script:
-        - zip -r $CI_PROJECT_NAME.zip localhost_consumer
+        - zip -r $CI_PROJECT_NAME.zip lambda_function.py packages
     artifacts:
         paths:
         - $CI_PROJECT_NAME.zip

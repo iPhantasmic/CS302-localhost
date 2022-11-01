@@ -2,10 +2,10 @@ import json
 
 # print('Loading function')
 # import requests
-import sendgrid
+import packages.sendgrid
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from packages.sendgrid import SendGridAPIClient
+from packages.sendgrid.helpers.mail import Mail
 # from sendgrid.helpers.mail import Mail, Email, To, Content
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event, indent=2))
