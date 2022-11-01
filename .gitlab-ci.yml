@@ -9,6 +9,8 @@ image: golang:latest
 
 # Build a Docker container and push it to Amazon ECR
 variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/cd/
+  TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/terraform.tfstate
   DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
   AWS_DEFAULT_REGION: ap-southeast-1
   APP_NAME: reviews
@@ -21,6 +23,7 @@ stages:
 - test
 - build
 - analysis
+- deploy
 
 format:
   stage: lint
@@ -61,9 +64,7 @@ publish:
     - docker info
     - docker --version
   script:
-    - docker build -t $DOCKER_REGISTRY/$APP_NAME .
-    - docker push $DOCKER_REGISTRY/$APP_NAME
-    - docker tag $DOCKER_REGISTRY/$APP_NAME $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -85,3 +86,94 @@ sonarqube-check:
   allow_failure: true
   only:
     - main # or the name of your main branch
+
+init-terraform:
+  stage: deploy
+  image: 
+    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  script:
+    - gitlab-terraform init
+
+validate-terraform:
+  stage: deploy
+  image: 
+    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+  script:
+    - gitlab-terraform validate
+
+plan-terraform:
+  stage: deploy
+  image: 
+    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+  script:
+    - gitlab-terraform plan
+
+apply-terraform:
+  stage: deploy
+  image: 
+    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+  script:
+    - gitlab-terraform apply
+  environment:
+    name: production
+  dependencies:
+    - plan-terraform
+  when: manual
+  only:
+    - master
+
+destroy-terraform:
+  stage: deploy
+  image: 
+    name: registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:v0.43.0"
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+  script:
+    - gitlab-terraform destroy
+  environment:
+    name: production
+  dependencies:
+    - apply-terraform
+  when: manual
+  only:
+    - master
