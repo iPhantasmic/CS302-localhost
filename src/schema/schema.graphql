@@ -31,19 +31,69 @@
 # }
 
 type User {
-  userId: String
-  email: String
+    userId: String
+    email: String
 }
 
 input GetUserRequest {
-  userId: String
+    userId: String
 }
 
+input PublishBookingConfirmedRequest {
+    receiverEmail: String
+    propertyName: String
+    receiptId: String
+    paymentDate: String
+    paymentTime: String
+    bookingStartDate: String
+    bookingEndDate: String
+    unitPrice: Float
+    numNights: Int
+    subTotal: Float
+    serviceFee: Float
+    totalPrice: Float
+}
+
+type BookingResponse{
+  bookings:[Booking]
+}
+
+type DeleteReturnMessage{
+  returnMessage: String
+}
+
+type Booking {
+    id: Int
+    userId: Int
+    listingId: Int
+    hostId: Int
+    startDate: String
+    endDate: String
+    paymentId: Int
+}
+
+input BookingUserId{
+  userId: Int
+}
+
+input MakeBookingRequest {
+    userId: Int
+    listingId: Int
+    hostId: Int
+    startDate: String
+    endDate: String
+    paymentId: Int
+}
+
+
 type Query {
-  GetUser(data: GetUserRequest): User
+    GetUser(data: GetUserRequest): User
+    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+    GetBookingByUser(data:BookingUserId): BookingResponse
+    MakeBooking(data:MakeBookingRequest):DeleteReturnMessage 
 }
 
 schema {
-  query: Query
-  # mutation: Mutation
+    query: Query
+    # mutation: Mutation
 }
