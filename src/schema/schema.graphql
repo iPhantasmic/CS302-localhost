@@ -151,6 +151,46 @@ input GetUnavailableListingsRequest{
 
 type ListingIdArray{
   listingIds:[String]
+input ProtobufTimestamp {
+    nanos: Int
+    seconds: String
+}
+
+input PublishBookingConfirmedRequest {
+    receiverEmail: String
+    propertyName: String
+    receiptId: String
+    paymentDate: String
+    paymentTime: String
+    bookingStartDate: String
+    bookingEndDate: String
+    unitPrice: Float
+    numNights: Int
+    subTotal: Float
+    serviceFee: Float
+    totalPrice: Float
+}
+
+type BookingResponse {
+    bookings: [Booking]
+}
+
+type DeleteReturnMessage {
+    returnMessage: String
+}
+
+type Booking {
+    id: String
+    userId: String
+    listingId: String
+    hostId: String
+    startDate: String
+    endDate: String
+    paymentId: Int
+}
+
+input BookingUserId {
+    userId: Int
 }
 
 # ------------------------------------------------------------------------------
