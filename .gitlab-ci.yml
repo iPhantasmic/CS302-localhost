@@ -159,6 +159,8 @@ apply-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
   script:
+    - pwd
+    - ls
     - gitlab-terraform apply
   environment:
     name: production
@@ -187,8 +189,6 @@ destroy-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
   script:
-    - pwd
-    - ls
     - gitlab-terraform destroy
   environment:
     name: production
