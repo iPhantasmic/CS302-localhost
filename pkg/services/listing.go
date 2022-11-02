@@ -89,6 +89,7 @@ func (s *ListingServer) GetAllListings(ctx context.Context, req *emptypb.Empty) 
 
 func (s *ListingServer) GetAvailableListings(ctx context.Context, req *listings_proto.FilterLocationRoomRequest) (*listings_proto.Listings, error) {
 	var listingsDb []models.Listing
+	listings := req.GetListings()
 	if req.GetCountry() == "" {
 		return nil, status.Error(codes.InvalidArgument, "Invalid country")
 	}
@@ -97,67 +98,42 @@ func (s *ListingServer) GetAvailableListings(ctx context.Context, req *listings_
 
 	if req.GetCity() == "" && req.GetRooms() == 0 {
 		// filter by country
-		if result := s.H.DB.Where("country LIKE ?", countryQuery).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+		if result := s.H.DB.Where("uuid IN ? AND country LIKE ?", listings, countryQuery).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
 			return nil, status.Error(codes.NotFound, "No listings found")
 		}
 	} else if req.GetCity() == "" && req.GetRooms() > 0 {
 		// filter by country and rooms
-		if result := s.H.DB.Where("country LIKE ? AND rooms = ?", countryQuery, strconv.FormatUint(uint64(req.GetRooms()), 10)).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+		if result := s.H.DB.Where("uuid IN ? AND country LIKE ? AND rooms = ?", listings, countryQuery, strconv.FormatUint(uint64(req.GetRooms()), 10)).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
 			return nil, status.Error(codes.NotFound, "No listings found")
 		}
 	} else if req.GetRooms() < 1 && req.GetCity() != "" {
 		// filter by country and city
-		if result := s.H.DB.Where("country LIKE ? AND city LIKE ?", countryQuery, cityQuery).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+		if result := s.H.DB.Where("uuid IN ? AND country LIKE ? AND city LIKE ?", listings, countryQuery, cityQuery).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
 			return nil, status.Error(codes.NotFound, "No listings found")
 		}
 	} else {
 		// filter by country, rooms and city
-		if result := s.H.DB.Where("country LIKE ? AND city LIKE ? AND rooms = ?", countryQuery, cityQuery, strconv.FormatUint(uint64(req.GetRooms()), 10)).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+		if result := s.H.DB.Where("uuid IN ? AND country LIKE ? AND city LIKE ? AND rooms = ?", listings, countryQuery, cityQuery, strconv.FormatUint(uint64(req.GetRooms()), 10)).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
 			return nil, status.Error(codes.NotFound, "No listings found")
 		}
 	}
 
-	var reqListingIds []string
-	for _, listing := range listingsDb {
-		reqListingIds = append(reqListingIds, listing.UUID.String())
-	}
-
-	// query bookings service to get available listings
-	res, err := s.B.GetAvailableListings(context.Background(), &bookings_proto.GetAvailableListingsRequest{
-		ListingIds: reqListingIds,
-		StartDate:  req.GetStartDate(),
-		EndDate:    req.GetEndDate(),
-	})
-	statusObj, ok := status.FromError(err)
-	if ok && statusObj.Code() != codes.OK {
-		if statusObj.Code() == codes.NotFound {
-			return nil, status.Error(statusObj.Code(), "No listing found")
-		}
-		return nil, status.Error(codes.Internal, "Error fetching available listings")
-	}
-	result := res.GetListingIds()
-
-	// return only the filtered listings returned by bookings service
 	var listingsGrpc []*listings_proto.Listing
 	for _, listing := range listingsDb {
-		for _, listingId := range result {
-			if listingId == listing.UUID.String() {
-				listingsGrpc = append(listingsGrpc, &listings_proto.Listing{
-					ListingId: listing.UUID.String(),
-					UserId:    listing.UserId,
-					Title:     listing.Title,
-					Price:     listing.Price,
-					Images:    listing.Images,
-					Type:      listings_proto.Type(listings_proto.Type_value[listing.Type]),
-					Address:   listing.Address,
-					Country:   listing.Country,
-					City:      listing.City,
-					Rooms:     listing.Rooms,
-					StartDate: timestamppb.New(listing.StartDate),
-					CreatedAt: timestamppb.New(listing.CreatedAt),
-				})
-			}
-		}
+		listingsGrpc = append(listingsGrpc, &listings_proto.Listing{
+			ListingId: listing.UUID.String(),
+			UserId:    listing.UserId,
+			Title:     listing.Title,
+			Price:     listing.Price,
+			Images:    listing.Images,
+			Type:      listings_proto.Type(listings_proto.Type_value[listing.Type]),
+			Address:   listing.Address,
+			Country:   listing.Country,
+			City:      listing.City,
+			Rooms:     listing.Rooms,
+			StartDate: timestamppb.New(listing.StartDate),
+			CreatedAt: timestamppb.New(listing.CreatedAt),
+		})
 	}
 
 	return &listings_proto.Listings{

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"gitlab.com/cs302-2022/g2-team3/services/listings/pkg/utils"
 	"log"
 	"net"
 
@@ -33,7 +32,6 @@ func main() {
 	listingServer := services.ListingServer{
 		H: h,
 		C: c,
-		B: utils.InitServiceClient(c.BookingSvcUrl),
 	}
 
 	healthServer := services.HealthServer{}

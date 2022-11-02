@@ -3,16 +3,15 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	Port          string `mapstructure:"PORT"`
-	DBUser        string `mapstructure:"DB_USER"`
-	DBPassword    string `mapstructure:"DB_PASSWORD"`
-	DBHost        string `mapstructure:"DB_HOST"`
-	DBPort        string `mapstructure:"DB_PORT"`
-	DBSchema      string `mapstructure:"DB_SCHEMA"`
-	AWSBucket     string `mapstructure:"AWS_BUCKET_NAME"`
-	AWSKeyID      string `mapstructure:"AWS_ACCESS_KEY_ID"`
-	AWSSecret     string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
-	BookingSvcUrl string `mapstructure:"BOOKING_SERVICE_URL"`
+	Port       string `mapstructure:"PORT"`
+	DBUser     string `mapstructure:"DB_USER"`
+	DBPassword string `mapstructure:"DB_PASSWORD"`
+	DBHost     string `mapstructure:"DB_HOST"`
+	DBPort     string `mapstructure:"DB_PORT"`
+	DBSchema   string `mapstructure:"DB_SCHEMA"`
+	AWSBucket  string `mapstructure:"AWS_BUCKET_NAME"`
+	AWSKeyID   string `mapstructure:"AWS_ACCESS_KEY_ID"`
+	AWSSecret  string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
 }
 
 func LoadConfig() (config Config, err error) {
@@ -32,7 +31,9 @@ func LoadConfig() (config Config, err error) {
 		err = viper.BindEnv("DB_HOST")
 		err = viper.BindEnv("DB_PORT")
 		err = viper.BindEnv("DB_SCHEMA")
-		err = viper.BindEnv("JWT_SECRET_KEY")
+		err = viper.BindEnv("AWS_BUCKET_NAME")
+		err = viper.BindEnv("AWS_ACCESS_KEY_ID")
+		err = viper.BindEnv("AWS_SECRET_ACCESS_KEY")
 		err = viper.Unmarshal(&config)
 		return
 	}
