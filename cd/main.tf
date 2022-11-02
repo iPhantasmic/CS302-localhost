@@ -53,6 +53,15 @@ resource "aws_ecs_task_definition" "bookings-service" {
         { name = "DB_PORT", value = var.DB_PORT },
         { name = "DB_SCHEMA", value = var.DB_SCHEMA }
       ]
+      logConfiguration = {
+        "logDriver" = "awslogs",
+        options = {
+          "awslogs-create-group": "true",
+          "awslogs-group": "awslogs-bookings",
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-stream-prefix": "awslogs-bookings"
+        }
+      }
     }
   ])
 }
