@@ -53,6 +53,15 @@ resource "aws_ecs_task_definition" "auth-service" {
         { name = "DB_SCHEMA", value = var.DB_SCHEMA },
         { name = "JWT_SECRET_KEY", value = var.JWT_SECRET_KEY }
       ]
+      logConfiguration = {
+        "logDriver" = "awslogs",
+        options = {
+          "awslogs-create-group": "true",
+          "awslogs-group": "awslogs-authuser",
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-stream-prefix": "awslogs-authuser"
+        }
+      }
     }
   ])
 }
