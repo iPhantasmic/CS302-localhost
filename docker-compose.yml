@@ -21,20 +21,22 @@ services:
     ports:
       - "5431:80"
   
-  grpc_api:
-    command: dockerize -wait tcp://postgres.app.site:5432 ./scripts/run-grpc-api.sh
-    image: app
+  bookings-service:
+    image: bookings
     depends_on:
       - postgres
     environment:
       # must bind to [::] for port forwarding to work properly
       - HOST=[::]
       - PORT=50051
-      - DATABASE_URL=postgresql://test_user:test123@postgres.app.site:5432/localhost_bookings
-      - GRPC_API_URL=localhost:50051
+      - DB_USER=test_user
+      - DB_PASS=test123
+      - DB_HOST=postgres.app.site
+      - DB_PORT=5432
+      - DB_SCHEMA=localhost_bookings
     networks:
       default:
         aliases:
-          - grpc_api.app.site
+          - bookings_service
     ports:
       - "50051:50051"

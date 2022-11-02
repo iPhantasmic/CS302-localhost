@@ -1,5 +1,5 @@
 GIT_COMMIT=$(shell git rev-parse --verify HEAD)
-PROJECT_NAME=app
+PROJECT_NAME=bookings
 
 .PHONY: build
 build:
@@ -28,7 +28,7 @@ lint:
 
 .PHONY: run-grpc-api
 run-grpc-api:
-	python -m $(PROJECT_NAME).apis.server
+	python -m app.apis.server
 
 .PHONY: up
 up:
