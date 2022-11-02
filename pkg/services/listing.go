@@ -367,7 +367,7 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 	}, nil
 }
 
-func (s *ListingServer) DeleteListing(ctx context.Context, req *listings_proto.DeleteListingRequest) (*emptypb.Empty, error) {
+func (s *ListingServer) DeleteListing(ctx context.Context, req *listings_proto.DeleteListingRequest) (*listings_proto.DeleteListingResponse, error) {
 	var listing models.Listing
 	reqUuid := uuid.FromStringOrNil(req.GetListingId())
 
@@ -397,5 +397,7 @@ func (s *ListingServer) DeleteListing(ctx context.Context, req *listings_proto.D
 
 	s.H.DB.Delete(&listing)
 
-	return &emptypb.Empty{}, nil
+	return &listings_proto.DeleteListingResponse{
+		Message: "Deleted",
+	}, nil
 }
