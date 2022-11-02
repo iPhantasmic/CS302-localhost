@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookingServiceClient interface {
 	CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*Booking, error)
+	GetBookingById(ctx context.Context, in *BookingByIdRequest, opts ...grpc.CallOption) (*Booking, error)
 	GetBookingByUser(ctx context.Context, in *BookingByUserRequest, opts ...grpc.CallOption) (*GetBookingArrayResponse, error)
 	GetBookingByListing(ctx context.Context, in *BookingByListingRequest, opts ...grpc.CallOption) (*GetBookingArrayResponse, error)
 	UpdateBookingById(ctx context.Context, in *UpdateBookingRequest, opts ...grpc.CallOption) (*ReturnMessage, error)
@@ -43,6 +44,15 @@ func NewBookingServiceClient(cc grpc.ClientConnInterface) BookingServiceClient {
 func (c *bookingServiceClient) CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*Booking, error) {
 	out := new(Booking)
 	err := c.cc.Invoke(ctx, "/bookings.BookingService/CreateBooking", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) GetBookingById(ctx context.Context, in *BookingByIdRequest, opts ...grpc.CallOption) (*Booking, error) {
+	out := new(Booking)
+	err := c.cc.Invoke(ctx, "/bookings.BookingService/GetBookingById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +127,7 @@ func (c *bookingServiceClient) GetAvailableListings(ctx context.Context, in *Get
 // for forward compatibility
 type BookingServiceServer interface {
 	CreateBooking(context.Context, *CreateBookingRequest) (*Booking, error)
+	GetBookingById(context.Context, *BookingByIdRequest) (*Booking, error)
 	GetBookingByUser(context.Context, *BookingByUserRequest) (*GetBookingArrayResponse, error)
 	GetBookingByListing(context.Context, *BookingByListingRequest) (*GetBookingArrayResponse, error)
 	UpdateBookingById(context.Context, *UpdateBookingRequest) (*ReturnMessage, error)
@@ -133,6 +144,9 @@ type UnimplementedBookingServiceServer struct {
 
 func (UnimplementedBookingServiceServer) CreateBooking(context.Context, *CreateBookingRequest) (*Booking, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBooking not implemented")
+}
+func (UnimplementedBookingServiceServer) GetBookingById(context.Context, *BookingByIdRequest) (*Booking, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBookingById not implemented")
 }
 func (UnimplementedBookingServiceServer) GetBookingByUser(context.Context, *BookingByUserRequest) (*GetBookingArrayResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookingByUser not implemented")
@@ -182,6 +196,24 @@ func _BookingService_CreateBooking_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BookingServiceServer).CreateBooking(ctx, req.(*CreateBookingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_GetBookingById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BookingByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).GetBookingById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookings.BookingService/GetBookingById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).GetBookingById(ctx, req.(*BookingByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -322,6 +354,10 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBooking",
 			Handler:    _BookingService_CreateBooking_Handler,
+		},
+		{
+			MethodName: "GetBookingById",
+			Handler:    _BookingService_GetBookingById_Handler,
 		},
 		{
 			MethodName: "GetBookingByUser",
