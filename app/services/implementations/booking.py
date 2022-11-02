@@ -2,10 +2,10 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 import logging
 import grpc
+from google.protobuf.timestamp_pb2 import Timestamp
 from app.services.pb.bookings import bookings_pb2_grpc, bookings_pb2
 from app.services.implementations.database import engine, models
 from google.protobuf import json_format
-from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import datetime
 
 log = logging.getLogger(__name__)
@@ -14,8 +14,13 @@ log = logging.getLogger(__name__)
 session = Session(engine)
 
 
-def getTimeStamp_fromStr(str_time: str) -> Timestamp:
-    str_time = str_time[:-4] + "Z"
+def getTimeStamp_fromStr(str_time: str, from_db: bool = False) -> Timestamp:
+    if from_db:
+        str_time = str_time[:10] + "T" + str_time[11:]
+    else:
+        str_time = str_time[:-4]
+
+    str_time += "Z"
     t = datetime.strptime(str_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
     seconds = int(t)
     nanos = int(t % 1 * 1e9)
@@ -270,3 +275,28 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             return bookings_pb2.ReturnMessage(
                 return_message=f"Bookings with id {request.id} FAILED to be updated"
             )
+
+    def GetBookingById(self, request, context):
+        booking = (
+            session.query(models.Booking)
+            .filter(models.Booking.id == request.booking_id)
+            .all()
+        )
+        if booking:
+            booking = booking[0]
+            start_date = getTimeStamp_fromStr(str(booking.start_date), from_db=True)
+            end_date = getTimeStamp_fromStr(str(booking.end_date), from_db=True)
+            booking_returned = bookings_pb2.Booking(
+                id=str(booking.id),
+                user_id=str(booking.user_id),
+                listing_id=str(booking.listing_id),
+                host_id=str(booking.host_id),
+                start_date=start_date,
+                end_date=end_date,
+                payment_id=str(booking.payment_id),
+            )
+            print(booking_returned)
+            context.set_code(grpc.StatusCode.OK)
+            return booking_returned
+        context.set_code(grpc.StatusCode.INTERNAL)
+        return bookings_pb2.Booking()
