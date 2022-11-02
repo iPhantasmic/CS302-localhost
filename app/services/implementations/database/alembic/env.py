@@ -2,6 +2,7 @@ from __future__ import with_statement
 from alembic import context
 from sqlalchemy import create_engine
 from logging.config import fileConfig
+import os
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -22,8 +23,8 @@ def get_database_url():
     """Get database url from environment variable.
     Replaces alembic's default of using `sqlalchemy.url` in alembic.ini.
     """
-    db_url = "postgresql://" + os.environ["DB_USER"] + ":" + os.environ["DB_PASSWORD"] + "@" + os.environ["DB_HOST"] + ":"
-    db_url += os.environ["DB_PORT"] + "/" + os.environ["DB_SCHEMA"]
+    db_url = "postgresql://" + os.environ["DB_USER"] + ":" + os.environ["DB_PASSWORD"] + "@" + os.environ["DB_HOST"]
+    db_url += ":" + os.environ["DB_PORT"] + "/" + os.environ["DB_SCHEMA"]
 
     return db_url
 
