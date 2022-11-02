@@ -72,12 +72,20 @@ export async function getStaticProps() {
     variables: { datas },
   });
 
-  return {
-    props: {
-      launches: data,
-    },
-    fallback: true,
-  };
+  if (data) {
+    return {
+      props: {
+        launches: data,
+      },
+    };
+  } else {
+    const build_data = { email: "testing" };
+    return {
+      props: {
+        launches: build_data,
+      },
+    };
+  }
 }
 
 export default Home;
