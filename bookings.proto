@@ -8,6 +8,7 @@ option go_package = "./bookings.proto";
 
 service BookingService {
   rpc CreateBooking (CreateBookingRequest) returns (Booking){}
+  rpc GetBookingById(BookingByIdRequest) returns (Booking){}
   rpc GetBookingByUser (BookingByUserRequest)
       returns (GetBookingArrayResponse) {}
   rpc GetBookingByListing (BookingByListingRequest)
