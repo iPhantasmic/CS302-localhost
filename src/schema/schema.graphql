@@ -16,6 +16,8 @@
 #   listPosts(page: Int limit: Int): Posts
 # }
 
+scalar BigInt
+
 # Setup
 schema {
     query: Query
@@ -99,12 +101,12 @@ type ValidateResponse {
 
 input ProtobufTimestampInput {
     nanos: Int
-    seconds: String
+    seconds: BigInt
 }
 
 type ProtobufTimestampOutput {
     nanos: Int
-    seconds: String
+    seconds: BigInt
 }
 
 input PublishBookingConfirmedRequest {
