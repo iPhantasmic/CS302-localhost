@@ -114,7 +114,7 @@ validate-terraform:
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
         TF_VAR_AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
         TF_VAR_AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
-        TF_VAR_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+        TF_VAR_AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform validate
 
@@ -137,8 +137,8 @@ plan-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
         TF_VAR_AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
-        TF_VAR_AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-        TF_VAR_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        TF_VAR_AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+        TF_VAR_AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform plan
     - gitlab-terraform plan-json
@@ -168,8 +168,8 @@ apply-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
         TF_VAR_AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
-        TF_VAR_AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-        TF_VAR_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        TF_VAR_AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+        TF_VAR_AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform apply
   environment:
@@ -199,8 +199,8 @@ destroy-terraform:
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
         TF_VAR_AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
-        TF_VAR_AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-        TF_VAR_AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        TF_VAR_AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+        TF_VAR_AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform destroy
   environment:
