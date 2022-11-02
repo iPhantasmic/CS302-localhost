@@ -29,9 +29,7 @@ type Query {
     GetBookingByUser(data: BookingUserId): BookingResponse
     GetReview(data: GetReviewRequest): ReviewResponse
     GetListing(data: GetListingRequest): ListingResponse
-    #Please help to review this and think of a better way
-    GetAllListings(data: String!): ListingsResponse
-    
+    GetAllListings: ListingsResponse
     GetAvailableListings(data: FilterLocationRoomRequest): ListingsResponse
     PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
 }

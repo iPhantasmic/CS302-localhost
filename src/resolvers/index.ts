@@ -26,6 +26,7 @@ const resolvers: any  = {
     GetAvailableListings,
     ValidateToken,
     PublishBookingConfirmed,
+    LoginUser,
   },
   Mutation: {
     RegisterUser,
