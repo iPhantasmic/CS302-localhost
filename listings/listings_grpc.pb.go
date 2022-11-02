@@ -28,7 +28,7 @@ type ListingServiceClient interface {
 	GetAvailableListings(ctx context.Context, in *FilterLocationRoomRequest, opts ...grpc.CallOption) (*Listings, error)
 	CreateListing(ctx context.Context, in *CreateListingRequest, opts ...grpc.CallOption) (*Listing, error)
 	UpdateListing(ctx context.Context, in *UpdateListingRequest, opts ...grpc.CallOption) (*Listing, error)
-	DeleteListing(ctx context.Context, in *DeleteListingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteListing(ctx context.Context, in *DeleteListingRequest, opts ...grpc.CallOption) (*DeleteListingResponse, error)
 }
 
 type listingServiceClient struct {
@@ -84,8 +84,8 @@ func (c *listingServiceClient) UpdateListing(ctx context.Context, in *UpdateList
 	return out, nil
 }
 
-func (c *listingServiceClient) DeleteListing(ctx context.Context, in *DeleteListingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *listingServiceClient) DeleteListing(ctx context.Context, in *DeleteListingRequest, opts ...grpc.CallOption) (*DeleteListingResponse, error) {
+	out := new(DeleteListingResponse)
 	err := c.cc.Invoke(ctx, "/listings.ListingService/DeleteListing", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ type ListingServiceServer interface {
 	GetAvailableListings(context.Context, *FilterLocationRoomRequest) (*Listings, error)
 	CreateListing(context.Context, *CreateListingRequest) (*Listing, error)
 	UpdateListing(context.Context, *UpdateListingRequest) (*Listing, error)
-	DeleteListing(context.Context, *DeleteListingRequest) (*emptypb.Empty, error)
+	DeleteListing(context.Context, *DeleteListingRequest) (*DeleteListingResponse, error)
 	mustEmbedUnimplementedListingServiceServer()
 }
 
@@ -125,7 +125,7 @@ func (UnimplementedListingServiceServer) CreateListing(context.Context, *CreateL
 func (UnimplementedListingServiceServer) UpdateListing(context.Context, *UpdateListingRequest) (*Listing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateListing not implemented")
 }
-func (UnimplementedListingServiceServer) DeleteListing(context.Context, *DeleteListingRequest) (*emptypb.Empty, error) {
+func (UnimplementedListingServiceServer) DeleteListing(context.Context, *DeleteListingRequest) (*DeleteListingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteListing not implemented")
 }
 func (UnimplementedListingServiceServer) mustEmbedUnimplementedListingServiceServer() {}

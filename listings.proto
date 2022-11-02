@@ -13,7 +13,7 @@ service ListingService {
   rpc GetAvailableListings(FilterLocationRoomRequest) returns (Listings) {}
   rpc CreateListing(CreateListingRequest) returns (Listing) {}
   rpc UpdateListing(UpdateListingRequest) returns (Listing) {}
-  rpc DeleteListing(DeleteListingRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteListing(DeleteListingRequest) returns (DeleteListingResponse) {}
 }
 
 enum Type {
@@ -103,5 +103,9 @@ message UpdateListingRequest {
 // Delete Listing
 message DeleteListingRequest {
   string listing_id = 1;
+}
+
+message DeleteListingResponse {
+  string message = 1;
 }
 //
