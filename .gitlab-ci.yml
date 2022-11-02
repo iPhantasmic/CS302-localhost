@@ -1,4 +1,5 @@
 variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/cd
   DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
   AWS_DEFAULT_REGION: ap-southeast-1
   APP_NAME: bookings
