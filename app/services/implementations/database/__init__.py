@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 import os
 from sqlalchemy_wrapper import SQLAlchemy
 
-db_url = "postgresql://" + os.environ["DB_USER"] + ":" + os.environ["DB_PASS"] + "@" + os.environ["DB_HOST"] + ":"
+db_url = "postgresql://" + os.environ["DB_USER"] + ":" + os.environ["DB_PASSWORD"] + "@" + os.environ["DB_HOST"] + ":"
 db_url += os.environ["DB_PORT"] + "/" + os.environ["DB_SCHEMA"]
 
 # # pylint: disable=invalid-name
