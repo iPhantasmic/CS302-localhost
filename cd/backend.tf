@@ -1,9 +1,9 @@
 terraform {
   backend "http" {
-    address = "https://gitlab.com/api/v4/projects/40113570/terraform/state/terraform_state"
-    lock_address = "https://gitlab.com/api/v4/projects/40113570/terraform/state/terraform_state/lock"
+    address = "https://gitlab.com/api/v4/projects/40083964/terraform/state/terraform_state"
+    lock_address = "https://gitlab.com/api/v4/projects/40083964/terraform/state/terraform_state/lock"
     lock_method = "POST"
-    unlock_address = "https://gitlab.com/api/v4/projects/40113570/terraform/state/terraform_state/lock"
+    unlock_address = "https://gitlab.com/api/v4/projects/40083964/terraform/state/terraform_state/lock"
     unlock_method = "DELETE"
   }
 }
