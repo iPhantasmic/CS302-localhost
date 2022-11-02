@@ -32,6 +32,8 @@ import { IoIosBed, IoIosPeople } from "react-icons/io";
 import { MdMeetingRoom } from "react-icons/md";
 import { BiBath } from "react-icons/bi";
 import { useState } from "react";
+import gqlclient from "../../GraphQL/graphQLClient";
+import { gql } from "@apollo/client";
 
 const Listing: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

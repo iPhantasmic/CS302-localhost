@@ -60,31 +60,25 @@ const Home: NextPage = (data) => {
 export async function getStaticProps() {
   var datas = { userId: "c2d29867-3d0b-d497-9191-18a9d8ee7830" };
 
-  const { data } = await gqlclient.query({
-    query: gql`
-      query GetUser($datas: GetUserRequest) {
-        GetUser(data: $datas) {
-          userId
-          email
+  try {
+    const { data } = await gqlclient.query({
+      query: gql`
+        query GetUser($datas: GetUserRequest) {
+          GetUser(data: $datas) {
+            userId
+            email
+          }
         }
-      }
-    `,
-    variables: { datas },
-  });
-
-  if (data) {
+      `,
+      variables: { datas },
+    });
     return {
       props: {
         launches: data,
       },
     };
-  } else {
-    const build_data = { email: "testing" };
-    return {
-      props: {
-        launches: build_data,
-      },
-    };
+  } catch (e) {
+    console.log("Error in subscription:", e);
   }
 }
 
