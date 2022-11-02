@@ -1,55 +1,37 @@
 // @ts-nocheck
+import { StarIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import {
-  StarIcon,
-  PlusSquareIcon,
-  ExternalLinkIcon,
-  ChevronLeftIcon,
-} from "@chakra-ui/icons";
-import {
-  Avatar,
   Box,
   Button,
   Container,
   Divider,
   Flex,
-  FormLabel,
   Grid,
   GridItem,
   Heading,
   HStack,
   IconButton,
-  Input,
   Modal,
-  ModalBody,
-  ModalCloseButton,
   ModalContent,
-  ModalFooter,
-  ModalHeader,
   ModalOverlay,
-  SimpleGrid,
   Spacer,
   Text,
   useDisclosure,
-  VStack,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { Card } from "../../components/Card";
 import Footer from "../../components/Footer";
 import { Navbar } from "../../components/Navbar";
-import Types from "../../components/Types";
-import { DateRangePicker, Range, RangeKeyDict } from "react-date-range";
+import { DateRangePicker, Range } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { useEffect, useState } from "react";
-import { IoIosBed, IoIosPeople } from "react-icons/io";
-import { MdMeetingRoom } from "react-icons/md";
-import { BiBath } from "react-icons/bi";
 import MainContent from "../../components/MainContent";
 import { useRouter } from "next/router";
 import gqlclient from "../../GraphQL/graphQLClient";
 import { gql } from "@apollo/client";
+import { useSession } from "next-auth/react";
 
 const images = [
   "https://a0.muscache.com/im/pictures/0720332d-b410-4c85-b09d-78fb36240a43.jpg",
