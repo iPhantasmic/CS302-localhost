@@ -1,3 +1,3 @@
 [submodule "app/services/pb"]
 	path = app/services/pb
-	url = https://gitlab.com/cs302-2022/g2-team3/protobuf_schemas.git
+	url = ../../protobuf_schemas.git
