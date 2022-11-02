@@ -59,6 +59,15 @@ resource "aws_ecs_task_definition" "listings-service" {
         { name = "AWS_ACCESS_KEY_ID", value = var.AWS_ACCESS_KEY_ID },
         { name = "AWS_SECRET_ACCESS_KEY", value = var.AWS_SECRET_ACCESS_KEY }
       ]
+      logConfiguration = {
+        "logDriver" = "awslogs",
+        options = {
+          "awslogs-create-group": "true",
+          "awslogs-group": "awslogs-listings",
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-stream-prefix": "awslogs-listings"
+        }
+      }
     }
   ])
 }
