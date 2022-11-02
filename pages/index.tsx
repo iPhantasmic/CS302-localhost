@@ -13,7 +13,7 @@ import styles from "../styles/Home.module.css";
 import { gql } from "@apollo/client";
 import gqlclient from "../GraphQL/graphQLClient";
 
-const Home: NextPage = (query_data) => {
+const Home: NextPage = (data) => {
   // console.log(query_data.launches)
   const { status } = useSession({
     required: true,
@@ -76,6 +76,7 @@ export async function getStaticProps() {
     props: {
       launches: data,
     },
+    fallback: true,
   };
 }
 
