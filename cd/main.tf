@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "bookings-service" {
         hostPort = 50051
       }]
       environment = [
-        { name = :"HOST", value = var.HOST },
+        { name = "HOST", value = var.HOST },
         { name = "PORT", value = var.PORT },
         { name = "DB_USER", value = var.DB_USER },
         { name = "DB_PASSWORD", value = var.DB_PASSWORD },
