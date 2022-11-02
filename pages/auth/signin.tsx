@@ -24,13 +24,14 @@ import {
 import { MouseEventHandler } from "react";
 import Link from "next/link";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import MainContent from "../../components/MainContent";
 
 // interface Props { }
 
 export default function SignIn() {
   const email: any = useRef<HTMLInputElement>();
   const password: any = useRef<HTMLInputElement>();
-  const handleLogin: MouseEventHandler<HTMLButtonElement> = async (e: any) => {
+  const handleLogin = async () => {
     // e.preventDefault()
     if (email.current.value && password.current.value) {
       const res = await signIn("credentials", {
@@ -45,7 +46,7 @@ export default function SignIn() {
   };
 
   return (
-    <>
+    <MainContent>
       <Container maxW="100%" display="inline-block" p={0} overflow="hidden">
         <Container
           borderRadius="none"
@@ -99,9 +100,10 @@ export default function SignIn() {
                   w={350}
                   mb={8}
                   ref={password}
+                  onKeyDown={(e) => (e.key === "Enter" ? handleLogin() : null)}
                 />
               </FormControl>
-              <Button mb={5} w="full" onClick={(e) => handleLogin(e)}>
+              <Button mb={5} w="full" onClick={(e) => handleLogin()}>
                 Sign in
               </Button>
             </Box>
@@ -121,7 +123,7 @@ export default function SignIn() {
           </VStack>
         </Center>
       </Container>
-      <Footer />
-    </>
+      <Footer fixed />
+    </MainContent>
   );
 }

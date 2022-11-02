@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Avatar,
   Box,
@@ -56,17 +57,17 @@ export function Navbar(props: any) {
 
   return (
     <>
-      <Box pb={{ base: "12", md: "24" }}>
+      <Box pb={{ base: "12", md: "20" }}>
         <Box
           as="nav"
           boxShadow={useColorModeValue("sm", "sm-dark")}
           position="fixed"
-          zIndex="1"
+          zIndex="2"
           w="100%"
           bg={useColorModeValue("white", "black")}
         >
           <Container
-            maxW={props.main == true ? "container.2xl" : "container.xl"}
+            maxW={props.main == true ? "container.xl" : "container.xl"}
             py="3"
             px="7"
           >
@@ -123,7 +124,7 @@ export function Navbar(props: any) {
                 </Flex>
               </Center>
               <Spacer />
-              <Box width="30%" display={props.simple ? "none" : ""}>
+              <Box width="30%" display={props.extrasimple ? "none" : ""}>
                 <HStack spacing="1" py="2">
                   <Flex justify="space-between" flex="1" />
                   <Button
@@ -132,9 +133,11 @@ export function Navbar(props: any) {
                     letterSpacing={0.1}
                     fontSize="14px"
                   >
-                    <Link href="/host">Become a host</Link>
+                    <Link href="/host">
+                      {session == null ? "Become a host" : "Switch to host"}
+                    </Link>
                   </Button>
-                  <DarkModeToggle />
+                  {/* <DarkModeToggle /> */}
                   <IconButton
                     icon={<BsGlobe2 />}
                     variant="ghost"
@@ -152,7 +155,7 @@ export function Navbar(props: any) {
                     </>
                   ) : (
                     <>
-                      <Menu>
+                      <Menu zIndex="9">
                         <MenuButton>
                           <IconButton
                             variant="ghost"
@@ -171,20 +174,37 @@ export function Navbar(props: any) {
                             </WrapItem>
                           </IconButton>
                         </MenuButton>
-                        <MenuList>
-                          <MenuItem>
+                        <MenuList zIndex="9">
+                          <MenuItem
+                            zIndex="9"
+                            onClick={() =>
+                              Router.push("/user/" + session.userId)
+                            }
+                          >
                             <CalendarIcon ml={1} mr={3} />
                             Bookings
                           </MenuItem>
-                          <MenuItem>
+                          <MenuItem
+                            onClick={() =>
+                              Router.push("/user/" + session.userId)
+                            }
+                          >
                             <InfoOutlineIcon ml={1} mr={3} />
                             Profile
                           </MenuItem>
-                          <MenuItem>
+                          <MenuItem
+                            onClick={() =>
+                              Router.push("/user/" + session.userId)
+                            }
+                          >
                             <SettingsIcon ml={1} mr={3} />
                             Setting
                           </MenuItem>
-                          <MenuItem>
+                          <MenuItem
+                            onClick={() =>
+                              Router.push("/user/" + session.userId)
+                            }
+                          >
                             <StarIcon ml={1} mr={3} />
                             Wishlist
                           </MenuItem>
@@ -192,7 +212,7 @@ export function Navbar(props: any) {
                           <MenuItem
                             textColor="red"
                             fontWeight="semibold"
-                            onClick={() => signOut}
+                            onClick={() => signOut()}
                           >
                             <UnlockIcon color="red" ml={1} mr={3} />
                             Sign out

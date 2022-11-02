@@ -6,10 +6,10 @@ export default function Footer(props: any) {
   return (
     <div
       style={{
-        position: "fixed",
         bottom: 0,
         backgroundColor: "white",
-        width: "100vw",
+        width: "99%",
+        position: props.fixed === true ? "fixed" : "relative",
       }}
     >
       <Divider />
@@ -28,8 +28,6 @@ export default function Footer(props: any) {
             <Text fontSize="14px">Sitemap</Text>
           </NextLink>
         </HStack>
-        <Spacer />
-        <Text></Text>
       </Flex>
     </div>
   );

@@ -5,23 +5,31 @@ import {
   Container,
   Divider,
   FormControl,
+  FormErrorMessage,
   Heading,
   HStack,
   Input,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import { signIn, useSession } from "next-auth/react";
+import { getCsrfToken, signIn, useSession } from "next-auth/react";
 import Footer from "../../components/Footer";
 import { gql } from "@apollo/client";
 import gqlclient from "../../GraphQL/graphQLClient";
-import { MouseEventHandler, useRef } from "react";
+import { MouseEventHandler, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { subtle } from "crypto";
+import Router from "next/router";
+import MainContent from "../../components/MainContent";
 
 const Signup: NextPage = (query_data) => {
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -30,27 +38,49 @@ const Signup: NextPage = (query_data) => {
     },
   });
 
-  function handleSubmit() {}
-
   const email: any = useRef<HTMLInputElement>();
   const password: any = useRef<HTMLInputElement>();
-  const handleLogin: MouseEventHandler<HTMLButtonElement> = async (e: any) => {
+  const handleSubmit = async () => {
     if (email.current.value && password.current.value) {
+      setIsLoading(true);
       console.log(email.current.value);
       console.log(password.current.value);
 
-      const res = await signIn("credential", {
+      var data = {
         email: email.current.value,
         password: password.current.value,
-        redirect: false,
-      });
+      };
 
-      console.log(res);
+      const request = gqlclient
+        .mutate({
+          mutation: gql`
+            mutation RegisterUser($data: RegisterRequest) {
+              RegisterUser(data: $data) {
+                message
+              }
+            }
+          `,
+          variables: { data },
+        })
+        .then((response) => {
+          toast({
+            title: `Please hold while we redirect you to the sign in page.`,
+            variant: "subtle",
+            status: "success",
+            isClosable: true,
+          });
+          Router.push("/auth/signin");
+        })
+        .catch((e) => {
+          setIsError(true);
+          setIsLoading(false);
+          console.log(e);
+        });
     }
   };
 
   return (
-    <>
+    <MainContent>
       <Container maxW="100%" display="inline-block" p={0} overflow="hidden">
         <Container
           borderRadius="none"
@@ -86,7 +116,7 @@ const Signup: NextPage = (query_data) => {
               </Heading>
             </Box>
             <Box>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={isError}>
                 <Input
                   variant="flushed"
                   placeholder="Email address"
@@ -94,7 +124,15 @@ const Signup: NextPage = (query_data) => {
                   mt={4}
                   w={350}
                   ref={email}
+                  onKeyDown={(e) => (e.key === "Enter" ? handleSubmit() : null)}
                 />
+                {isError ? (
+                  <FormErrorMessage>
+                    Email address already in use. Please sign in.
+                  </FormErrorMessage>
+                ) : (
+                  <></>
+                )}
               </FormControl>
               <FormControl isRequired>
                 <Input
@@ -105,9 +143,15 @@ const Signup: NextPage = (query_data) => {
                   mt={6}
                   mb={8}
                   ref={password}
+                  onKeyDown={(e) => (e.key === "Enter" ? handleSubmit() : null)}
                 />
               </FormControl>
-              <Button mb={5} w="full" onClick={(e) => handleLogin(e)}>
+              <Button
+                mb={5}
+                w="full"
+                onClick={() => handleSubmit()}
+                disabled={isLoading}
+              >
                 Sign up
               </Button>
             </Box>
@@ -127,8 +171,8 @@ const Signup: NextPage = (query_data) => {
           </VStack>
         </Center>
       </Container>
-      <Footer />
-    </>
+      <Footer fixed />
+    </MainContent>
   );
 };
 

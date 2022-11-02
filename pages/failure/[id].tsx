@@ -26,6 +26,7 @@ import Justin from "./../../public/Justin.jpg";
 import Nich from "./../../public/Nich.jpg";
 import Omer from "./../../public/Omer.jpg";
 import LogoDark from "./../../public/localhost_dark.png";
+import MainContent from "../../components/MainContent";
 
 const Failure: NextPage = () => {
   return (
@@ -43,7 +44,7 @@ const Failure: NextPage = () => {
         />
       </Center>
 
-      <main>
+      <MainContent>
         <Container maxW="container.2xl" px={8} pt={5}>
           <Center mt={10}>
             <VStack textAlign="center">
@@ -154,7 +155,7 @@ const Failure: NextPage = () => {
             </VStack>
           </Center>
         </Container>
-      </main>
+      </MainContent>
       <Footer />
     </div>
   );

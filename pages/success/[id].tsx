@@ -31,6 +31,7 @@ import { MdMeetingRoom } from "react-icons/md";
 import { BiBath } from "react-icons/bi";
 import Logo from "./../../public/localhost.png";
 import LogoDark from "./../../public/localhost_dark.png";
+import MainContent from "../../components/MainContent";
 
 const Success: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,7 +59,7 @@ const Success: NextPage = () => {
         />
       </Center>
 
-      <main>
+      <MainContent>
         <Container maxW="container.md" px={8} pt={5}>
           <Center mt={10}>
             <VStack textAlign="center">
@@ -97,7 +98,7 @@ const Success: NextPage = () => {
             View Your Trips
           </Button>
         </Container>
-      </main>
+      </MainContent>
       <Footer />
     </div>
   );

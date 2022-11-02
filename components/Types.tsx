@@ -21,7 +21,7 @@ function RadioCard(props: any) {
   const checkbox = getCheckboxProps();
 
   return (
-    <Flex as="label" width="6%">
+    <Flex as="label" width="8%" justifyContent="center">
       <input {...input} />
       <Box
         {...checkbox}
@@ -35,7 +35,8 @@ function RadioCard(props: any) {
           fontWeight: "semibold",
           color: "black",
         }}
-        my={3}
+        mt={3}
+        mb={2}
         textAlign="center"
       >
         {props.children}
@@ -73,10 +74,23 @@ export default function Types() {
   const group = getRootProps();
 
   return (
-    <Container maxW="container.2xl" px="3%">
+    <Container
+      maxW="full"
+      px="4%"
+      py={1}
+      position="fixed"
+      top={20}
+      zIndex="1"
+      bgColor="white"
+      borderTop="1px"
+      borderColor="gray.200"
+    >
       <HStack {...group} overflow="hidden">
         {options.map((value) => {
-          const radio = getRadioProps({ value });
+          const radio = getRadioProps({
+            value,
+            style: { justifyContent: "center" },
+          });
           return (
             <RadioCard key={value} {...radio}>
               <Image src={"/" + value + ".jpg"} height="24px" width="24px" />

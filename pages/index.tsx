@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box, Container, HStack } from "@chakra-ui/react";
 import type { GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
@@ -12,16 +13,68 @@ import Types from "../components/Types";
 import styles from "../styles/Home.module.css";
 import { gql } from "@apollo/client";
 import gqlclient from "../GraphQL/graphQLClient";
+import { useEffect, useState } from "react";
+import MainContent from "../components/MainContent";
 
-const Home: NextPage = (data) => {
+const Home: NextPage = () => {
   // console.log(query_data.launches)
-  const { status } = useSession({
+  const [listings, setListings] = useState<any[]>([]);
+  const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
       // The user is not authenticated, handle it here.
-      Router.push("/auth/signin");
+      // Router.push("/auth/signin");
     },
   });
+
+  function sliceIntoChunks(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      const chunk = arr.slice(i, i + chunkSize);
+      res.push(chunk);
+    }
+    return res;
+  }
+
+  useEffect(() => {
+    gqlclient
+      .query({
+        query: gql`
+          query Listings {
+            GetAllListings {
+              listings {
+                listingId
+                userId
+                title
+                price
+                images
+                type
+                address
+                country
+                city
+                rooms
+                startDate {
+                  nanos
+                  seconds
+                }
+                createdAt {
+                  nanos
+                  seconds
+                }
+              }
+            }
+          }
+        `,
+      })
+      .then((response) => {
+        var list = response.data.GetAllListings.listings;
+        setListings(sliceIntoChunks(list, 4));
+        console.log(listings);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   return (
     <div>
@@ -32,54 +85,49 @@ const Home: NextPage = (data) => {
       </Head>
       <Navbar main />
 
-      <main>
-        <Container maxW="container.3xl">
-          <Types />
-          <HStack placeContent="center">
-            {[1, 2, 3, 4, 5, 6].map((element) => {
-              return <Card key={element} />;
-            })}
-          </HStack>
-          <HStack placeContent="center">
-            {[1, 2, 3, 4, 5, 6].map((element) => {
-              return <Card key={element} />;
-            })}
-          </HStack>
-          <HStack placeContent="center">
-            {[1, 2, 3, 4, 5, 6].map((element) => {
-              return <Card key={element} />;
-            })}
-          </HStack>
+      <MainContent>
+        <Types />
+        <Container maxW="container.3xl" pt={90}>
+          {listings.map((group, index) => {
+            console.log(group);
+            return (
+              <HStack key={index} placeContent="center">
+                {group.map((element: { listingId: any }) => {
+                  return <Card key={element.listingId} data={element} />;
+                })}
+              </HStack>
+            );
+          })}
         </Container>
-      </main>
+      </MainContent>
       <Footer />
     </div>
   );
 };
 
-export async function getStaticProps() {
-  var datas = { userId: "c2d29867-3d0b-d497-9191-18a9d8ee7830" };
+// export async function getStaticProps() {
+//     var datas = { userId: "c2d29867-3d0b-d497-9191-18a9d8ee7830" };
 
-  try {
-    const { data } = await gqlclient.query({
-      query: gql`
-        query GetUser($datas: GetUserRequest) {
-          GetUser(data: $datas) {
-            userId
-            email
-          }
-        }
-      `,
-      variables: { datas },
-    });
-    return {
-      props: {
-        launches: data,
-      },
-    };
-  } catch (e) {
-    console.log("Error in subscription:", e);
-  }
-}
+//     const { data } = await gqlclient.query({
+//         query: gql`
+//       query GetUser($datas: GetUserRequest) {
+//         GetUser(data: $datas) {
+//           userId
+//           email
+//         }
+//       }
+//     `,
+//         variables: { datas },
+//     });
+//     try {
+//         return {
+//             props: {
+//                 launches: data,
+//             },
+//         };
+//     } catch (e) {
+//         console.log("Error in subscription:", e);
+//     }
+// }
 
 export default Home;
