@@ -1,0 +1,19 @@
+import fs from 'fs';
+import * as path from 'path';
+import * as grpc from '@grpc/grpc-js';
+import * as protoLoader from '@grpc/proto-loader';
+
+const packageDefinition:any = protoLoader.loadSync(path.resolve('./src/services/pb/listings.proto'));
+
+const proto:any = grpc.loadPackageDefinition(packageDefinition).listings;
+
+
+
+const credentials:any = grpc.credentials.createInsecure();
+
+const options:any = {
+//   'grpc.ssl_target_name_override': 'localhost',
+//   interceptors: [interceptorAuth]
+};
+
+export default () => new proto.ListingService('localhost:50053', credentials);

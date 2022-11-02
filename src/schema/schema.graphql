@@ -133,19 +133,127 @@ input MakeBookingRequest {
     userId: String
     listingId: String
     hostId: String
-    startDate: ProtobufTimestamp
-    endDate: ProtobufTimestamp
+    startDate: ProtobufTimestampInput
+    endDate: ProtobufTimestampInput
     paymentId: String
+}
+
+input GetReviewRequest {
+    reviewId: String
+}
+
+input CreateReviewRequest {
+    userId: String
+    listingId: String
+    rating: Int
+    review: String
+}
+
+type ReviewResponse {
+    reviewId: String
+    userId: String
+    listingId: String
+    rating: Int
+    review: String
+    createdAt: ProtobufTimestampOutput
+}
+
+input DeleteReviewRequest {
+    reviewId: String
+}
+
+type DeleteReviewResponse {
+    message: String
+}
+
+input GetListingRequest {
+  listingId: String
+}
+
+type ListingResponse{
+  listingId:String
+  userId:String
+  title:String
+  price:Int
+  images: [String]
+  type:String
+  address:String
+  country:String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestampOutput
+  createdAt:ProtobufTimestampOutput
+}
+
+type ListingsResponse{
+  listings:[ListingResponse]
+}
+
+input FilterLocationRoomRequest{
+  country:String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestampInput
+  endDate:ProtobufTimestampInput
+}
+
+input ListingImage{
+  filename:String
+  data:String
+}
+
+input CreateListingRequest{
+  userId:String
+  title:String
+  price:Int
+  images:[ListingImage]
+  type:String
+  address:String
+  country:String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestampInput
+}
+
+input UpdateListingRequest{
+  listingId:String
+  title:String
+  price:Int
+  images:[ListingImage]
+  type:String
+  address:String
+  country:String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestampInput
+}
+
+input DeleteListingRequest{
+  listing_id:String
+}
+
+type DeleteListingResponse{
+  message:String
 }
 
 type Query {
     GetUser(data: GetUserRequest): User
-    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
     GetBookingByUser(data: BookingUserId): BookingResponse
-    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
+    GetReview(data: GetReviewRequest): ReviewResponse
+    GetListing(data:GetListingRequest) : ListingResponse
+
+    #Please help to review this and think of a better way
+    GetAllListings(data:String!): ListingsResponse
+
+    GetAvailableListings(data:FilterLocationRoomRequest):ListingsResponse
 }
 
-schema {
-    query: Query
-    # mutation: Mutation
+type Mutation {
+    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
+    CreateReview(data: CreateReviewRequest): ReviewResponse
+    DeleteReview(data: DeleteReviewRequest): DeleteReviewResponse
+    CreateListing(data:CreateListingRequest):ListingResponse
+    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+    DeleteListing(data:DeleteListingRequest): DeleteListingResponse
+    UpdateListing(data:UpdateListingRequest):ListingResponse
 }
