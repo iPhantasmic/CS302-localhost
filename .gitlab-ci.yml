@@ -187,6 +187,13 @@ destroy-terraform:
   variables:
         TF_VAR_ACCESS_ID: ${ACCESS_ID}
         TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_HOST: ${HOST}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
   script:
     - gitlab-terraform destroy
   environment:
