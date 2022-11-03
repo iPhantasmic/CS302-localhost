@@ -1,269 +1,270 @@
-# type Post {
-#   _id: ID
-#   title: String
-#   body: String
-#   createdAt: DateTime
-# }
-
-# type Posts {
-#   count: Int
-#   page: Int
-#   limit: Int
-#   nodes: [Post]
-# }
-
-# type Query {
-#   listPosts(page: Int limit: Int): Posts
-# }
-
 # Setup
 schema {
-    query: Query
-    mutation: Mutation
+  query: Query
+  mutation: Mutation
 }
 
 type Query {
-    GetUser(data: GetUserRequest): User
-    LoginUser(data: LoginRequest): LoginResponse
-    ValidateToken(data: ValidateRequest): ValidateResponse
-    GetBookingByUser(data: BookingUserId): BookingResponse
-    GetReview(data: GetReviewRequest): ReviewResponse
-    GetListing(data: GetListingRequest): ListingResponse
-    #Please help to review this and think of a better way
-    GetAllListings(data: String!): ListingsResponse
-    GetBookingById(data:GetBookingByIdRequest) : Booking
-    GetAvailableListings(data: FilterLocationRoomRequest): ListingsResponse
-    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+  GetUser(data: GetUserRequest): User
+  LoginUser(data: LoginRequest): LoginResponse
+  ValidateToken(data: ValidateRequest): ValidateResponse
+  #
+  GetBookingById(data:GetBookingRequest) : Booking
+  GetBookingByUser(data: GetBookingsByUserRequest): Bookings
+  #
+  GetReview(data: GetReviewRequest): Review
+  #
+  GetListing(data: GetListingRequest): Listing
+  GetAllListings(data: String!): Listings #Please help to review this and think of a better way
+  GetAvailableListings(data: FilterLocationRoomRequest): Listings
+  #
+  PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
 }
 
 type Mutation {
-    RegisterUser(data: RegisterRequest): RegisterResponse
-    UpdateUser(data: UpdateUserRequest): User
-    DeleteUser(data: DeleteUserRequest): DeleteUserResponse
-    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
-    CreateReview(data: CreateReviewRequest): ReviewResponse
-    DeleteReview(data: DeleteReviewRequest): DeleteReviewResponse
-    CreateListing(data: CreateListingRequest): ListingResponse
-    DeleteListing(data: DeleteListingRequest): DeleteListingResponse
-    UpdateListing(data: UpdateListingRequest): ListingResponse
-    DeleteBookingById(data: DeleteBookingByIdRequest): DeleteReturnMessage
-    CancelBooking(data: CancelBookingRequest): DeleteReturnMessage
+  RegisterUser(data: RegisterRequest): Message
+  UpdateUser(data: UpdateUserRequest): User
+  DeleteUser(data: DeleteUserRequest): Message
+  #
+  CreateBooking(data: CreateBookingRequest): ReturnMessage
+  DeleteBookingById(data: DeleteBookingRequest): ReturnMessage
+  #
+  CreateReview(data: CreateReviewRequest): Review
+  DeleteReview(data: DeleteReviewRequest): Message
+  #
+  CreateListing(data: CreateListingRequest): Listing
+  UpdateListing(data: UpdateListingRequest): Listing
+  DeleteListing(data: DeleteListingRequest): Message
+  #
+  MakeBooking(data: MakeBookingRequest): ReturnMessage
+  CancelBooking(data: CancelBookingRequest): ReturnMessage
 }
 
-#
+# ------------------------------------------------------------------------------
 
-# User Service
-type User {
-    userId: String
-    email: String
-}
-input GetUserRequest {
-    userId: String
-}
-
-input UpdateUserRequest {
-    userId: String
-    email: String
-    password: String
-}
-
-input DeleteUserRequest {
-    userId: String
-}
-type DeleteUserResponse {
-    message: String
-}
-#
-
-# Auth Service
-input RegisterRequest {
-    email: String
-    password: String
-}
-type RegisterResponse {
-    message: String
-}
-
-input LoginRequest {
-    email: String
-    password: String
-}
-type LoginResponse {
-    userId: String
-    token: String
-}
-
-input ValidateRequest {
-    token: String
-}
-type ValidateResponse {
-    userId: String
-}
-
-#
-
-input ProtobufTimestampInput {
-    nanos: Int
-    seconds: String
+# Common Data Types
+input ProtobufTimestamp {
+  nanos: Int
+  seconds: String
 }
 
 type ProtobufTimestampOutput {
-    nanos: Int
-    seconds: String
+  nanos: Int
+  seconds: String
 }
 
-input PublishBookingConfirmedRequest {
-    receiverEmail: String
-    propertyName: String
-    receiptId: String
-    paymentDate: String
-    paymentTime: String
-    bookingStartDate: String
-    bookingEndDate: String
-    unitPrice: Float
-    numNights: Int
-    subTotal: Float
-    serviceFee: Float
-    totalPrice: Float
+type Message {
+  message: String
 }
 
-type BookingResponse {
-    bookings: [Booking]
+# ------------------------------------------------------------------------------
+
+# User Service
+type User {
+  userId: String
+  email: String
+}
+input GetUserRequest {
+  userId: String
 }
 
-type DeleteReturnMessage {
-    returnMessage: String
+input UpdateUserRequest {
+  userId: String
+  email: String
+  password: String
 }
 
+input DeleteUserRequest {
+  userId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Auth Service
+input RegisterRequest {
+  email: String
+  password: String
+}
+
+input LoginRequest {
+  email: String
+  password: String
+}
+type LoginResponse {
+  userId: String
+  token: String
+}
+
+input ValidateRequest {
+  token: String
+}
+type ValidateResponse {
+  userId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Bookings Service
+input GetBookingRequest {
+  bookingId: String
+}
 type Booking {
-    id: String
-    userId: String
-    listingId: String
-    hostId: String
-    startDate: String
-    endDate: String
-    paymentId: Int
+  id: String
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestampOutput
+  endDate: ProtobufTimestampOutput
+  paymentId: String
 }
 
-input BookingUserId {
-    userId: Int
+input GetBookingsByUserRequest {
+  userId: String
+}
+type Bookings {
+  bookings: [Booking]
 }
 
-input MakeBookingRequest {
-    endDate: String
-    hostId: Int
-    listingId: Int
-    paymentId: Int
-    startDate: String
-    userId: Int
+input CreateBookingRequest {
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestamp
+  endDate: ProtobufTimestamp
+  paymentId: String
 }
 
+input DeleteBookingRequest {
+  bookingId: String
+}
+type ReturnMessage {
+  returnMessage: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Reviews Service
 input GetReviewRequest {
-    reviewId: String
+  reviewId: String
+}
+type Review {
+  reviewId: String
+  userId: String
+  listingId: String
+  rating: Int
+  review: String
+  createdAt: ProtobufTimestampOutput
 }
 
 input CreateReviewRequest {
-    userId: String
-    listingId: String
-    rating: Int
-    review: String
-}
-
-type ReviewResponse {
-    reviewId: String
-    userId: String
-    listingId: String
-    rating: Int
-    review: String
-    createdAt: ProtobufTimestampOutput
+  userId: String
+  listingId: String
+  rating: Int
+  review: String
 }
 
 input DeleteReviewRequest {
-    reviewId: String
+  reviewId: String
 }
 
-type DeleteReviewResponse {
-    message: String
-}
+# ------------------------------------------------------------------------------
 
+# Listings Service
 input GetListingRequest {
-    listingId: String
+  listingId: String
 }
-
-type ListingResponse {
-    listingId: String
-    userId: String
-    title: String
-    price: Int
-    images: [String]
-    type: String
-    address: String
-    country: String
-    city: String
-    rooms: Int
-    startDate: ProtobufTimestampOutput
-    createdAt: ProtobufTimestampOutput
-}
-
-type ListingsResponse {
-    listings: [ListingResponse]
+type Listing {
+  listingId: String
+  userId: String
+  title: String
+  price: Int
+  images: [String]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestampOutput
+  createdAt: ProtobufTimestampOutput
 }
 
 input FilterLocationRoomRequest {
-    country: String
-    city: String
-    rooms: Int
-    startDate: ProtobufTimestampInput
-    endDate: ProtobufTimestampInput
+  listings: [String]
+  country: String
+  city: String
+  rooms: Int
+}
+type Listings {
+  listings: [Listing]
 }
 
 input ListingImage {
-    filename: String
-    data: String
+  filename: String
+  data: String
 }
 
 input CreateListingRequest {
-    userId: String
-    title: String
-    price: Int
-    images: [ListingImage]
-    type: String
-    address: String
-    country: String
-    city: String
-    rooms: Int
-    startDate: ProtobufTimestampInput
+  userId: String
+  title: String
+  price: Int
+  images: [ListingImage]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestamp
 }
 
 input UpdateListingRequest {
-    listingId: String
-    title: String
-    price: Int
-    images: [ListingImage]
-    type: String
-    address: String
-    country: String
-    city: String
-    rooms: Int
-    startDate: ProtobufTimestampInput
+  listingId: String
+  title: String
+  price: Int
+  images: [ListingImage]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestamp
 }
 
 input DeleteListingRequest {
-    listing_id: String
+  listingId: String
 }
 
-type DeleteListingResponse {
-    message: String
-}
+# ------------------------------------------------------------------------------
 
-input DeleteBookingByIdRequest {
-    bookingId: String
+# Composite Service
+# We need to figure out how to do the composite requests here, this isn't correct
+
+input MakeBookingRequest {
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestamp
+  endDate: ProtobufTimestamp
+  paymentId: String
 }
 
 input CancelBookingRequest {
-    bookingId: String
+  bookingId: String
 }
 
-input GetBookingByIdRequest {
-    bookingId: String
+# ------------------------------------------------------------------------------
+
+# Email Service
+input PublishBookingConfirmedRequest {
+  receiverEmail: String
+  propertyName: String
+  receiptId: String
+  paymentDate: String
+  paymentTime: String
+  bookingStartDate: String
+  bookingEndDate: String
+  unitPrice: Float
+  numNights: Int
+  subTotal: Float
+  serviceFee: Float
+  totalPrice: Float
 }
