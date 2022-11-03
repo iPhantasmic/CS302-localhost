@@ -16,21 +16,10 @@ import GetAvailableListings from "./getAvailableListings"
 import CreateListing from "./createListing"
 import UpdateListing from "./updateListing"
 import DeleteListing from "./deleteListing"
+import CancelBooking from "./cancelBooking"
+import DeleteBookingById from './deleteBookingById';
+import GetBookingById from "./getBookingById"
 const resolvers: any  = {
-<<<<<<< HEAD
-  Mutation: {
-    RegisterUser,
-    UpdateUser,
-    DeleteUser,
-    MakeBooking
-  },
-  Query: {
-    GetUser,
-    LoginUser,
-    ValidateToken,
-    PublishBookingConfirmed,
-    GetBookingByUser,
-=======
   Query: {
     GetUser,
     GetBookingByUser,
@@ -38,7 +27,9 @@ const resolvers: any  = {
     GetListing,
     GetAllListings,
     GetAvailableListings,
->>>>>>> 2e378bf (feat: mappings for listing and reviews)
+    ValidateToken,
+    PublishBookingConfirmed,
+    GetBookingById
   },
   Mutation: {
     PublishBookingConfirmed,
@@ -47,7 +38,13 @@ const resolvers: any  = {
     DeleteReview,
     CreateListing,
     UpdateListing,
-    DeleteListing
+    DeleteListing,
+    DeleteBookingById,
+    CancelBooking,
+    DeleteUser,
+    RegisterUser,
+    LoginUser,
+    UpdateUser
   }
 };
 

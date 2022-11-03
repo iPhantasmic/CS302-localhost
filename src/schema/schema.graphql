@@ -23,6 +23,7 @@ schema {
 }
 
 type Query {
+<<<<<<< HEAD
   GetUser(data: GetUserRequest): User
   LoginUser(data: LoginRequest): LoginResponse
   ValidateToken(data: ValidateRequest): ValidateResponse
@@ -35,6 +36,33 @@ type Mutation {
   UpdateUser(data: UpdateUserRequest): User
   DeleteUser(data: DeleteUserRequest): DeleteUserResponse
   MakeBooking(data:MakeBookingRequest): DeleteReturnMessage
+=======
+    GetUser(data: GetUserRequest): User
+    LoginUser(data: LoginRequest): LoginResponse
+    ValidateToken(data: ValidateRequest): ValidateResponse
+    GetBookingByUser(data: BookingUserId): BookingResponse
+    GetReview(data: GetReviewRequest): ReviewResponse
+    GetListing(data: GetListingRequest): ListingResponse
+    #Please help to review this and think of a better way
+    GetAllListings(data: String!): ListingsResponse
+    GetBookingById(data:GetBookingByIdRequest) : Booking
+    GetAvailableListings(data: FilterLocationRoomRequest): ListingsResponse
+    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+}
+
+type Mutation {
+    RegisterUser(data: RegisterRequest): RegisterResponse
+    UpdateUser(data: UpdateUserRequest): User
+    DeleteUser(data: DeleteUserRequest): DeleteUserResponse
+    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
+    CreateReview(data: CreateReviewRequest): ReviewResponse
+    DeleteReview(data: DeleteReviewRequest): DeleteReviewResponse
+    CreateListing(data: CreateListingRequest): ListingResponse
+    DeleteListing(data: DeleteListingRequest): DeleteListingResponse
+    UpdateListing(data: UpdateListingRequest): ListingResponse
+    DeleteBookingById(data: DeleteBookingByIdRequest): DeleteReturnMessage
+    CancelBooking(data: CancelBookingRequest): DeleteReturnMessage
+>>>>>>> 766f4bb (chore: refactor try catch)
 }
 #
 
@@ -85,6 +113,7 @@ input ValidateRequest {
 type ValidateResponse {
   userId: String
 }
+
 #
 
 input ProtobufTimestamp {
@@ -256,4 +285,16 @@ type Mutation {
     PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
     DeleteListing(data:DeleteListingRequest): DeleteListingResponse
     UpdateListing(data:UpdateListingRequest):ListingResponse
+}
+
+input DeleteBookingByIdRequest {
+    bookingId: String
+}
+
+input CancelBookingRequest {
+    bookingId: String
+}
+
+input GetBookingByIdRequest {
+    bookingId: String
 }
