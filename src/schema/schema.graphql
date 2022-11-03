@@ -1,21 +1,3 @@
-# type Post {
-#   _id: ID
-#   title: String
-#   body: String
-#   createdAt: DateTime
-# }
-
-# type Posts {
-#   count: Int
-#   page: Int
-#   limit: Int
-#   nodes: [Post]
-# }
-
-# type Query {
-#   listPosts(page: Int limit: Int): Posts
-# }
-
 # Setup
 schema {
   query: Query
@@ -23,48 +5,62 @@ schema {
 }
 
 type Query {
-<<<<<<< HEAD
   GetUser(data: GetUserRequest): User
   LoginUser(data: LoginRequest): LoginResponse
   ValidateToken(data: ValidateRequest): ValidateResponse
+  #
+  GetBookingById(data:GetBookingRequest) : Booking
+  GetBookingByUser(data: GetBookingsByUserRequest): Bookings
+  GetUnavailableListings(data:GetUnavailableListingsRequest) : ListingIdArray
+  #
+  GetReview(data: GetReviewRequest): Review
+  #
+  GetListing(data: GetListingRequest): Listing
+  GetAllListings(data: String!): Listings #Please help to review this and think of a better way
+  GetAvailableListings(data: FilterLocationRoomRequest): Listings
+  #
   PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
-  GetBookingByUser(data:BookingUserId): BookingResponse
+  #
+  ViewListings(data:ViewListingsRequest):Listings
 }
 
 type Mutation {
-  RegisterUser(data: RegisterRequest): RegisterResponse
+  RegisterUser(data: RegisterRequest): Message
   UpdateUser(data: UpdateUserRequest): User
-  DeleteUser(data: DeleteUserRequest): DeleteUserResponse
-  MakeBooking(data:MakeBookingRequest): DeleteReturnMessage
-=======
-    GetUser(data: GetUserRequest): User
-    LoginUser(data: LoginRequest): LoginResponse
-    ValidateToken(data: ValidateRequest): ValidateResponse
-    GetBookingByUser(data: BookingUserId): BookingResponse
-    GetReview(data: GetReviewRequest): ReviewResponse
-    GetListing(data: GetListingRequest): ListingResponse
-    #Please help to review this and think of a better way
-    GetAllListings(data: String!): ListingsResponse
-    GetBookingById(data:GetBookingByIdRequest) : Booking
-    GetAvailableListings(data: FilterLocationRoomRequest): ListingsResponse
-    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+  DeleteUser(data: DeleteUserRequest): Message
+  #
+  CreateBooking(data: CreateBookingRequest): ReturnMessage
+  DeleteBookingById(data: DeleteBookingRequest): ReturnMessage
+  #
+  CreateReview(data: CreateReviewRequest): Review
+  DeleteReview(data: DeleteReviewRequest): Message
+  #
+  CreateListing(data: CreateListingRequest): Listing
+  UpdateListing(data: UpdateListingRequest): Listing
+  DeleteListing(data: DeleteListingRequest): Message
+  #
+  MakeBooking(data: MakeBookingRequest): ReturnMessage
+  CancelBooking(data: CancelBookingRequest): ReturnMessage
 }
 
-type Mutation {
-    RegisterUser(data: RegisterRequest): RegisterResponse
-    UpdateUser(data: UpdateUserRequest): User
-    DeleteUser(data: DeleteUserRequest): DeleteUserResponse
-    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
-    CreateReview(data: CreateReviewRequest): ReviewResponse
-    DeleteReview(data: DeleteReviewRequest): DeleteReviewResponse
-    CreateListing(data: CreateListingRequest): ListingResponse
-    DeleteListing(data: DeleteListingRequest): DeleteListingResponse
-    UpdateListing(data: UpdateListingRequest): ListingResponse
-    DeleteBookingById(data: DeleteBookingByIdRequest): DeleteReturnMessage
-    CancelBooking(data: CancelBookingRequest): DeleteReturnMessage
->>>>>>> 766f4bb (chore: refactor try catch)
+# ------------------------------------------------------------------------------
+
+# Common Data Types
+input ProtobufTimestamp {
+  nanos: Int
+  seconds: String
 }
-#
+
+type ProtobufTimestampOutput {
+  nanos: Int
+  seconds: String
+}
+
+type Message {
+  message: String
+}
+
+# ------------------------------------------------------------------------------
 
 # User Service
 type User {
@@ -84,18 +80,13 @@ input UpdateUserRequest {
 input DeleteUserRequest {
   userId: String
 }
-type DeleteUserResponse {
-  message: String
-}
-#
+
+# ------------------------------------------------------------------------------
 
 # Auth Service
 input RegisterRequest {
   email: String
   password: String
-}
-type RegisterResponse {
-  message: String
 }
 
 input LoginRequest {
@@ -114,13 +105,175 @@ type ValidateResponse {
   userId: String
 }
 
-#
+# ------------------------------------------------------------------------------
 
-input ProtobufTimestamp {
-    nanos: Int
-    seconds: String
+# Bookings Service
+input GetBookingRequest {
+  bookingId: String
+}
+type Booking {
+  id: String
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestampOutput
+  endDate: ProtobufTimestampOutput
+  paymentId: String
 }
 
+input GetBookingsByUserRequest {
+  userId: String
+}
+type Bookings {
+  bookings: [Booking]
+}
+
+input CreateBookingRequest {
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestamp
+  endDate: ProtobufTimestamp
+  paymentId: String
+}
+
+input DeleteBookingRequest {
+  bookingId: String
+}
+type ReturnMessage {
+  returnMessage: String
+}
+
+input GetUnavailableListingsRequest{
+  startDate: ProtobufTimestamp
+  endDate:ProtobufTimestamp
+}
+
+type ListingIdArray{
+  listingIds:[String]
+}
+
+# ------------------------------------------------------------------------------
+
+# Reviews Service
+input GetReviewRequest {
+  reviewId: String
+}
+type Review {
+  reviewId: String
+  userId: String
+  listingId: String
+  rating: Int
+  review: String
+  createdAt: ProtobufTimestampOutput
+}
+
+input CreateReviewRequest {
+  userId: String
+  listingId: String
+  rating: Int
+  review: String
+}
+
+input DeleteReviewRequest {
+  reviewId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Listings Service
+input GetListingRequest {
+  listingId: String
+}
+type Listing {
+  listingId: String
+  userId: String
+  title: String
+  price: Int
+  images: [String]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestampOutput
+  createdAt: ProtobufTimestampOutput
+}
+
+input FilterLocationRoomRequest {
+  listings: [String]
+  country: String
+  city: String
+  rooms: Int
+}
+type Listings {
+  listings: [Listing]
+}
+
+input ListingImage {
+  filename: String
+  data: String
+}
+
+input CreateListingRequest {
+  userId: String
+  title: String
+  price: Int
+  images: [ListingImage]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestamp
+}
+
+input UpdateListingRequest {
+  listingId: String
+  title: String
+  price: Int
+  images: [ListingImage]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestamp
+}
+
+input DeleteListingRequest {
+  listingId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Composite Service
+# We need to figure out how to do the composite requests here, this isn't correct
+
+input MakeBookingRequest {
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestamp
+  endDate: ProtobufTimestamp
+  paymentId: String
+}
+
+input CancelBookingRequest {
+  bookingId: String
+}
+
+input ViewListingsRequest {
+  country: String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestamp
+  endDate:ProtobufTimestamp
+}
+
+# ------------------------------------------------------------------------------
+
+# Email Service
 input PublishBookingConfirmedRequest {
   receiverEmail: String
   propertyName: String
@@ -134,167 +287,4 @@ input PublishBookingConfirmedRequest {
   subTotal: Float
   serviceFee: Float
   totalPrice: Float
-}
-
-type BookingResponse {
-    bookings: [Booking]
-}
-
-type DeleteReturnMessage {
-    returnMessage: String
-}
-
-type Booking {
-  id: Int
-  userId: Int
-  listingId: Int
-  hostId: Int
-  startDate: String
-  endDate: String
-  paymentId: Int
-}
-
-input BookingUserId {
-    userId: Int
-}
-
-input MakeBookingRequest {
-    userId: String
-    listingId: String
-    hostId: String
-    startDate: ProtobufTimestampInput
-    endDate: ProtobufTimestampInput
-    paymentId: String
-}
-
-input GetReviewRequest {
-    reviewId: String
-}
-
-input CreateReviewRequest {
-    userId: String
-    listingId: String
-    rating: Int
-    review: String
-}
-
-type ReviewResponse {
-    reviewId: String
-    userId: String
-    listingId: String
-    rating: Int
-    review: String
-    createdAt: ProtobufTimestampOutput
-}
-
-input DeleteReviewRequest {
-    reviewId: String
-}
-
-type DeleteReviewResponse {
-    message: String
-}
-
-input GetListingRequest {
-  listingId: String
-}
-
-type ListingResponse{
-  listingId:String
-  userId:String
-  title:String
-  price:Int
-  images: [String]
-  type:String
-  address:String
-  country:String
-  city:String
-  rooms:Int
-  startDate:ProtobufTimestampOutput
-  createdAt:ProtobufTimestampOutput
-}
-
-type ListingsResponse{
-  listings:[ListingResponse]
-}
-
-input FilterLocationRoomRequest{
-  country:String
-  city:String
-  rooms:Int
-  startDate:ProtobufTimestampInput
-  endDate:ProtobufTimestampInput
-}
-
-input ListingImage{
-  filename:String
-  data:String
-}
-
-input CreateListingRequest{
-  userId:String
-  title:String
-  price:Int
-  images:[ListingImage]
-  type:String
-  address:String
-  country:String
-  city:String
-  rooms:Int
-  startDate:ProtobufTimestampInput
-}
-
-input UpdateListingRequest{
-  listingId:String
-  title:String
-  price:Int
-  images:[ListingImage]
-  type:String
-  address:String
-  country:String
-  city:String
-  rooms:Int
-  startDate:ProtobufTimestampInput
-}
-
-input DeleteListingRequest{
-  listing_id:String
-}
-
-type DeleteListingResponse{
-  message:String
-}
-
-type Query {
-    GetUser(data: GetUserRequest): User
-    GetBookingByUser(data: BookingUserId): BookingResponse
-    GetReview(data: GetReviewRequest): ReviewResponse
-    GetListing(data:GetListingRequest) : ListingResponse
-
-    #Please help to review this and think of a better way
-    GetAllListings(data:String!): ListingsResponse
-
-    GetAvailableListings(data:FilterLocationRoomRequest):ListingsResponse
-}
-
-type Mutation {
-    MakeBooking(data: MakeBookingRequest): DeleteReturnMessage
-    CreateReview(data: CreateReviewRequest): ReviewResponse
-    DeleteReview(data: DeleteReviewRequest): DeleteReviewResponse
-    CreateListing(data:CreateListingRequest):ListingResponse
-    PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
-    DeleteListing(data:DeleteListingRequest): DeleteListingResponse
-    UpdateListing(data:UpdateListingRequest):ListingResponse
-}
-
-input DeleteBookingByIdRequest {
-    bookingId: String
-}
-
-input CancelBookingRequest {
-    bookingId: String
-}
-
-input GetBookingByIdRequest {
-    bookingId: String
 }
