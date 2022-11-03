@@ -33,7 +33,7 @@ services:
         aliases:
           - listing_service
     environment:
-      PORT: 0.0.0.0:50052
+      PORT: 0.0.0.0:50051
       DB_USER: test_user
       DB_PASSWORD: test123
       DB_HOST: postgres_db
@@ -74,7 +74,7 @@ services:
         aliases:
           - auth_service
     environment:
-      PORT: 0.0.0.0:50053
+      PORT: 0.0.0.0:50051
       DB_USER: test_user
       DB_PASSWORD: test123
       DB_HOST: postgres_db
@@ -93,7 +93,7 @@ services:
         aliases:
           - review_service
     environment:
-      PORT: 0.0.0.0:50054
+      PORT: 0.0.0.0:50051
       DB_USER: test_user
       DB_PASSWORD: test123
       DB_HOST: postgres_db
