@@ -22,13 +22,13 @@ func LoadConfig() (config Config, err error) {
 
 	if err != nil {
 		// production use
-		err = viper.BindEnv("PORT")
-		err = viper.BindEnv("DB_USER")
-		err = viper.BindEnv("DB_PASSWORD")
-		err = viper.BindEnv("DB_HOST")
-		err = viper.BindEnv("DB_PORT")
-		err = viper.BindEnv("DB_SCHEMA")
-		err = viper.Unmarshal(&config)
+		_ = viper.BindEnv("PORT")
+		_ = viper.BindEnv("DB_USER")
+		_ = viper.BindEnv("DB_PASSWORD")
+		_ = viper.BindEnv("DB_HOST")
+		_ = viper.BindEnv("DB_PORT")
+		_ = viper.BindEnv("DB_SCHEMA")
+		_ = viper.Unmarshal(&config)
 		return
 	}
 
