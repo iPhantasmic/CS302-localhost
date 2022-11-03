@@ -11,9 +11,9 @@ export default (root: any, params: any) => {
         //Current: Refund -> DeleteBooking -> SNS
         //Ideal  : UpdateBookingStatus -> Refund -> SNS
         //Justification: It's easier to rollback failed bookingstatus than to roll back
-        
+
         try {
-            
+
         } catch {
             reject("Refunding Failed")
             return
@@ -31,7 +31,7 @@ export default (root: any, params: any) => {
                     if (err) {
                         return reject(err)
                     }
-    
+
                     //Prepare message to send to SNS
                     //TODO: retrieve listing details from db
                     const test_data = {
@@ -51,12 +51,12 @@ export default (root: any, params: any) => {
                         },
                     }
                     email_client.publish_message_booking_confirmed(test_data)
-    
+
                     resolve(response)
                 }
             )
         })
-        
+
 
     })
 }

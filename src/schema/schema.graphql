@@ -328,3 +328,15 @@ input PublishBookingConfirmedRequest {
   serviceFee: Float
   totalPrice: Float
 }
+
+input DeleteBookingByIdRequest {
+    bookingId: String
+}
+
+input CancelBookingRequest {
+    bookingId: String
+}
+
+input GetBookingByIdRequest {
+    bookingId: String
+}
