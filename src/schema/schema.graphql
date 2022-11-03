@@ -31,7 +31,7 @@ type Query {
     GetListing(data: GetListingRequest): ListingResponse
     #Please help to review this and think of a better way
     GetAllListings(data: String!): ListingsResponse
-    
+    GetBookingById(data:GetBookingByIdRequest) : Booking
     GetAvailableListings(data: FilterLocationRoomRequest): ListingsResponse
     PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
 }
@@ -46,6 +46,8 @@ type Mutation {
     CreateListing(data: CreateListingRequest): ListingResponse
     DeleteListing(data: DeleteListingRequest): DeleteListingResponse
     UpdateListing(data: UpdateListingRequest): ListingResponse
+    DeleteBookingById(data: DeleteBookingByIdRequest): DeleteReturnMessage
+    CancelBooking(data: CancelBookingRequest): DeleteReturnMessage
 }
 
 #
@@ -97,6 +99,7 @@ input ValidateRequest {
 type ValidateResponse {
     userId: String
 }
+
 #
 
 input ProtobufTimestampInput {
@@ -251,4 +254,16 @@ input DeleteListingRequest {
 
 type DeleteListingResponse {
     message: String
+}
+
+input DeleteBookingByIdRequest {
+    bookingId: String
+}
+
+input CancelBookingRequest {
+    bookingId: String
+}
+
+input GetBookingByIdRequest {
+    bookingId: String
 }

@@ -16,6 +16,9 @@ import GetAvailableListings from "./getAvailableListings"
 import CreateListing from "./createListing"
 import UpdateListing from "./updateListing"
 import DeleteListing from "./deleteListing"
+import CancelBooking from "./cancelBooking"
+import DeleteBookingById from './deleteBookingById';
+import GetBookingById from "./getBookingById"
 const resolvers: any  = {
   Query: {
     GetUser,
@@ -26,6 +29,7 @@ const resolvers: any  = {
     GetAvailableListings,
     ValidateToken,
     PublishBookingConfirmed,
+    GetBookingById
   },
   Mutation: {
     RegisterUser,
@@ -36,7 +40,9 @@ const resolvers: any  = {
     DeleteReview,
     CreateListing,
     UpdateListing,
-    DeleteListing
+    DeleteListing,
+    DeleteBookingById,
+    CancelBooking
   }
 };
 
