@@ -28,7 +28,7 @@ func LoadConfig() (config Config, err error) {
 		_ = viper.BindEnv("DB_HOST")
 		_ = viper.BindEnv("DB_PORT")
 		_ = viper.BindEnv("DB_SCHEMA")
-		_ = viper.Unmarshal(&config)
+		err = viper.Unmarshal(&config)
 		return
 	}
 
