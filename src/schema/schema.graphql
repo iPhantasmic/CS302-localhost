@@ -144,55 +144,6 @@ type ReturnMessage {
   returnMessage: String
 }
 
-input GetUnavailableListingsRequest{
-  startDate: ProtobufTimestamp
-  endDate:ProtobufTimestamp
-}
-
-type ListingIdArray{
-  listingIds:[String]
-input ProtobufTimestamp {
-    nanos: Int
-    seconds: String
-}
-
-input PublishBookingConfirmedRequest {
-    receiverEmail: String
-    propertyName: String
-    receiptId: String
-    paymentDate: String
-    paymentTime: String
-    bookingStartDate: String
-    bookingEndDate: String
-    unitPrice: Float
-    numNights: Int
-    subTotal: Float
-    serviceFee: Float
-    totalPrice: Float
-}
-
-type BookingResponse {
-    bookings: [Booking]
-}
-
-type DeleteReturnMessage {
-    returnMessage: String
-}
-
-type Booking {
-    id: String
-    userId: String
-    listingId: String
-    hostId: String
-    startDate: String
-    endDate: String
-    paymentId: Int
-}
-
-input BookingUserId {
-    userId: Int
-}
-
 # ------------------------------------------------------------------------------
 
 # Reviews Service
@@ -303,14 +254,6 @@ input CancelBookingRequest {
   bookingId: String
 }
 
-input ViewListingsRequest {
-  country: String
-  city:String
-  rooms:Int
-  startDate:ProtobufTimestamp
-  endDate:ProtobufTimestamp
-}
-
 # ------------------------------------------------------------------------------
 
 # Email Service
@@ -327,16 +270,4 @@ input PublishBookingConfirmedRequest {
   subTotal: Float
   serviceFee: Float
   totalPrice: Float
-}
-
-input DeleteBookingByIdRequest {
-    bookingId: String
-}
-
-input CancelBookingRequest {
-    bookingId: String
-}
-
-input GetBookingByIdRequest {
-    bookingId: String
 }
