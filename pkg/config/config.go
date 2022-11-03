@@ -34,7 +34,7 @@ func LoadConfig() (config Config, err error) {
 		_ = viper.BindEnv("AWS_BUCKET_NAME")
 		_ = viper.BindEnv("AWS_ACCESS_KEY_ID")
 		_ = viper.BindEnv("AWS_SECRET_ACCESS_KEY")
-		_ = viper.Unmarshal(&config)
+		err = viper.Unmarshal(&config)
 		return
 	}
 
