@@ -161,21 +161,14 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
 
         unavailable_listings = list({str(tup[0]) for tup in unavailable_listings})
 
-        if len(unavailable_listings) > 0:
-            unavail_res_array = bookings_pb2.GetUnavailableListingsResponse()
-            for str_id in unavailable_listings:
-                unavail_res_array.listing_ids.extend([str_id])
-            context.set_code(grpc.StatusCode.OK)
-            context.set_details(
-                f"Found {len(unavailable_listings)} unavailable listings in the provided timeframe"
-            )
-            return unavail_res_array
-        else:
-            context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details(
-                f"All listings available between {request.start_date} and {request.end_date}"
-            )
-            return bookings_pb2.GetUnavailableListingsResponse()
+        unavail_res_array = bookings_pb2.GetUnavailableListingsResponse()
+        for str_id in unavailable_listings:
+            unavail_res_array.listing_ids.extend([str_id])
+        context.set_code(grpc.StatusCode.OK)
+        context.set_details(
+            f"Found {len(unavailable_listings)} unavailable listings in the provided timeframe"
+        )
+        return unavail_res_array
 
     def DeleteBookingByUserId(self, request, context):
         result = (
