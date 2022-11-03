@@ -7,7 +7,6 @@ export default (root:any, params: any) => {
       if (err) {
         return reject(err);
       }
-      console.log(response)
       resolve(response);
     });
   });
