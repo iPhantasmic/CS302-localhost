@@ -13,7 +13,7 @@ archive:
         - apt-get update
         - apt-get install zip -y
     script:
-        - zip -r $CI_PROJECT_NAME.zip lambda_function.py packages
+        - zip -r $CI_PROJECT_NAME.zip lambda_function.py packages ellipticcurve python_http_client
     artifacts:
         paths:
         - $CI_PROJECT_NAME.zip
