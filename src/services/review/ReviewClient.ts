@@ -16,4 +16,4 @@ const options:any = {
 //   interceptors: [interceptorAuth]
 };
 
-export default () => new proto.ReviewService('localhost:50052', credentials);
+export default () => new proto.ReviewService('localhost:50054', credentials);

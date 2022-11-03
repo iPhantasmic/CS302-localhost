@@ -28,4 +28,4 @@ const options:any = {
 //   interceptors: [interceptorAuth]
 };
 
-export default () => new proto.AuthService('localhost:50051', credentials);
+export default () => new proto.AuthService('localhost:50053', credentials);
