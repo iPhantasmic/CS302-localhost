@@ -30,7 +30,7 @@ type BookingServiceClient interface {
 	DeleteBookingByUserId(ctx context.Context, in *BookingByUserRequest, opts ...grpc.CallOption) (*ReturnMessage, error)
 	DeleteBookingByListingId(ctx context.Context, in *BookingByListingRequest, opts ...grpc.CallOption) (*ReturnMessage, error)
 	DeleteBookingById(ctx context.Context, in *BookingByIdRequest, opts ...grpc.CallOption) (*ReturnMessage, error)
-	GetAvailableListings(ctx context.Context, in *GetAvailableListingsRequest, opts ...grpc.CallOption) (*GetAvailableListingsResponse, error)
+	GetAvailableListings(ctx context.Context, in *GetUnavailableListingsRequest, opts ...grpc.CallOption) (*GetUnavailableListingsResponse, error)
 }
 
 type bookingServiceClient struct {
@@ -113,8 +113,8 @@ func (c *bookingServiceClient) DeleteBookingById(ctx context.Context, in *Bookin
 	return out, nil
 }
 
-func (c *bookingServiceClient) GetAvailableListings(ctx context.Context, in *GetAvailableListingsRequest, opts ...grpc.CallOption) (*GetAvailableListingsResponse, error) {
-	out := new(GetAvailableListingsResponse)
+func (c *bookingServiceClient) GetAvailableListings(ctx context.Context, in *GetUnavailableListingsRequest, opts ...grpc.CallOption) (*GetUnavailableListingsResponse, error) {
+	out := new(GetUnavailableListingsResponse)
 	err := c.cc.Invoke(ctx, "/bookings.BookingService/GetAvailableListings", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ type BookingServiceServer interface {
 	DeleteBookingByUserId(context.Context, *BookingByUserRequest) (*ReturnMessage, error)
 	DeleteBookingByListingId(context.Context, *BookingByListingRequest) (*ReturnMessage, error)
 	DeleteBookingById(context.Context, *BookingByIdRequest) (*ReturnMessage, error)
-	GetAvailableListings(context.Context, *GetAvailableListingsRequest) (*GetAvailableListingsResponse, error)
+	GetAvailableListings(context.Context, *GetUnavailableListingsRequest) (*GetUnavailableListingsResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -166,7 +166,7 @@ func (UnimplementedBookingServiceServer) DeleteBookingByListingId(context.Contex
 func (UnimplementedBookingServiceServer) DeleteBookingById(context.Context, *BookingByIdRequest) (*ReturnMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBookingById not implemented")
 }
-func (UnimplementedBookingServiceServer) GetAvailableListings(context.Context, *GetAvailableListingsRequest) (*GetAvailableListingsResponse, error) {
+func (UnimplementedBookingServiceServer) GetAvailableListings(context.Context, *GetUnavailableListingsRequest) (*GetUnavailableListingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableListings not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
@@ -327,7 +327,7 @@ func _BookingService_DeleteBookingById_Handler(srv interface{}, ctx context.Cont
 }
 
 func _BookingService_GetAvailableListings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAvailableListingsRequest)
+	in := new(GetUnavailableListingsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -339,7 +339,7 @@ func _BookingService_GetAvailableListings_Handler(srv interface{}, ctx context.C
 		FullMethod: "/bookings.BookingService/GetAvailableListings",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).GetAvailableListings(ctx, req.(*GetAvailableListingsRequest))
+		return srv.(BookingServiceServer).GetAvailableListings(ctx, req.(*GetUnavailableListingsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
