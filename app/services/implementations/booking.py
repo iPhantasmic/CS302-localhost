@@ -133,13 +133,14 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             context.set_details("Booking failed to be created")
             return bookings_pb2.Booking()
 
-    def GetAvailableListings(self, request, context):
+    def GetUnavailableListings(self, request, context):
         request_start_datetime = datetime.fromtimestamp(int(request.start_date.seconds))
         request_end_datetime = datetime.fromtimestamp(int(request.end_date.seconds))
 
+        # Retrieve unavailable listings during timeframe, and pass it to listings service via the orchestrator
+        # Listings service filters listings that are not in the unavailable list to present to user
         unavailable_listings = (
             session.query(models.Booking.listing_id)
-            .filter(models.Booking.listing_id.in_(request.listing_ids))
             .filter(
                 or_(
                     models.Booking.start_date.between(
@@ -158,27 +159,23 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             .all()
         )
 
-        unavailable_listings_set = {str(tup[0]) for tup in unavailable_listings}
+        unavailable_listings = list({str(tup[0]) for tup in unavailable_listings})
 
-        available_listings = list(
-            set(request.listing_ids).difference(unavailable_listings_set)
-        )
-
-        if len(available_listings) > 0:
-            res_array = bookings_pb2.GetAvailableListingsResponse()
-            for str_id in available_listings:
-                res_array.listing_ids.extend([str_id])
+        if len(unavailable_listings) > 0:
+            unavail_res_array = bookings_pb2.GetUnavailableListingsResponse()
+            for str_id in unavailable_listings:
+                unavail_res_array.listing_ids.extend([str_id])
             context.set_code(grpc.StatusCode.OK)
             context.set_details(
-                f"Found {len(available_listings)} available listings in the provided timeframe"
+                f"Found {len(unavailable_listings)} unavailable listings in the provided timeframe"
             )
-            return res_array
+            return unavail_res_array
         else:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details(
-                f"No available listing between {request.start_date} and {request.end_date}"
+                f"All listings available between {request.start_date} and {request.end_date}"
             )
-            return bookings_pb2.GetAvailableListingsResponse()
+            return bookings_pb2.GetUnavailableListingsResponse()
 
     def DeleteBookingByUserId(self, request, context):
         result = (
