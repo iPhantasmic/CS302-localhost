@@ -19,7 +19,7 @@ service BookingService {
       returns (ReturnMessage){}
   rpc DeleteBookingById(BookingByIdRequest)
       returns (ReturnMessage){}
-  rpc GetAvailableListings (GetUnavailableListingsRequest)
+  rpc GetUnavailableListings (GetUnavailableListingsRequest)
       returns (GetUnavailableListingsResponse){}
 }
 
