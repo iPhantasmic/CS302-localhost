@@ -99,18 +99,30 @@ func (s *ListingServer) GetAvailableListings(ctx context.Context, req *listings_
 	if req.GetCity() == "" && req.GetRooms() == 0 {
 		// filter by country
 		if result := s.H.DB.Where("uuid NOT IN ? AND country LIKE ?", unavailableListings, countryQuery).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+			return &listings_proto.Listings{
+				Listings: []*listings_proto.Listing{},
+			}, nil
 		}
 	} else if req.GetCity() == "" && req.GetRooms() > 0 {
 		// filter by country and rooms
 		if result := s.H.DB.Where("uuid NOT IN ? AND country LIKE ? AND rooms = ?", unavailableListings, countryQuery, strconv.FormatUint(uint64(req.GetRooms()), 10)).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+			return &listings_proto.Listings{
+				Listings: []*listings_proto.Listing{},
+			}, nil
 		}
 	} else if req.GetRooms() < 1 && req.GetCity() != "" {
 		// filter by country and city
 		if result := s.H.DB.Where("uuid NOT IN ? AND country LIKE ? AND city LIKE ?", unavailableListings, countryQuery, cityQuery).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+			return &listings_proto.Listings{
+				Listings: []*listings_proto.Listing{},
+			}, nil
 		}
 	} else {
 		// filter by country, rooms and city
 		if result := s.H.DB.Where("uuid NOT IN ? AND country LIKE ? AND city LIKE ? AND rooms = ?", unavailableListings, countryQuery, cityQuery, strconv.FormatUint(uint64(req.GetRooms()), 10)).Find(&listingsDb); result.Error != nil || result.RowsAffected == 0 {
+			return &listings_proto.Listings{
+				Listings: []*listings_proto.Listing{},
+			}, nil
 		}
 	}
 
