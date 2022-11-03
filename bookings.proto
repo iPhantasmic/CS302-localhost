@@ -19,8 +19,8 @@ service BookingService {
       returns (ReturnMessage){}
   rpc DeleteBookingById(BookingByIdRequest)
       returns (ReturnMessage){}
-  rpc GetAvailableListings (GetAvailableListingsRequest)
-      returns (GetAvailableListingsResponse){}
+  rpc GetAvailableListings (GetUnavailableListingsRequest)
+      returns (GetUnavailableListingsResponse){}
 }
 
 message Booking {
@@ -33,12 +33,12 @@ message Booking {
   string payment_id = 7;
 }
 
-message GetAvailableListingsRequest {
+message GetUnavailableListingsRequest {
   google.protobuf.Timestamp start_date = 2;
   google.protobuf.Timestamp end_date = 3;
 }
 
-message GetAvailableListingsResponse {
+message GetUnavailableListingsResponse {
   repeated string listing_ids = 1;
 }
 
