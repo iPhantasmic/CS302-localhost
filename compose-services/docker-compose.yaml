@@ -14,7 +14,7 @@ services:
       - POSTGRES_PASSWORD=test123
     ports:
       - "5432:5432"
-  
+
   pgadmin:
     image: dpage/pgadmin4:6
     restart: always
@@ -23,7 +23,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: cs302_password
     ports:
       - "5431:80"
-  
+
   listings_service:
     image: listings
     depends_on:
@@ -33,7 +33,7 @@ services:
         aliases:
           - listing_service
     environment:
-      PORT: 0.0.0.0:50051
+      PORT: 0.0.0.0:50052
       DB_USER: test_user
       DB_PASSWORD: test123
       DB_HOST: postgres_db
@@ -74,7 +74,7 @@ services:
         aliases:
           - auth_service
     environment:
-      PORT: 0.0.0.0:50051
+      PORT: 0.0.0.0:50053
       DB_USER: test_user
       DB_PASSWORD: test123
       DB_HOST: postgres_db
@@ -93,7 +93,7 @@ services:
         aliases:
           - review_service
     environment:
-      PORT: 0.0.0.0:50051
+      PORT: 0.0.0.0:50054
       DB_USER: test_user
       DB_PASSWORD: test123
       DB_HOST: postgres_db
