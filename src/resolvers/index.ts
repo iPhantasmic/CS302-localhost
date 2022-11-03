@@ -5,7 +5,7 @@ import UpdateUser from './updateUser';
 import DeleteUser from './deleteUser';
 import ValidateToken from './validateToken';
 import PublishBookingConfirmed from "./emailBookingConfirmed"
-import GetBookingByUser from './getBooking';
+import GetBookingByUser from './getBookingByUser';
 import MakeBooking from './makeBooking';
 import GetReview from './getReview';
 import CreateReview from "./createReview"

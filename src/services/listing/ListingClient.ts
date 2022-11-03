@@ -16,4 +16,4 @@ const options:any = {
 //   interceptors: [interceptorAuth]
 };
 
-export default () => new proto.ListingService('localhost:50053', credentials);
+export default () => new proto.ListingService('localhost:50051', credentials);
