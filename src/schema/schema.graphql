@@ -144,6 +144,15 @@ type ReturnMessage {
   returnMessage: String
 }
 
+input GetUnavailableListingsRequest{
+  startDate: ProtobufTimestamp
+  endDate:ProtobufTimestamp
+}
+
+type ListingIdArray{
+  listingIds:[String]
+}
+
 # ------------------------------------------------------------------------------
 
 # Reviews Service
@@ -252,6 +261,14 @@ input MakeBookingRequest {
 
 input CancelBookingRequest {
   bookingId: String
+}
+
+input ViewListingsRequest {
+  country: String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestamp
+  endDate:ProtobufTimestamp
 }
 
 # ------------------------------------------------------------------------------
