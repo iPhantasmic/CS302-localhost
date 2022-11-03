@@ -25,16 +25,16 @@ func LoadConfig() (config Config, err error) {
 
 	if err != nil {
 		// production use
-		err = viper.BindEnv("PORT")
-		err = viper.BindEnv("DB_USER")
-		err = viper.BindEnv("DB_PASSWORD")
-		err = viper.BindEnv("DB_HOST")
-		err = viper.BindEnv("DB_PORT")
-		err = viper.BindEnv("DB_SCHEMA")
-		err = viper.BindEnv("AWS_BUCKET_NAME")
-		err = viper.BindEnv("AWS_ACCESS_KEY_ID")
-		err = viper.BindEnv("AWS_SECRET_ACCESS_KEY")
-		err = viper.Unmarshal(&config)
+		_ = viper.BindEnv("PORT")
+		_ = viper.BindEnv("DB_USER")
+		_ = viper.BindEnv("DB_PASSWORD")
+		_ = viper.BindEnv("DB_HOST")
+		_ = viper.BindEnv("DB_PORT")
+		_ = viper.BindEnv("DB_SCHEMA")
+		_ = viper.BindEnv("AWS_BUCKET_NAME")
+		_ = viper.BindEnv("AWS_ACCESS_KEY_ID")
+		_ = viper.BindEnv("AWS_SECRET_ACCESS_KEY")
+		_ = viper.Unmarshal(&config)
 		return
 	}
 

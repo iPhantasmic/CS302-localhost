@@ -272,7 +272,7 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 	uploader := s3manager.NewUploader(s3Session)
 
 	// upload new images
-	var tmp [3]string
+	tmp := make([]string, 3)
 	for i, image := range req.Images {
 		input := &s3manager.UploadInput{
 			Bucket:      aws.String("cs302-localhost"),                                        // bucket's name
@@ -287,13 +287,9 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 		}
 	}
 
-	var urls [3]string
-	for i, s3Url := range listing.Images {
-		urls[i] = s3Url
-	}
-	for i, s3Url := range tmp {
-		listing.Images[i] = s3Url
-	}
+	urls := make([]string, 3)
+	copy(urls, listing.Images)
+	copy(listing.Images, tmp)
 
 	result := s.H.DB.Save(&listing)
 	if result.Error != nil {
