@@ -45,6 +45,8 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
 
         if bookings:
             for booking in bookings:
+                start_date = getTimeStamp_fromStr(str(booking.start_date), from_db=True)
+                end_date = getTimeStamp_fromStr(str(booking.end_date), from_db=True)
                 booking_array.bookings.extend(
                     [
                         bookings_pb2.Booking(
@@ -52,10 +54,8 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             user_id=booking.user_id,
                             listing_id=booking.listing_id,
                             host_id=booking.host_id,
-                            start_date=booking.start_date.strftime(
-                                "%m/%d/%Y, %H:%M:%S"
-                            ),
-                            end_date=booking.end_date.strftime("%m/%d/%Y, %H:%M:%S"),
+                            start_date=start_date,
+                            end_date=end_date,
                             payment_id=booking.payment_id,
                         )
                     ]
@@ -80,10 +80,10 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 booking_array.extend(
                     [
                         bookings_pb2.Booking(
-                            id=booking.id,
-                            user_id=booking.user_id,
-                            listing_id=booking.listing_id,
-                            host_id=booking.host_id,
+                            id=str(booking.id),
+                            user_id=str(booking.user_id),
+                            listing_id=str(booking.listing_id),
+                            host_id=str(booking.host_id),
                             start_date=booking.start_date.strftime(
                                 "%m/%d/%Y, %H:%M:%S"
                             ),
@@ -222,13 +222,11 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             )
 
     def DeleteBookingById(self, request, context):
-        print(request)
         result = (
             session.query(models.Booking)
             .filter(models.Booking.id == request.booking_id)
             .all()
         )
-        print(result)
         try:
             if result:
                 for booking in result:
@@ -277,10 +275,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking = (
             session.query(models.Booking)
             .filter(models.Booking.id == request.booking_id)
-            .all()
+            .first()
         )
         if booking:
-            booking = booking[0]
             start_date = getTimeStamp_fromStr(str(booking.start_date), from_db=True)
             end_date = getTimeStamp_fromStr(str(booking.end_date), from_db=True)
             booking_returned = bookings_pb2.Booking(
@@ -292,8 +289,10 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 end_date=end_date,
                 payment_id=str(booking.payment_id),
             )
-            print(booking_returned)
             context.set_code(grpc.StatusCode.OK)
             return booking_returned
-        context.set_code(grpc.StatusCode.INTERNAL)
+        context.set_code(grpc.StatusCode.NOT_FOUND)
+        context.set_details(
+                f"No booking found for id {request.booking_id}"
+        )
         return bookings_pb2.Booking()
