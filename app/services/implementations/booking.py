@@ -138,7 +138,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         request_end_datetime = datetime.fromtimestamp(int(request.end_date.seconds))
 
         # Retrieve unavailable listings during timeframe, and pass it to listings service via the orchestrator
-        # Listings service filters listings that are not in the unavailable list to present to user
+        # Listings service filters listings that are not in the unavailable list to present to users
         unavailable_listings = (
             session.query(models.Booking.listing_id)
             .filter(
