@@ -11,6 +11,7 @@ type Query {
   #
   GetBookingById(data:GetBookingRequest) : Booking
   GetBookingByUser(data: GetBookingsByUserRequest): Bookings
+  GetUnavailableListings(data:GetUnavailableListingsRequest) : ListingIdArray
   #
   GetReview(data: GetReviewRequest): Review
   #
@@ -19,6 +20,8 @@ type Query {
   GetAvailableListings(data: FilterLocationRoomRequest): Listings
   #
   PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+  #
+  ViewListings(data:ViewListingsRequest):Listings
 }
 
 type Mutation {
@@ -141,6 +144,15 @@ type ReturnMessage {
   returnMessage: String
 }
 
+input GetUnavailableListingsRequest{
+  startDate: ProtobufTimestamp
+  endDate:ProtobufTimestamp
+}
+
+type ListingIdArray{
+  listingIds:[String]
+}
+
 # ------------------------------------------------------------------------------
 
 # Reviews Service
@@ -249,6 +261,14 @@ input MakeBookingRequest {
 
 input CancelBookingRequest {
   bookingId: String
+}
+
+input ViewListingsRequest {
+  country: String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestamp
+  endDate:ProtobufTimestamp
 }
 
 # ------------------------------------------------------------------------------
