@@ -10,6 +10,7 @@ import resolvers from './resolvers';
 // your data.
 const typeDefs = fs.readFileSync(path.resolve('./src/schema/schema.graphql')).toString('utf-8');
 
+const PORT = process.env.PORT || 4000;
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
@@ -22,7 +23,7 @@ const server = new ApolloServer({
   //  2. installs your ApolloServer instance as middleware
   //  3. prepares your app to handle incoming requests
   const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
+    listen: { port: Number(process.env.PORT) },
   });
   
   console.log(`🚀  Server ready at: ${url}`);
