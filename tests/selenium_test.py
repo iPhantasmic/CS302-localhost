@@ -16,6 +16,6 @@ chrome_driver.get('https://cs302-ui.vercel.app/')
 
 title = "Localhost - Rent safely1212"
 assert title != chrome_driver.title
-print("Passed!")
+print("Passed!1")
 chrome_driver.close()
 chrome_driver.quit()
