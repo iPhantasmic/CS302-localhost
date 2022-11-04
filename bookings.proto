@@ -30,7 +30,6 @@ message Booking {
   string host_id = 4;
   google.protobuf.Timestamp start_date = 5;
   google.protobuf.Timestamp end_date = 6;
-  string payment_id = 7;
 }
 
 message GetUnavailableListingsRequest {
@@ -48,7 +47,6 @@ message CreateBookingRequest {
   string host_id = 3;
   google.protobuf.Timestamp start_date = 4;
   google.protobuf.Timestamp end_date = 5;
-  string payment_id = 6;
 }
 
 message GetBookingArrayResponse{
@@ -74,7 +72,6 @@ message UpdateBookingRequest{
   string host_id = 4;
   google.protobuf.Timestamp start_date = 5;
   google.protobuf.Timestamp end_date = 6;
-  string payment_id = 7;
 }
 
 message ReturnMessage{
