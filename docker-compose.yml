@@ -3,10 +3,10 @@ services:
   api-gateway:
     image: api-gateway
     environment:
-      PORT: 4000
+      PORT: 6969
       AUTH_SVC_URL: 18.139.2.227:50051
 #      BOOKINGS_SVC_URL:
 #      LISTINGS_SVC_URL:
 #      REVIEWS_SVC_URL:
     ports:
-      - "6969:4000"
+      - "6969:6969"

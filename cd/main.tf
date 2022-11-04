@@ -17,8 +17,8 @@ resource "aws_ecs_task_definition" "api-gateway" {
       memory = 512
       essential = true
       portMappings = [{
-        containerPort = var.PORT
-        hostPort = var.PORT
+        containerPort = 6969
+        hostPort = 6969
       }]
       environment = [
         { name = "PORT", value = var.PORT },
