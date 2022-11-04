@@ -94,6 +94,7 @@ const Listing: NextPage = (props: any) => {
     },
   ]);
 
+  //TODO: Change the endpoint for fetching available listings to GetAvailableListings
   useEffect(() => {
     var data = { listingId: router.query.id };
     gqlclient

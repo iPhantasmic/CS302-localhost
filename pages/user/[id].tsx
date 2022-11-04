@@ -123,8 +123,10 @@ const Home: NextPage = () => {
                 </VStack>
               </Box>
             </Container>
+            {/* TODO: Add view booking method */}
             <Container></Container>
             <Container>
+              Box
               <Box my="20">Hello</Box>
             </Container>
           </HStack>

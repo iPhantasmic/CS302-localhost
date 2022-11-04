@@ -115,6 +115,7 @@ const Signup: NextPage = (query_data) => {
                 Join Localhost
               </Heading>
             </Box>
+            {/* TODO: Amend user details required for signup */}
             <Box>
               <FormControl isRequired isInvalid={isError}>
                 <Input
@@ -128,7 +129,7 @@ const Signup: NextPage = (query_data) => {
                 />
                 {isError ? (
                   <FormErrorMessage>
-                    Email address already in use. Please sign in.
+                    An error occured. Please try again later.
                   </FormErrorMessage>
                 ) : (
                   <></>

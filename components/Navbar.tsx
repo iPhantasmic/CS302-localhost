@@ -156,23 +156,20 @@ export function Navbar(props: any) {
                   ) : (
                     <>
                       <Menu zIndex="9">
-                        <MenuButton>
-                          <IconButton
-                            variant="ghost"
-                            borderRadius="full"
-                            aria-label="lang"
-                            p={3}
-                            boxShadow="sm"
-                          >
-                            <WrapItem>
-                              <HamburgerIcon alignSelf="center" mr={3} />
-                              <Avatar
-                                size="sm"
-                                name="Kent Dodds"
-                                src="https://bit.ly/kent-c-dodds"
-                              />{" "}
-                            </WrapItem>
-                          </IconButton>
+                        <MenuButton
+                          borderRadius="full"
+                          boxShadow="sm"
+                          px={3}
+                          py={1}
+                        >
+                          <WrapItem>
+                            <HamburgerIcon alignSelf="center" mr={3} />
+                            <Avatar
+                              size="sm"
+                              name="Kent Dodds"
+                              src="https://bit.ly/kent-c-dodds"
+                            />{" "}
+                          </WrapItem>
                         </MenuButton>
                         <MenuList zIndex="9">
                           <MenuItem
