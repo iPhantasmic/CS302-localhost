@@ -56,7 +56,6 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             host_id=booking.host_id,
                             start_date=start_date,
                             end_date=end_date,
-                            payment_id=booking.payment_id,
                         )
                     ]
                 )
@@ -88,7 +87,6 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                                 "%m/%d/%Y, %H:%M:%S"
                             ),
                             end_date=booking.end_date.strftime("%m/%d/%Y, %H:%M:%S"),
-                            payment_id=booking.payment_id,
                         )
                     ]
                 )
@@ -280,7 +278,6 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 host_id=str(booking.host_id),
                 start_date=start_date,
                 end_date=end_date,
-                payment_id=str(booking.payment_id),
             )
             context.set_code(grpc.StatusCode.OK)
             return booking_returned

@@ -19,7 +19,6 @@ class Booking(db.Model):
         host_id (UUID String): foreign key for host that listed the corresponding listing
         start_date (DateTime): start date of the booking
         end_date (DateTime): end date of the booking
-        payment_id (UUID String): foreign key for payment that this booking is attached to
     """
 
     __tablename__ = "bookings"
@@ -30,17 +29,15 @@ class Booking(db.Model):
     host_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
     start_date = db.Column(DateTime)
     end_date = db.Column(DateTime)
-    payment_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
 
     def __init__(
-        self, user_id, listing_id, host_id, start_date, end_date, payment_id
+        self, user_id, listing_id, host_id, start_date, end_date
     ) -> None:
         self.user_id = user_id
         self.listing_id = listing_id
         self.host_id = host_id
         self.start_date = start_date
         self.end_date = end_date
-        self.payment_id = payment_id
 
     def __repr__(self):
         return f"Booking(id={self.id}, start_date={self.start_date}, end_date={self.end_date}"

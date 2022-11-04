@@ -27,7 +27,6 @@ def upgrade():
         sa.Column("host_id", UUID(as_uuid=True)),
         sa.Column("start_date", sa.DateTime),
         sa.Column("end_date", sa.DateTime),
-        sa.Column("payment_id", UUID(as_uuid=True)),
     )
 
 
