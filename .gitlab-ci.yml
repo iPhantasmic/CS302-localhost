@@ -9,6 +9,8 @@ variables:
 
 stages:
   - build
+  - prep-deploy
+  - deploy
 
 publish:
   stage: build
