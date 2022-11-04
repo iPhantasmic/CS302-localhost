@@ -63,7 +63,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             host_id=booking.host_id,
                             start_date=start_date,
                             end_date=end_date,
-                            status=booking.status
+                            status=bookings_pb2.Status.STATUS_ACTIVE,
                         )
                     ]
                 )
@@ -82,20 +82,22 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             .all()
         )
 
+        print(bookings)
+
         if bookings:
             for booking in bookings:
                 start_date = getTimeStamp_fromStr(str(booking.start_date), from_db=True)
                 end_date = getTimeStamp_fromStr(str(booking.end_date), from_db=True)
-                booking_array.extend(
+                booking_array.bookings.extend(
                     [
                         bookings_pb2.Booking(
                             id=str(booking.id),
                             user_id=str(booking.user_id),
                             listing_id=str(booking.listing_id),
                             host_id=str(booking.host_id),
+                            status=bookings_pb2.Status.STATUS_ACTIVE,
                             start_date=start_date,
                             end_date=end_date,
-                            status=booking.status
                         )
                     ]
                 )
