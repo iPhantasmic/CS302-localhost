@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express from 'express';
 import app from './Server';
 import logger from './shared/Logger';
 import Stripe from 'stripe';
@@ -14,6 +13,7 @@ const AppDataSource = new DataSource({
   password: process.env.TYPEORM_PASSWORD,
   database: process.env.TYPEORM_DATABASE,
   ssl: false,
+  synchronize: true,
   entities: [__dirname + '/api/models/**/*.{js,ts}'],
 });
 

@@ -8,7 +8,7 @@ import { stripe } from '../..';
 const router = Router();
 
 /******************************************************************************
- *          Create Account for a user on Payments Service - "POST /account"
+ *          Create Account for a user on Payments Service - "POST /api/accounts/"
  *          Request body includes
  *          {
  *              "email": "jenny.rosen@gmail.com",
@@ -39,7 +39,7 @@ router.post('/', async (req: Request, res: Response) => {
 }); 
 
 /******************************************************************************
- *          Delete Account for a user by user_id- "DELETE /account"
+ *          Delete Account for a user by user_id- "DELETE /api/accounts/"
  *          Request body includes
  *          {
  *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
@@ -58,7 +58,7 @@ router.post('/', async (req: Request, res: Response) => {
 }); 
 
 /******************************************************************************
- *                      Get Account by ID - "GET /transactions/:id"
+ *                      Get Account by ID - "GET /api/accounts/:id"
  ******************************************************************************/
 
 router.get('/:id', async (req: Request, res: Response) => {
@@ -66,7 +66,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   const account = await AppDataSource.createQueryBuilder()
     .select('account')
     .from(Account, 'account')
-    .where('title.id = :id', { id: id })
+    .where('account.id = :id', { id: id })
     .getOne();
   if (!account) {
     res.status(404);
@@ -77,7 +77,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 /******************************************************************************
- *                      Get all accounts - "GET /accounts/"
+ *                      Get all accounts - "GET /api/accounts/"
  ******************************************************************************/
 
  router.get('/', async (req: Request, res: Response) => {

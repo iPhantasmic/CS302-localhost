@@ -7,7 +7,7 @@ export class Account {
   @PrimaryColumn()
   public id: string;
 
-  @OneToMany(type => Transaction,  transaction => transaction.Account) 
+  @OneToMany(type => Transaction,  transaction => transaction.account) 
   public transactions: Transaction[];
 
   @IsNotEmpty()

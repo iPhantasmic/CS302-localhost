@@ -7,18 +7,18 @@ export class Transaction {
   @PrimaryColumn()
   public id: string;
 
-  @IsNotEmpty()
   @Column()
-  public name: string;
+  public chargeid: string;
 
   @IsNotEmpty()
   @Column()
-  public age: number;
+  public bookingid: string;
 
   @ManyToOne(type => Account, account => account.transactions) 
-  public Account: Account;
+  public account: Account;
 
   public toString(): string {
-    return `${this.name}`;
+    return `Account Associated ${this.account}, Booking_id associated: ${this.bookingid}, \
+            Stripe Transaction id: ${this.id}`;
   }
 }

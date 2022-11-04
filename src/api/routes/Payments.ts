@@ -4,93 +4,102 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { AppDataSource } from '../..';
 import { Account } from '../models/Account';
 import { stripe } from '../..';
+import { Transaction } from '../models/Transaction';
 
 const router = Router();
 
 /******************************************************************************
- *          Create Payment from a user on Payments Service - "POST /payments"
+ *          Create Payment from a user on Payments Service - "POST /api/payments/create"
  *          Request body includes
  *          {   
  *              "amount": 300,
- *              "user_id": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
+ *              "bookingId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
+ *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc"
  *          }
  ******************************************************************************/
-router.post('/', async (req: Request, res: Response) => {
-    const account = await stripe.accounts.create({
-        type: 'express',
-        country: 'SG',
-        email: req.body.email,
-        capabilities: {
-          card_payments: {requested: true},
-          transfers: {requested: true},
-        },
-        business_type: 'individual',
-        business_profile: {
-          url: "https://cs302-ui.vercel.app/",
-        }
-      })
-    const new_account = new Account()
-    new_account.id = account.id
-    new_account.email = account.email
-    new_account.userid = req.body.userId
-    const accountRepository = await AppDataSource.getRepository(Account)
-    await accountRepository.save(new_account)
-    return res.status(OK).json(new_account);
+router.post('/create', async (req: Request, res: Response) => {
+    var paymentIntent = await stripe.paymentIntents.create({
+        amount: req.body.amount,
+        currency: 'sgd',
+        payment_method_types: ['card'],
+    });
+
+    paymentIntent = await stripe.paymentIntents.confirm(
+        paymentIntent.id,
+        {payment_method: 'pm_card_visa'}
+    );
+
+    const account = await AppDataSource.createQueryBuilder()
+    .select('account')
+    .from(Account, 'account')
+    .where('account.id = :id', { id: req.body.userId })
+    .getOne();
+
+    const transaction = new Transaction()
+    transaction.id = paymentIntent.id
+    transaction.bookingid = req.body.bookingId
+    transaction.chargeid = paymentIntent.charges.data[0].id
+    transaction.account = account
+    const transactionRepository = await AppDataSource.getRepository(Transaction)
+    await transactionRepository.save(transaction)
+    return res.status(OK).json(transaction);
 }); 
 
 /******************************************************************************
- *          Delete Account for a user by user_id- "DELETE /account"
+ *          Refund Payment from a user on Payments Service - "POST /api/payments/refund"
  *          Request body includes
- *          {
- *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
+ *          {   
+ *              "bookingId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
  *          }
  ******************************************************************************/
- router.delete('/', async (req: Request, res: Response) => {
-  const accountRepository = AppDataSource.getRepository(Account)
-  const toDelete = await accountRepository.findOneBy({
-    userid: req.body.userId
-  })
-  await stripe.accounts.del(
-    toDelete.id
-  );
-  await accountRepository.remove(toDelete)
-  return res.status(OK).json(toDelete);
+ router.post('/refund', async (req: Request, res: Response) => {
+    const transaction = await AppDataSource.createQueryBuilder()
+    .select('transaction')
+    .from(Transaction, 'transaction')
+    .where('transaction.bookingid = :id', { id: req.body.bookingId })
+    .getOne();
+    const refund = await stripe.refunds.create({
+        charge: transaction.chargeid,
+      });
+
+    return res.status(OK).json({refund});
 }); 
 
+
 /******************************************************************************
- *                      Get Account by ID - "GET /transactions/:id"
+ *                      Get Payment by ID - "GET /api/payments/:id"
  ******************************************************************************/
 
 router.get('/:id', async (req: Request, res: Response) => {
   const { id } = req.params as ParamsDictionary;
-  const account = await AppDataSource.createQueryBuilder()
-    .select('account')
-    .from(Account, 'account')
-    .where('title.id = :id', { id: id })
+  const transaction = await AppDataSource.createQueryBuilder()
+    .select('transaction')
+    .from(Transaction, 'transaction')
+    .where('transaction.id = :id', { id: id })
     .getOne();
-  if (!account) {
+  if (!transaction) {
     res.status(404);
     res.end();
     return;
   }
-  return res.status(OK).json({ account });
+  return res.status(OK).json({ transaction });
 });
 
 /******************************************************************************
- *                      Get all payments - "GET /payments/"
+ *                      Get all payments - "GET /api/payments/"
  ******************************************************************************/
 
  router.get('/', async (req: Request, res: Response) => {
-  const accounts = await AppDataSource.createQueryBuilder()
-    .select('account')
-    .from(Account, 'account')
+  const transactions = await AppDataSource.createQueryBuilder()
+    .select('transaction')
+    .from(Transaction, 'transaction')
     .getMany();
-  if (!accounts) {
+  if (!transactions) {
     res.status(404);
     res.end();
     return;
   }
-  return res.status(OK).json({ accounts });
+  return res.status(OK).json({ transactions });
 });
 /******************************************************************************
  *                                     Export
