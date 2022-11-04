@@ -1,5 +1,5 @@
 """Module with booking model."""
-from sqlalchemy import DateTime, func, inspect
+from sqlalchemy import DateTime, func, inspect, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from app.services.implementations.database import connection as db
 import uuid
@@ -19,6 +19,7 @@ class Booking(db.Model):
         host_id (UUID String): foreign key for host that listed the corresponding listing
         start_date (DateTime): start date of the booking
         end_date (DateTime): end date of the booking
+        status (Integer): mapped to corresponding statuses on proto file
     """
 
     __tablename__ = "bookings"
@@ -29,18 +30,20 @@ class Booking(db.Model):
     host_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
     start_date = db.Column(DateTime)
     end_date = db.Column(DateTime)
+    status = db.Column(Integer)
 
     def __init__(
-        self, user_id, listing_id, host_id, start_date, end_date
+        self, user_id, listing_id, host_id, start_date, end_date, status,
     ) -> None:
         self.user_id = user_id
         self.listing_id = listing_id
         self.host_id = host_id
         self.start_date = start_date
         self.end_date = end_date
+        self.status = status
 
     def __repr__(self):
-        return f"Booking(id={self.id}, start_date={self.start_date}, end_date={self.end_date}"
+        return f"Booking(id={self.id}, booking status: {self.status}, start_date={self.start_date}, end_date={self.end_date}"
 
     def to_dict(self):
         """Returns model as dict of properties.

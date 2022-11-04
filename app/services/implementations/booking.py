@@ -13,6 +13,13 @@ log = logging.getLogger(__name__)
 
 session = Session(engine)
 
+statuses = {
+    "STATUS_UNSPECIFIED": 0,
+    "STATUS_ACTIVE": 1,
+    "STATUS_COMPLETED":2,
+    "STATUS_CANCELLED": 3
+}
+
 
 def getTimeStamp_fromStr(str_time: str, from_db: bool = False) -> Timestamp:
     if from_db:
@@ -56,6 +63,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             host_id=booking.host_id,
                             start_date=start_date,
                             end_date=end_date,
+                            status=booking.status
                         )
                     ]
                 )
@@ -76,6 +84,8 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
 
         if bookings:
             for booking in bookings:
+                start_date = getTimeStamp_fromStr(str(booking.start_date), from_db=True)
+                end_date = getTimeStamp_fromStr(str(booking.end_date), from_db=True)
                 booking_array.extend(
                     [
                         bookings_pb2.Booking(
@@ -83,10 +93,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             user_id=str(booking.user_id),
                             listing_id=str(booking.listing_id),
                             host_id=str(booking.host_id),
-                            start_date=booking.start_date.strftime(
-                                "%m/%d/%Y, %H:%M:%S"
-                            ),
-                            end_date=booking.end_date.strftime("%m/%d/%Y, %H:%M:%S"),
+                            start_date=start_date,
+                            end_date=end_date,
+                            status=booking.status
                         )
                     ]
                 )
@@ -109,6 +118,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_request = json_format.MessageToDict(
             request, preserving_proto_field_name=True
         )
+        booking_request["status"] = statuses["STATUS_ACTIVE"]
         new_booking = models.Booking(**booking_request)
         try:
             session.add(new_booking)
@@ -278,6 +288,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 host_id=str(booking.host_id),
                 start_date=start_date,
                 end_date=end_date,
+                status=booking.status
             )
             context.set_code(grpc.StatusCode.OK)
             return booking_returned
