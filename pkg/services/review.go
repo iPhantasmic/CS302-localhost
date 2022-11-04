@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofrs/uuid"
+	log "github.com/sirupsen/logrus"
 	"gitlab.com/cs302-2022/g2-team3/services/reviews/pkg/db"
 	"gitlab.com/cs302-2022/g2-team3/services/reviews/pkg/models"
 	"gitlab.com/cs302-2022/g2-team3/services/reviews/pkg/pb/reviews"
@@ -25,6 +25,9 @@ func (s *ReviewServer) GetReview(ctx context.Context, req *reviews_proto.GetRevi
 	reqUuid := uuid.FromStringOrNil(req.GetReviewId())
 
 	if result := s.H.DB.Where(&models.Review{UUID: reqUuid}).First(&review); reqUuid == uuid.Nil || result.Error != nil {
+		log.WithFields(log.Fields{
+			"reviewId": review.UUID.String(),
+		}).Info("Review not found")
 		return nil, status.Error(codes.NotFound, "Review not found")
 	}
 
@@ -46,7 +49,6 @@ func (s *ReviewServer) CreateReview(ctx context.Context, req *reviews_proto.Crea
 		return nil, status.Error(codes.AlreadyExists, "Review already exists")
 	}
 
-	// TODO: do we need to check if user and listing exists or can composition be done for this?
 	review.UserId = req.UserId
 	review.ListingId = req.ListingId
 	review.Rating = req.Rating
@@ -54,14 +56,19 @@ func (s *ReviewServer) CreateReview(ctx context.Context, req *reviews_proto.Crea
 
 	err := validate.Struct(review)
 	if err != nil {
-		fmt.Println(err)
+		log.Info("CreateReview invalid review")
 		return nil, status.Error(codes.InvalidArgument, "Invalid review")
 	}
 
 	result := s.H.DB.Create(&review)
 	if result.Error != nil {
+		log.Error("Review could not be created")
 		return nil, status.Error(codes.Internal, "Review could not be created")
 	}
+
+	log.WithFields(log.Fields{
+		"reviewId": review.UUID.String(),
+	}).Info("Review updated")
 
 	return &reviews_proto.CreateReviewResponse{
 		ReviewId:  review.UUID.String(),
@@ -78,10 +85,17 @@ func (s *ReviewServer) DeleteReview(ctx context.Context, req *reviews_proto.Dele
 	reqUuid := uuid.FromStringOrNil(req.GetReviewId())
 
 	if result := s.H.DB.Where(&models.Review{UUID: reqUuid}).First(&review); reqUuid == uuid.Nil || result.Error != nil {
+		log.WithFields(log.Fields{
+			"reviewId": review.UUID.String(),
+		}).Info("Review not found")
 		return nil, status.Error(codes.NotFound, "Review not found")
 	}
 
 	s.H.DB.Delete(&review)
+
+	log.WithFields(log.Fields{
+		"reviewId": review.UUID.String(),
+	}).Info("Review deleted")
 
 	return &reviews_proto.DeleteReviewResponse{
 		Message: "Deleted",
