@@ -7,6 +7,10 @@ const email_client = new SNSPublisher()
 
 export default (root: any, params: any) => {
     return new Promise((resolve: any, reject: any) => {
+        //TODO: Hi Nich.. Remember to change the order of this saga pattern.
+        //Current: Refund -> DeleteBooking -> SNS
+        //Ideal  : UpdateBookingStatus -> Refund -> SNS
+        //Justification: It's easier to rollback failed bookingstatus than to roll back
         
         try {
             
