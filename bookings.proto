@@ -24,7 +24,7 @@ service BookingService {
 }
 
 enum Status {
-  CORPUS_UNSPECIFIED = 0;
+  STATUS_UNSPECIFIED = 0;
   STATUS_ACTIVE = 1;
   STATUS_COMPLETED = 2;
   STATUS_CANCELLED = 3;
