@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { OK } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
-import AppDataSource from '../..';
+import { AppDataSource } from '../..';
 import { Transaction } from '../models/Transaction';
 
 const router = Router();

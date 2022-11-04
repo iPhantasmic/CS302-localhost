@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
-// import { Logger } from './lib/logger';
+import app from './Server';
+import logger from './shared/Logger';
+import Stripe from 'stripe';
 import { DataSource } from 'typeorm';
-
-// logger = new Logger();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -13,27 +13,24 @@ const AppDataSource = new DataSource({
   username: process.env.TYPEORM_USERNAME,
   password: process.env.TYPEORM_PASSWORD,
   database: process.env.TYPEORM_DATABASE,
-  ssl: true,
-  entities: [__dirname + '/entities/**/*.{js,ts}'],
+  ssl: false,
+  entities: [__dirname + '/api/models/**/*.{js,ts}'],
 });
 
-// AppDataSource.initialize()
-//     .then(() => {
-//       Logger.info("Data Source has been initialized!")
-//     })
-//     .catch((err) => {
-//       logger.info("Error during Data Source initialization", err)
-//     })
+AppDataSource.initialize()
+    .then(() => {
+      logger.info("Data Source has been initialized!")
+    })
+    .catch((err) => {
+      logger.info("Error during Data Source initialization", err)
+    })
 
-const app = express();
-const port = 3000;
+const port = Number(process.env.PORT || 3000);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const stripe = new Stripe(process.env.STRIPE_API_KEY, {apiVersion: '2022-08-01'});
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
 });
 
-export default AppDataSource;
+export { AppDataSource, stripe };

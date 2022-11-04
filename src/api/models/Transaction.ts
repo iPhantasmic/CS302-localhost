@@ -1,9 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Account } from './Account';
 
 @Entity()
 export class Transaction {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn()
   public id: string;
 
   @IsNotEmpty()
@@ -14,11 +15,8 @@ export class Transaction {
   @Column()
   public age: number;
 
-  @Column({
-    name: 'user_id',
-    nullable: true,
-  })
-  public userId: string;
+  @ManyToOne(type => Account, account => account.transactions) 
+  public Account: Account;
 
   public toString(): string {
     return `${this.name}`;

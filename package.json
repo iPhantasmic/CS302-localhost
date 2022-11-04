@@ -2,9 +2,9 @@
   "name": "payments",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node dist/app.js",
+    "start": "tsc && node dist/index.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --config .prettierrc.json --write src/**/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,8 +27,9 @@
   "dependencies": {
     "class-validator": "^0.13.2",
     "express": "^4.17.1",
-    "stripe": "^10.15.0",
     "http-status-codes": "^1.4.0",
+    "pg": "^8.8.0",
+    "stripe": "^10.15.0",
     "typeorm": "^0.3.10",
     "winston": "^3.8.2"
   },
