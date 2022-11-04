@@ -23,18 +23,26 @@ service BookingService {
       returns (GetUnavailableListingsResponse){}
 }
 
+enum Status {
+  CORPUS_UNSPECIFIED = 0;
+  STATUS_ACTIVE = 1;
+  STATUS_COMPLETED = 2;
+  STATUS_CANCELLED = 3;
+}
+
 message Booking {
   string id = 1;
   string user_id = 2;
   string listing_id = 3;
   string host_id = 4;
-  google.protobuf.Timestamp start_date = 5;
-  google.protobuf.Timestamp end_date = 6;
+  Status status = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
 }
 
 message GetUnavailableListingsRequest {
-  google.protobuf.Timestamp start_date = 2;
-  google.protobuf.Timestamp end_date = 3;
+  google.protobuf.Timestamp start_date = 1;
+  google.protobuf.Timestamp end_date = 2;
 }
 
 message GetUnavailableListingsResponse {
@@ -70,8 +78,9 @@ message UpdateBookingRequest{
   string user_id = 2;
   string listing_id = 3;
   string host_id = 4;
-  google.protobuf.Timestamp start_date = 5;
-  google.protobuf.Timestamp end_date = 6;
+  Status status = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
 }
 
 message ReturnMessage{
