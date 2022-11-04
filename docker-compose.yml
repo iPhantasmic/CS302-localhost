@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+  api-gateway:
+    image: api-gateway
+    environment:
+      PORT: 4000
+      AUTH_SVC_URL: 18.139.2.227:50051
+#      BOOKINGS_SVC_URL:
+#      LISTINGS_SVC_URL:
+#      REVIEWS_SVC_URL:
+    ports:
+      - "6969:4000"
