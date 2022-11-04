@@ -25,6 +25,7 @@ publish:
     - aws --version
     - docker info
     - docker --version
+    - ls src/services/pb
   script:
     - docker build -t $DOCKER_REGISTRY/$APP_NAME .
     - docker push $DOCKER_REGISTRY/$APP_NAME
