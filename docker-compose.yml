@@ -5,7 +5,7 @@ services:
     networks:
       default:
         aliases:
-          - postgres.app.site
+          - postgres_db
     environment:
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test123
@@ -30,8 +30,8 @@ services:
       - HOST=[::]
       - PORT=50051
       - DB_USER=test_user
-      - DB_PASS=test123
-      - DB_HOST=postgres.app.site
+      - DB_PASSWORD=test123
+      - DB_HOST=postgres_db
       - DB_PORT=5432
       - DB_SCHEMA=localhost_bookings
     networks:
