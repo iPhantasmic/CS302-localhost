@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofrs/uuid"
+	log "github.com/sirupsen/logrus"
 	"gitlab.com/cs302-2022/g2-team3/services/listings/pkg/config"
 	"gitlab.com/cs302-2022/g2-team3/services/listings/pkg/db"
 	"gitlab.com/cs302-2022/g2-team3/services/listings/pkg/models"
@@ -38,6 +39,9 @@ func (s *ListingServer) GetListing(ctx context.Context, req *listings_proto.GetL
 	reqUuid := uuid.FromStringOrNil(req.GetListingId())
 
 	if result := s.H.DB.Where(&models.Listing{UUID: reqUuid}).First(&listing); reqUuid == uuid.Nil || result.Error != nil {
+		log.WithFields(log.Fields{
+			"listingId": listing.UUID.String(),
+		}).Info("Listing not found")
 		return nil, status.Error(codes.NotFound, "Listing not found")
 	}
 
@@ -61,6 +65,7 @@ func (s *ListingServer) GetAllListings(ctx context.Context, req *emptypb.Empty) 
 	var listingsDb []models.Listing
 
 	if result := s.H.DB.Find(&listingsDb); result.Error != nil {
+		log.Error("GetAllListings failed")
 		return nil, status.Error(codes.Internal, "Failed to get all Listings")
 	}
 
@@ -91,6 +96,9 @@ func (s *ListingServer) GetAvailableListings(ctx context.Context, req *listings_
 	var listingsDb []models.Listing
 	unavailableListings := req.GetListings()
 	if req.GetCountry() == "" {
+		log.WithFields(log.Fields{
+			"country": req.GetCountry(),
+		}).Info("GetAvailableListings invalid country")
 		return nil, status.Error(codes.InvalidArgument, "Invalid country")
 	}
 	countryQuery := "%" + req.GetCountry() + "%"
@@ -165,12 +173,15 @@ func (s *ListingServer) CreateListing(ctx context.Context, req *listings_proto.C
 
 	err := validate.Struct(listing)
 	if err != nil {
-		fmt.Println(err)
+		log.Info("CreateListing invalid listing")
 		return nil, status.Error(codes.InvalidArgument, "Invalid listing")
 	}
 
 	result := s.H.DB.Create(&listing)
 	if result.Error != nil {
+		log.WithFields(log.Fields{
+			"listingId": listing.UUID.String(),
+		}).Error("")
 		return nil, status.Error(codes.Internal, "Listing could not be created")
 	}
 
@@ -181,6 +192,7 @@ func (s *ListingServer) CreateListing(ctx context.Context, req *listings_proto.C
 	}
 	s3Session, err := session.NewSession(s3Config)
 	if err != nil {
+		log.Error("Invalid S3 credentials")
 		return nil, status.Error(codes.Internal, "Invalid S3 credentials")
 	}
 	s3client := s3.New(s3Session)
@@ -189,6 +201,9 @@ func (s *ListingServer) CreateListing(ctx context.Context, req *listings_proto.C
 	// validate images
 	var tmp [3]string
 	if len(req.Images) != 3 {
+		log.WithFields(log.Fields{
+			"listingId": listing.UUID.String(),
+		}).Info("CreateListing requires 3 images")
 		return nil, status.Error(codes.InvalidArgument, "3 images required")
 	}
 
@@ -220,8 +235,13 @@ func (s *ListingServer) CreateListing(ctx context.Context, req *listings_proto.C
 				Key:    aws.String(toDel),
 			})
 		}
+		log.Error("Listing could not be created")
 		return nil, status.Error(codes.Internal, "Listing could not be created")
 	}
+
+	log.WithFields(log.Fields{
+		"listingId": listing.UUID.String(),
+	}).Info("Listing Created")
 
 	return &listings_proto.Listing{
 		ListingId: listing.UUID.String(),
@@ -258,12 +278,15 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 
 	err := validate.Struct(listing)
 	if err != nil {
-		fmt.Println(err)
+		log.Info("UpdateListing invalid listing")
 		return nil, status.Error(codes.InvalidArgument, "Invalid listing")
 	}
 
 	// validate images
 	if len(req.Images) != 3 {
+		log.WithFields(log.Fields{
+			"listingId": listing.UUID.String(),
+		}).Info("CreateListing requires 3 images")
 		return nil, status.Error(codes.InvalidArgument, "3 images required")
 	}
 
@@ -274,6 +297,7 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 	}
 	s3Session, err := session.NewSession(s3Config)
 	if err != nil {
+		log.Error("Invalid S3 credentials")
 		return nil, status.Error(codes.Internal, "Invalid S3 credentials")
 	}
 	s3client := s3.New(s3Session)
@@ -310,6 +334,9 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 				Key:    aws.String(toDel),
 			})
 		}
+		log.WithFields(log.Fields{
+			"listingId": listing.UUID.String(),
+		}).Error("Update listing failed")
 		return nil, status.Error(codes.Internal, "Listing could not be updated")
 	}
 
@@ -330,6 +357,10 @@ func (s *ListingServer) UpdateListing(ctx context.Context, req *listings_proto.U
 			Key:    aws.String(toDel),
 		})
 	}
+
+	log.WithFields(log.Fields{
+		"listingId": listing.UUID.String(),
+	}).Info("Listing Updated")
 
 	return &listings_proto.Listing{
 		ListingId: listing.UUID.String(),
@@ -376,6 +407,10 @@ func (s *ListingServer) DeleteListing(ctx context.Context, req *listings_proto.D
 	}
 
 	s.H.DB.Delete(&listing)
+
+	log.WithFields(log.Fields{
+		"listingId": listing.UUID.String(),
+	}).Info("Listing Deleted")
 
 	return &listings_proto.DeleteListingResponse{
 		Message: "Deleted",
