@@ -11,7 +11,7 @@ export default (root: any, params: any) => {
         //Current: Refund -> DeleteBooking -> SNS
         //Ideal  : UpdateBookingStatus -> Refund -> SNS
         //Justification: It's easier to rollback failed bookingstatus than to roll back
-
+        
         try {
 
         } catch {
