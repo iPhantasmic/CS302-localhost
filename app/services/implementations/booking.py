@@ -8,7 +8,7 @@ from app.services.implementations.database import engine, models
 from google.protobuf import json_format
 from datetime import datetime
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 session = Session(engine)
@@ -134,9 +134,10 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             )
 
             context.set_code(grpc.StatusCode.OK)
+            logger.info(f"Booking created: {booking_request}")
             return bookings_pb2.Booking(**booking_request)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in booking creation: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Booking failed to be created")
             return bookings_pb2.Booking()
@@ -172,6 +173,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         unavail_res_array = bookings_pb2.GetUnavailableListingsResponse()
         for str_id in unavailable_listings:
             unavail_res_array.listing_ids.extend([str_id])
+        logger.info(f"Found {len(unavailable_listings)} unavailable listings in the provided timeframe")
         context.set_code(grpc.StatusCode.OK)
         context.set_details(
             f"Found {len(unavailable_listings)} unavailable listings in the provided timeframe"
@@ -188,12 +190,13 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             for booking in result:
                 session.delete(booking)
             session.commit()
+            logger.info(f"All bookings for user id {request.user_id} deleted")
             context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(
                 return_message=f"All bookings for user id {request.user_id} deleted"
             )
         except Exception as e:
-            print(e)
+            logger.error(f"Error in booking deletion: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Delete Failed")
             return bookings_pb2.ReturnMessage(
@@ -210,12 +213,13 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             for booking in result:
                 session.delete(booking)
             session.commit()
+            logger.info(f"All bookings for listing id:{request.listing_id} deleted")
             context.set_code(grpc.StatusCode.OK)
             return bookings_pb2.ReturnMessage(
                 return_message=f"All bookings for listing id {request.listing_id} deleted"
             )
         except Exception as e:
-            print(e)
+            logger.error(f"Error in booking deletion: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Delete Failed")
             return bookings_pb2.ReturnMessage(
@@ -233,6 +237,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 for booking in result:
                     session.delete(booking)
                 session.commit()
+                logger.info(f"All bookings for id {request.booking_id} deleted")
                 context.set_code(grpc.StatusCode.OK)
                 return bookings_pb2.ReturnMessage(
                     return_message=f"All bookings for id {request.booking_id} deleted"
@@ -243,7 +248,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                     return_message=f"No bookings for id {request.booking_id} found to be deleted"
                 )
         except Exception as e:
-            print(e)
+            logger.error(f"Error in booking deletion: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Delete Failed")
             return bookings_pb2.ReturnMessage(
@@ -265,7 +270,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 return_message=f"Booking with id {request.id} updated"
             )
         except Exception as e:
-            print(e)
+            logger.error(f"Error in booking deletion: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Update Failed")
             return bookings_pb2.ReturnMessage(
@@ -292,6 +297,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             )
             context.set_code(grpc.StatusCode.OK)
             return booking_returned
+        logger.info(f"No booking found for id {request.booking_id}")
         context.set_code(grpc.StatusCode.NOT_FOUND)
         context.set_details(
                 f"No booking found for id {request.booking_id}"
