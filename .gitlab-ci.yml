@@ -9,6 +9,8 @@ variables:
 
 stages:
   - build
+  - prep-deploy
+  - deploy
 
 publish:
   stage: build
@@ -30,3 +32,104 @@ publish:
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+
+init-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  script:
+    - gitlab-terraform init
+
+validate-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+  script:
+    - gitlab-terraform validate
+
+plan-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+  script:
+    - gitlab-terraform plan
+    - gitlab-terraform plan-json
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+
+apply-terraform:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+  script:
+    - gitlab-terraform apply
+  environment:
+    name: production
+  dependencies:
+    - plan-terraform
+  when: manual
+  only:
+    - main
+
+destroy-terraform:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+  script:
+    - gitlab-terraform destroy
+  environment:
+    name: production
+  dependencies:
+    - apply-terraform
+  when: manual
+  only:
+    - main
