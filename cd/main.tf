@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "api-gateway" {
   container_definitions = jsonencode([
     {
       name = "api-gateway"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/bookings:latest"
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/api-gateway:latest"
       cpu = 512
       memory = 512
       essential = true
