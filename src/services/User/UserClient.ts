@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-const packageDefinition:any = protoLoader.loadSync(path.resolve('./users.proto'));
+const packageDefinition:any = protoLoader.loadSync(path.resolve('./src/services/user/users.proto'));
 
 // type UserServiceType = {
 //     getUser: (params, () => ()) => any
