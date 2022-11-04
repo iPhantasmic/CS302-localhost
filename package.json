@@ -7,7 +7,6 @@
   "scripts": {
     "compile": "tsc",
     "build": "npx tsc",
-    "postinstall": "npm run compile",
     "start": "npm run build && node --experimental-specifier-resolution=node ./dist/index.js",
     "docker_start": "node --experimental-specifier-resolution=node ./dist/index.js"
   },
