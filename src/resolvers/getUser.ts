@@ -1,4 +1,4 @@
-import UserClient from '../services/user/UserClient';
+import UserClient from '../services/User/UserClient';
 
 const client = UserClient();
 
