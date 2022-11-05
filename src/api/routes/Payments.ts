@@ -13,8 +13,6 @@ const router = Router();
  *          Request body includes
  *          {   
  *              "amount": 300,
- *              "bookingId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
- *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc"
  *          }
  ******************************************************************************/
 router.post('/create', async (req: Request, res: Response) => {
@@ -22,13 +20,28 @@ router.post('/create', async (req: Request, res: Response) => {
         amount: req.body.amount,
         currency: 'sgd',
         payment_method_types: ['card'],
-    });
+    },{stripeAccount: '{{CONNECTED_STRIPE_ACCOUNT_ID}}'}
+    );
 
-    paymentIntent = await stripe.paymentIntents.confirm(
-        paymentIntent.id,
+    res.status(OK).send({clientSecret: paymentIntent.client_secret})
+}); 
+
+/******************************************************************************
+ *          Confirm Payment from a paymentIntent id on Payments Service - "POST /api/payments/create"
+ *          Request body includes
+ *          {   
+ *              "paymentIntentId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # PaymentIntent Id
+ *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc"
+ *              "bookingId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
+ *          }
+ ******************************************************************************/
+ router.post('/confirm/:paymentIntent_Id' , async (req: Request, res: Response) => {
+    const paymentIntent_Confirmed = await stripe.paymentIntents.confirm(
+        req.body.paymentIntentId,
         {payment_method: 'pm_card_visa'}
     );
 
+    // Fetch the account this purchase is associated
     const account = await AppDataSource.createQueryBuilder()
     .select('account')
     .from(Account, 'account')
@@ -36,14 +49,15 @@ router.post('/create', async (req: Request, res: Response) => {
     .getOne();
 
     const transaction = new Transaction()
-    transaction.id = paymentIntent.id
+    transaction.id = paymentIntent_Confirmed.id
     transaction.bookingid = req.body.bookingId
-    transaction.chargeid = paymentIntent.charges.data[0].id
+    transaction.chargeid = paymentIntent_Confirmed.charges.data[0].id
     transaction.account = account
     const transactionRepository = await AppDataSource.getRepository(Transaction)
     await transactionRepository.save(transaction)
+   
     return res.status(OK).json(transaction);
-}); 
+});
 
 /******************************************************************************
  *          Refund Payment from a user on Payments Service - "POST /api/payments/refund"
