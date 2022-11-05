@@ -25,3 +25,11 @@ up:
 .PHONY: down
 down:
 	docker-compose down
+
+.PHONY: test_local
+test_local:
+	go test -v ./ci
+
+.PHONY: test_docker
+test_docker:
+	docker compose -f ci/docker-compose.test.yml up --exit-code-from reviews_test --build

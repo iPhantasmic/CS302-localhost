@@ -68,7 +68,7 @@ func (s *ReviewServer) CreateReview(ctx context.Context, req *reviews_proto.Crea
 
 	log.WithFields(log.Fields{
 		"reviewId": review.UUID.String(),
-	}).Info("Review updated")
+	}).Info("Review created")
 
 	return &reviews_proto.CreateReviewResponse{
 		ReviewId:  review.UUID.String(),
