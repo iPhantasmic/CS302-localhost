@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "payments-service" {
   container_definitions = jsonencode([
     {
       name = "payments-service"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/payments-service:latest"
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/payments:latest"
       cpu = 512
       memory = 512
       essential = true
