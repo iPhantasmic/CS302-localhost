@@ -15,7 +15,9 @@ services:
       - "5432:5432"
 
   auth_service:
-    image: auth_user
+    build:
+      context: ../
+      dockerfile: Dockerfile
     depends_on:
       - postgres
     networks:
