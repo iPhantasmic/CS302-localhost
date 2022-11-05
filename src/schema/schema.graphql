@@ -1,3 +1,5 @@
+scalar BigInt
+
 # Setup
 schema {
   query: Query
@@ -48,12 +50,12 @@ type Mutation {
 # Common Data Types
 input ProtobufTimestamp {
   nanos: Int
-  seconds: String
+  seconds: BigInt
 }
 
 type ProtobufTimestampOutput {
   nanos: Int
-  seconds: String
+  seconds: BigInt
 }
 
 type Message {

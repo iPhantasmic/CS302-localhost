@@ -24,6 +24,7 @@ import GetUnavailableListings from "./getUnavailableListings";
 const resolvers: any  = {
   Query: {
     GetUser,
+    LoginUser,
     GetBookingByUser,
     GetReview,
     GetListing,
