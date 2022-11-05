@@ -1,16 +1,16 @@
 version: "3.1"
 
 services:
-  db:
+  postgres:
     image: postgres:14.5
-    restart: always
+    networks:
+      default:
+        aliases:
+          - postgres_db
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: 160201
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
       POSTGRES_DB: localhost_payments
-    volumes:
-      - payments:/var/lib/postgresql/data
-      # - ./db-init-scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 
@@ -22,9 +22,20 @@ services:
       PGADMIN_DEFAULT_PASSWORD: localhost
     ports:
       - "5431:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
 
-volumes:
-  payments:
-  pgadmin_data:
+  payments_service:
+    image: payments
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - payments_service
+    environment:
+      PORT: 4000
+      TYPEORM_HOST: postgres_db
+      TYPEORM_USERNAME: test_user
+      TYPEORM_PASSWORD: test123
+      TYPEORM_DATABASE: localhost_payments
+    ports:
+      - "4000:4000"
