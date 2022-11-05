@@ -69,6 +69,8 @@ integration:
     - docker-compose --version
   script:
     - docker-compose -f ci/docker-compose.test.yml up --exit-code-from reviews_test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
 publish:
   stage: build
