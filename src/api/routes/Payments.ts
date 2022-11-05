@@ -13,14 +13,23 @@ const router = Router();
  *          Request body includes
  *          {   
  *              "amount": 300,
+ *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc"
  *          }
+ *          Currency is SGD
  ******************************************************************************/
 router.post('/create', async (req: Request, res: Response) => {
+
+    const connected_account = await AppDataSource.createQueryBuilder()
+    .select('account')
+    .from(Account, 'account')
+    .where('account.userid = :userid', { userid: req.body.userId })
+    .getOne();
+
     var paymentIntent = await stripe.paymentIntents.create({
         amount: req.body.amount,
         currency: 'sgd',
         payment_method_types: ['card'],
-    },{stripeAccount: '{{CONNECTED_STRIPE_ACCOUNT_ID}}'}
+    },{ stripeAccount: connected_account.id }
     );
 
     res.status(OK).send({clientSecret: paymentIntent.client_secret})
