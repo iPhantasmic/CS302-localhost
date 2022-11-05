@@ -6,6 +6,22 @@ variable "AUTH_SVC_URL" {
   type = string
 }
 
+variable "BOOKINGS_SVC_URL" {
+  type = string
+}
+
+variable "LISTINGS_SVC_URL" {
+  type = string
+}
+
+variable "REVIEWS_SVC_URL" {
+  type = string
+}
+
+variable "PAYMENTS_SVC_URL" {
+  type = string
+}
+
 resource "aws_ecs_task_definition" "api-gateway" {
   family = "api-gateway"
   execution_role_arn       = "arn:aws:iam::631945473733:role/ecsTaskExecutionRole"
@@ -22,7 +38,11 @@ resource "aws_ecs_task_definition" "api-gateway" {
       }]
       environment = [
         { name = "PORT", value = var.PORT },
-        { name = "AUTH_SVC_URL", value = var.AUTH_SVC_URL }
+        { name = "AUTH_SVC_URL", value = var.AUTH_SVC_URL },
+        { name = "BOOKINGS_SVC_URL", value = var.BOOKINGS_SVC_URL },
+        { name = "LISTINGS_SVC_URL", value = var.LISTINGS_SVC_URL },
+        { name = "REVIEWS_SVC_URL", value = var.REVIEWS_SVC_URL },
+        { name = "PAYMENTS_SVC_URL", value = var.PAYMENTS_SVC_URL }
       ]
       logConfiguration = {
         "logDriver" = "awslogs",

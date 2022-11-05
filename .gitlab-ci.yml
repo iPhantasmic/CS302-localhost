@@ -107,7 +107,6 @@ apply-terraform:
     name: production
   dependencies:
     - plan-terraform
-  when: manual
   only:
     - main
 
