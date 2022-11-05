@@ -60,6 +60,10 @@ validate-terraform:
         TF_VAR_SECRET_KEY: ${SECRET_KEY}
         TF_VAR_PORT: ${PORT}
         TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+        TF_VAR_BOOKINGS_SVC_URL: ${BOOKINGS_SVC_URL}
+        TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
+        TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
+        TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
   script:
     - gitlab-terraform validate
 
@@ -77,6 +81,10 @@ plan-terraform:
         TF_VAR_SECRET_KEY: ${SECRET_KEY}
         TF_VAR_PORT: ${PORT}
         TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+        TF_VAR_BOOKINGS_SVC_URL: ${BOOKINGS_SVC_URL}
+        TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
+        TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
+        TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
   script:
     - gitlab-terraform plan
     - gitlab-terraform plan-json
@@ -101,6 +109,10 @@ apply-terraform:
         TF_VAR_SECRET_KEY: ${SECRET_KEY}
         TF_VAR_PORT: ${PORT}
         TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+        TF_VAR_BOOKINGS_SVC_URL: ${BOOKINGS_SVC_URL}
+        TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
+        TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
+        TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
   script:
     - gitlab-terraform apply
   environment:
@@ -124,6 +136,10 @@ destroy-terraform:
         TF_VAR_SECRET_KEY: ${SECRET_KEY}
         TF_VAR_PORT: ${PORT}
         TF_VAR_AUTH_SVC_URL: ${AUTH_SVC_URL}
+        TF_VAR_BOOKINGS_SVC_URL: ${BOOKINGS_SVC_URL}
+        TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
+        TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
+        TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
   script:
     - gitlab-terraform destroy
   environment:
