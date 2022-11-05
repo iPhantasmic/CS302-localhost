@@ -36,7 +36,9 @@ const resolvers: any  = {
     ViewListings //Composite
   },
   Mutation: {
-    PublishBookingConfirmed,
+    RegisterUser,
+    UpdateUser,
+    DeleteUser,
     MakeBooking,
     CreateReview,
     DeleteReview,
@@ -44,11 +46,7 @@ const resolvers: any  = {
     UpdateListing,
     DeleteListing,
     DeleteBookingById,
-    CancelBooking,
-    DeleteUser,
-    RegisterUser,
-    LoginUser,
-    UpdateUser
+    CancelBooking
   }
 };
 
