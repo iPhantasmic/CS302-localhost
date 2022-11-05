@@ -20,7 +20,7 @@ import CancelBooking from "./cancelBooking"
 import DeleteBookingById from './deleteBookingById';
 import GetBookingById from "./getBookingById"
 import ViewListings from "./viewListings"
-import GetUnavailableListings from './getUnAvailableListings';
+import GetUnavailableListings from "./getUnavailableListings";
 const resolvers: any  = {
   Query: {
     GetUser,
