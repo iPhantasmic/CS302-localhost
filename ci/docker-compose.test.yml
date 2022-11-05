@@ -15,7 +15,9 @@ services:
       - "5432:5432"
 
   review_service:
-    image: reviews
+    build:
+      context: ../
+      dockerfile: Dockerfile
     depends_on:
       - postgres
     networks:
