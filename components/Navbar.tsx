@@ -30,13 +30,14 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
+  useNumberInput,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import * as React from "react";
 import Logo from "./../public/localhost.png";
 import LogoDark from "./../public/localhost_dark.png";
-import type { NextPage } from "next";
-import DarkModeToggle from "./DarkModeToggle";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { BsGlobe2 } from "react-icons/bs";
 import {
   CalendarIcon,
@@ -48,12 +49,36 @@ import {
   StarIcon,
   UnlockIcon,
 } from "@chakra-ui/icons";
+import { DateRangePicker, Range } from "react-date-range";
 import { signOut, useSession } from "next-auth/react";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
+import { useState, useRef } from "react";
 
 export function Navbar(props: any) {
+  const rooms: any = useRef<HTMLInputElement>();
+  const destination: any = useRef<HTMLInputElement>();
+  const startDate: any = useRef<HTMLInputElement>();
+  const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
+    useNumberInput({
+      step: 1,
+      defaultValue: 0,
+      min: 0,
+      max: 20,
+    });
+  const inc = getIncrementButtonProps();
+  const dec = getDecrementButtonProps();
+  const input = getInputProps();
+  const router = useRouter();
+
   const { data: session } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [state, setState] = useState<Range[]>([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
 
   return (
     <>
@@ -99,19 +124,6 @@ export function Navbar(props: any) {
                   <Text fontSize="14px" fontWeight="semibold">
                     Start your search
                   </Text>
-                  {/* <Text fontSize="13.5px" fontWeight="semibold">
-                    Anywhere
-                  </Text>
-                  <Spacer />
-                  <Divider orientation="vertical" height="1px" py={4} />
-                  <Spacer />
-                  <Text fontSize="13.5px" fontWeight="semibold">
-                    Any week
-                  </Text>
-                  <Spacer />
-                  <Divider orientation="vertical" height="1px" py={4} />
-                  <Spacer />
-                  <Text fontSize="13.5px">Guests</Text> */}
                   <Spacer />
                   <IconButton
                     aria-label="Search listings"
@@ -225,14 +237,51 @@ export function Navbar(props: any) {
         </Box>
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+        <ModalContent p={5}>
+          <ModalHeader>Search listings</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            The quick brown fox jumped of the lazy brown dogs
+            <Text mb={2}>Where</Text>
+            <Input
+              mb={5}
+              placeholder="Search destination (e.g. City, Country)"
+              defaultValue={router.query.country}
+              ref={destination}
+            />
+            <Text mb={2}>Rooms</Text>
+            <HStack maxW="320px" mb={5}>
+              <Button {...dec}>-</Button>
+              <Input {...input} w={16} ref={rooms} />
+              <Button {...inc}>+</Button>
+            </HStack>
+            <Text mb={2}>When</Text>
+            <DateRangePicker
+              editableDateInputs={true}
+              onChange={(item) => setState([item.selection])}
+              moveRangeOnFirstSelection={false}
+              ranges={state}
+              ref={startDate}
+            />
           </ModalBody>
+          <Button
+            onClick={() => {
+              onClose();
+              Router.push({
+                pathname: "/",
+                query: {
+                  country:
+                    destination.current.value.split(",")[1] !== undefined
+                      ? destination.current.value.split(",")[1].trim()
+                      : destination.current.value.trim(),
+                  rooms: rooms.current.value !== 0 ? rooms.current.value : "",
+                },
+              });
+            }}
+          >
+            View listings
+          </Button>
         </ModalContent>
       </Modal>
     </>

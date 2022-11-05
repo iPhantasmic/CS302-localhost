@@ -15,10 +15,12 @@ import { gql } from "@apollo/client";
 import gqlclient from "../GraphQL/graphQLClient";
 import { useEffect, useState } from "react";
 import MainContent from "../components/MainContent";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
-  // console.log(query_data.launches)
+  const router = useRouter();
   const [listings, setListings] = useState<any[]>([]);
+  const [toggle, setToggle] = useState(false);
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -37,11 +39,12 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
+    const data = "null";
     gqlclient
       .query({
         query: gql`
-          query Listings {
-            GetAllListings {
+          query GetAllListings($data: String!) {
+            GetAllListings(data: $data) {
               listings {
                 listingId
                 userId
@@ -65,6 +68,7 @@ const Home: NextPage = () => {
             }
           }
         `,
+        variables: { data },
       })
       .then((response) => {
         var list = response.data.GetAllListings.listings;
@@ -74,7 +78,54 @@ const Home: NextPage = () => {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [toggle]);
+
+  useEffect(() => {
+    console.log(router.query.country);
+    if (router.query.country === undefined || router.query.country === "") {
+      setToggle(!toggle);
+      return;
+    }
+    console.log("Continue");
+    const data = { country: router.query.country };
+    gqlclient
+      .query({
+        query: gql`
+          query ViewListings($data: ViewListingsRequest) {
+            ViewListings(data: $data) {
+              listings {
+                listingId
+                userId
+                title
+                price
+                images
+                type
+                address
+                country
+                city
+                rooms
+                startDate {
+                  nanos
+                  seconds
+                }
+                createdAt {
+                  nanos
+                  seconds
+                }
+              }
+            }
+          }
+        `,
+        variables: { data },
+      })
+      .then((response) => {
+        var list = response.data.ViewListings.listings;
+        setListings(sliceIntoChunks(list, 4));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [router.query]);
 
   return (
     <div>
@@ -104,30 +155,5 @@ const Home: NextPage = () => {
     </div>
   );
 };
-
-// export async function getStaticProps() {
-//     var datas = { userId: "c2d29867-3d0b-d497-9191-18a9d8ee7830" };
-
-//     const { data } = await gqlclient.query({
-//         query: gql`
-//       query GetUser($datas: GetUserRequest) {
-//         GetUser(data: $datas) {
-//           userId
-//           email
-//         }
-//       }
-//     `,
-//         variables: { datas },
-//     });
-//     try {
-//         return {
-//             props: {
-//                 launches: data,
-//             },
-//         };
-//     } catch (e) {
-//         console.log("Error in subscription:", e);
-//     }
-// }
 
 export default Home;

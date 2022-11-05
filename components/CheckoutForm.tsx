@@ -3,6 +3,7 @@
 import { PaymentElement } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
+import { Box, Button } from "@chakra-ui/react";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -25,8 +26,8 @@ export default function CheckoutForm() {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // TODO: Make sure to change this to your payment completion page
-        return_url: `${window.location.origin}/success/1`,
+        // Make sure to change this to your payment completion page
+        return_url: `${window.location.origin}/user/${props.userId}` + ``,
       },
     });
 
@@ -40,15 +41,21 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" />
-      <button disabled={isProcessing || !stripe || !elements} id="submit">
-        <span id="button-text">
-          {isProcessing ? "Processing ... " : "Pay now"}
-        </span>
-      </button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
-    </form>
+    <Box h="fit-content">
+      <form id="payment-form">
+        <PaymentElement id="payment-element" />
+        <Button
+          onClick={handleSubmit}
+          disabled={isProcessing}
+          id="submit"
+          colorScheme="linkedin"
+          mt={5}
+        >
+          <span id="button-text">
+            {isProcessing ? "Processing ... " : "Let's go lah"}
+          </span>
+        </Button>
+      </form>
+    </Box>
   );
 }

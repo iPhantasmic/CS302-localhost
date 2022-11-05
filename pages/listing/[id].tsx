@@ -96,7 +96,15 @@ const Listing: NextPage = (props: any) => {
 
   //TODO: Change the endpoint for fetching available listings to GetAvailableListings
   useEffect(() => {
-    var data = { listingId: router.query.id };
+    const listingId = router.query.id;
+
+    if (listingId === undefined) {
+      console.log("undefined");
+      return;
+    }
+
+    var data = { listingId: listingId };
+    console.log(data);
     gqlclient
       .query({
         query: gql`
@@ -131,7 +139,7 @@ const Listing: NextPage = (props: any) => {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [router.query.id]);
 
   return (
     <>
@@ -171,59 +179,76 @@ const Listing: NextPage = (props: any) => {
               <Text fontSize="sm">Save</Text>
             </HStack>
           </Flex>
-          <Box width="100%" borderLeft="lg">
-            <HStack width="100%">
-              <Image
-                src={images[router.query.fallback]}
-                alt="Hello world"
-                objectFit="cover"
-                width={600}
-                height={560}
-                style={{
-                  borderTopLeftRadius: "15px",
-                  borderBottomLeftRadius: "15px",
-                }}
-              />
-              <HStack>
-                <VStack>
-                  <Image
-                    src={images[parseInt(router.query.fallback) + 1]}
-                    alt="Hello world"
-                    objectFit="cover"
-                    width={300}
-                    height={275}
-                  />
-                  <Divider />
-                  <Image
-                    src={images[parseInt(router.query.fallback) + 2]}
-                    alt="Hello world"
-                    objectFit="cover"
-                    width={300}
-                    height={275}
-                  />
-                </VStack>
-                <VStack>
-                  <Image
-                    src={images[parseInt(router.query.fallback) + 3]}
-                    alt="Hello world"
-                    objectFit="cover"
-                    width={300}
-                    height={275}
-                    style={{ borderTopRightRadius: "15px" }}
-                  />
-                  <Divider />
-                  <Image
-                    src={images[parseInt(router.query.fallback) + 4]}
-                    alt="Hello world"
-                    objectFit="cover"
-                    width={300}
-                    height={275}
-                    style={{ borderBottomRightRadius: "15px" }}
-                  />
-                </VStack>
+          {router.query.fallback ? (
+            <Box width="100%" borderLeft="lg">
+              <HStack width="100%">
+                <Image
+                  src={
+                    listing.images
+                      ? listing.images.toString().replace(/[{}]/g, "")
+                      : images[parseInt(router.query.fallback)]
+                  }
+                  alt="Hello world"
+                  objectFit="cover"
+                  width={600}
+                  height={560}
+                  style={{
+                    borderTopLeftRadius: "15px",
+                    borderBottomLeftRadius: "15px",
+                  }}
+                />
+                <HStack>
+                  <VStack>
+                    <Image
+                      src={
+                        router.query.fallback &&
+                        images[parseInt(router.query.fallback) + 1]
+                      }
+                      alt="Hello world"
+                      objectFit="cover"
+                      width={300}
+                      height={275}
+                    />
+                    <Divider />
+                    <Image
+                      src={
+                        router.query.fallback &&
+                        images[parseInt(router.query.fallback) + 2]
+                      }
+                      alt="Hello world"
+                      objectFit="cover"
+                      width={300}
+                      height={275}
+                    />
+                  </VStack>
+                  <VStack>
+                    <Image
+                      src={
+                        router.query.fallback &&
+                        images[parseInt(router.query.fallback) + 3]
+                      }
+                      alt="Hello world"
+                      objectFit="cover"
+                      width={300}
+                      height={275}
+                      style={{ borderTopRightRadius: "15px" }}
+                    />
+                    <Divider />
+                    <Image
+                      src={images[parseInt(router.query.fallback) + 4]}
+                      alt="Hello world"
+                      objectFit="cover"
+                      width={300}
+                      height={275}
+                      style={{ borderBottomRightRadius: "15px" }}
+                    />
+                  </VStack>
+                </HStack>
               </HStack>
-            </HStack>
-          </Box>
+            </Box>
+          ) : (
+            <Box width="100%" borderLeft="lg"></Box>
+          )}
           <Grid templateColumns="repeat(6, 1fr)" gap={1} mt={10} mb={80}>
             <GridItem colSpan={4} h="10" mr={8}>
               <Flex>
@@ -424,9 +449,8 @@ const Listing: NextPage = (props: any) => {
                         query: {
                           fallback: router.query.fallback,
                           startDate:
-                            startDate.current.value.toLocaleString("en-US"),
-                          endDate:
-                            endDate.current.value.toLocaleString("en-US"),
+                            state[0].startDate?.toLocaleString("en-US"),
+                          endDate: state[0].endDate?.toLocaleString("en-US"),
                         },
                       })
                     }
@@ -436,9 +460,24 @@ const Listing: NextPage = (props: any) => {
                   <Text fontSize="sm">You won&apos;t be charged yet</Text>
                 </VStack>
                 <Flex mt={5}>
-                  <Text fontSize="sm">$507 SGD x 7 nights</Text>
+                  <Text fontSize="sm">
+                    ${listing.price} SGD x{" "}
+                    {Math.ceil(
+                      (state[0].endDate - state[0].startDate) /
+                        (1000 * 60 * 60 * 24)
+                    )}{" "}
+                    nights
+                  </Text>
                   <Spacer />
-                  <Text fontSize="sm">$3,551 SGD</Text>
+                  <Text fontSize="sm">
+                    $
+                    {listing.price *
+                      Math.ceil(
+                        (state[0].endDate - state[0].startDate) /
+                          (1000 * 60 * 60 * 24)
+                      )}{" "}
+                    SGD
+                  </Text>
                 </Flex>
                 <Flex>
                   <Text fontSize="sm">Service fee</Text>
@@ -451,7 +490,15 @@ const Listing: NextPage = (props: any) => {
                     Total before taxes
                   </Text>
                   <Spacer />
-                  <Text fontSize="sm">$3,551 SGD</Text>
+                  <Text fontSize="sm">
+                    $
+                    {listing.price *
+                      Math.ceil(
+                        (state[0].endDate - state[0].startDate) /
+                          (1000 * 60 * 60 * 24)
+                      )}{" "}
+                    SGD
+                  </Text>
                 </Flex>
               </Box>
               <Box

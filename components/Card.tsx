@@ -5,10 +5,6 @@ import Router from "next/router";
 import { motion } from "framer-motion";
 
 const images = [
-  "https://a0.muscache.com/im/pictures/0720332d-b410-4c85-b09d-78fb36240a43.jpg",
-  "https://a0.muscache.com/im/pictures/miso/Hosting-36880172/original/4aac5067-4642-4148-9ba9-7476c6920c90.jpeg",
-  "https://a0.muscache.com/im/pictures/miso/Hosting-725604930974176592/original/66e8746e-9f09-4564-9e9c-5756fc572063.jpeg",
-  "https://a0.muscache.com/im/pictures/fe109afa-a36b-4082-b047-c8f4f36f18b2.jpg",
   "https://a0.muscache.com/im/pictures/db193878-c602-4a93-88ee-9b3f1ebfe7f1.jpg",
   "https://a0.muscache.com/im/pictures/9ee15529-6596-4b96-95e5-06777bfed126.jpg",
   "https://a0.muscache.com/im/pictures/miso/Hosting-620445832431796074/original/822e6e0a-6209-43e4-b84d-78cbcbeab16d.jpeg",

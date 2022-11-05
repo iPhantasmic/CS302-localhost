@@ -38,6 +38,7 @@ const Home: NextPage = () => {
   // console.log(query_data.launches)
   const router = useRouter();
   const [user, setUser] = useState({});
+  const [bookings, setBookings] = useState({});
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -48,22 +49,45 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     console.log(window.location.pathname);
-    var datas = { userId: router.query.id };
+    var data = { userId: router.query.id };
 
-    const data = gqlclient.query({
+    const userData = gqlclient.query({
       query: gql`
-        query GetUser($datas: GetUserRequest) {
-          GetUser(data: $datas) {
+        query GetUser($data: GetUserRequest) {
+          GetUser(data: $data) {
             userId
             email
           }
         }
       `,
-      variables: { datas },
+      variables: { data },
     });
 
-    data.then((response) => {
+    userData.then((response) => {
       setUser(response.data.GetUser);
+    });
+
+    const bookingData = gqlclient.query({
+      query: gql`
+        query GetBookingByUser($data: BookingUserId) {
+          GetBookingByUser(data: $data) {
+            bookings {
+              id
+              userId
+              listingId
+              hostId
+              startDate
+              endDate
+              paymentId
+            }
+          }
+        }
+      `,
+      variables: { data },
+    });
+
+    bookingData.then((response) => {
+      // setBookings(response.data.GetUser);
     });
   });
 

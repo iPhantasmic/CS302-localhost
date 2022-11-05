@@ -98,26 +98,33 @@ const Listing: NextPage = () => {
   ]);
 
   useEffect(() => {
-    // TODO: Fetch publishablekey and paymentintent.clientsecret from server
+    if (!session) {
+      return;
+    }
     // fetch("/config").then(async (r) => {
     //     const { publishableKey } = await r.json()
     //     setStripePromise(loadStripe(publishableKey))
     // })
+    const publishableKey =
+      "pk_test_51LrWauIsHhSfq0KeqJE7D6ZgsRgVVdliAF9t1Uea7RUfrsWoXE2QJ8LcmcZSv3JhHArHS43wZVs1w3CM3Y0icE4i00T9A99wFq";
+    setStripePromise(loadStripe(publishableKey));
 
-    fetch("/create-payment-intent", {
-      method: "POST",
-      body: JSON.stringify({
-        // TODO: Add amount and currency based on calculations
-        currency: "sgd",
-        amount: 1999,
-        automatic_payment_methods: {
-          enabled: true,
-        },
-      }),
-    }).then(async (r) => {
-      const { clientSecret } = await r.json();
-      setClientSecret(clientSecret);
-    });
+    try {
+      fetch("http://localhost:3001/api/payments/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // TODO: Add amount and currency based on calculations
+          amount: 1999,
+          userId: session.userId,
+        }),
+      }).then(async (r) => {
+        const { clientSecret } = await r.json();
+        setClientSecret(clientSecret);
+      });
+    } catch (e) {
+      console.log(e);
+    }
 
     var data = { listingId: router.query.id };
     gqlclient
@@ -154,7 +161,7 @@ const Listing: NextPage = () => {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [session]);
 
   return (
     <div>
@@ -166,8 +173,8 @@ const Listing: NextPage = () => {
       <Navbar main simple />
 
       <MainContent>
-        <Container maxW="container.xl" px={8} pt={5}>
-          <Grid templateColumns="repeat(6, 1fr)" gap={1} mt={10} mb={80}>
+        <Container maxW="container.xl" px={8} pt={5} h="fit-content">
+          <Grid templateColumns="repeat(6, 1fr)" gap={1} mt={10} h="800px">
             <GridItem colSpan={3} h="10" mr={8}>
               <HStack>
                 <IconButton
@@ -261,13 +268,16 @@ const Listing: NextPage = () => {
                 size="lg"
                 fontWeight="semibold"
                 mt={7}
+                mb={5}
                 letterSpacing="tight"
               >
                 Choose how to pay
               </Heading>
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <CheckoutForm />
-              </Elements>
+              {stripePromise && clientSecret && (
+                <Elements stripe={stripePromise} options={{ clientSecret }}>
+                  <CheckoutForm userId={session.userId} />
+                </Elements>
+              )}
             </GridItem>
             <GridItem colStart={4} colEnd={7} h="10" mb={80}>
               <Box
@@ -280,8 +290,12 @@ const Listing: NextPage = () => {
               >
                 <HStack>
                   <Image
-                    src={images[router.query.fallback]}
-                    alt="Hello world"
+                    src={
+                      router.query.fallback
+                        ? images[router.query.fallback]
+                        : "https://a0.muscache.com/im/pictures/fb860347-88b9-4a1a-acfe-d518f3f77072.jpg"
+                    }
+                    alt="Hello worlded"
                     objectFit="cover"
                     width={150}
                     height={120}

@@ -40,6 +40,10 @@ const Signup: NextPage = (query_data) => {
 
   const email: any = useRef<HTMLInputElement>();
   const password: any = useRef<HTMLInputElement>();
+  const address: any = useRef<HTMLInputElement>();
+  const dob: any = useRef<HTMLInputElement>();
+  const id: any = useRef<HTMLInputElement>();
+  const mobile: any = useRef<HTMLInputElement>();
   const handleSubmit = async () => {
     if (email.current.value && password.current.value) {
       setIsLoading(true);
@@ -115,7 +119,6 @@ const Signup: NextPage = (query_data) => {
                 Join Localhost
               </Heading>
             </Box>
-            {/* TODO: Amend user details required for signup */}
             <Box>
               <FormControl isRequired isInvalid={isError}>
                 <Input
@@ -138,10 +141,21 @@ const Signup: NextPage = (query_data) => {
               <FormControl isRequired>
                 <Input
                   variant="flushed"
+                  placeholder="Mobile number"
+                  type="text"
+                  mt={4}
+                  w={350}
+                  ref={mobile}
+                  onKeyDown={(e) => (e.key === "Enter" ? handleSubmit() : null)}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <Input
+                  variant="flushed"
                   placeholder="Password"
                   type="password"
                   w={350}
-                  mt={6}
+                  mt={4}
                   mb={8}
                   ref={password}
                   onKeyDown={(e) => (e.key === "Enter" ? handleSubmit() : null)}
