@@ -25,7 +25,7 @@ AppDataSource.initialize()
       logger.info("Error during Data Source initialization", err)
     })
 
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 3001);
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY, {apiVersion: '2022-08-01'});
 

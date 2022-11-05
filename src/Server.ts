@@ -7,6 +7,9 @@ import logger from './shared/Logger';
 
 // Init express
 const app = express();
+var cors = require('cors')
+
+app.use(cors())
 
 /************************************************************************************
  *                              Set basic express settings

@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { OK } from 'http-status-codes';
+import { OK, INTERNAL_SERVER_ERROR } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { AppDataSource } from '../..';
 import { Account } from '../models/Account';
@@ -33,9 +33,13 @@ router.post('/', async (req: Request, res: Response) => {
     new_account.id = account.id
     new_account.email = account.email
     new_account.userid = req.body.userId
-    const accountRepository = await AppDataSource.getRepository(Account)
-    await accountRepository.save(new_account)
-    return res.status(OK).json(new_account);
+    try {
+        const accountRepository = await AppDataSource.getRepository(Account)
+        await accountRepository.save(new_account)
+        return res.status(OK).json(new_account);
+    } catch (e) {
+        return res.status(INTERNAL_SERVER_ERROR).send(e)
+    }
 }); 
 
 /******************************************************************************

@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { OK } from 'http-status-codes';
+import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { AppDataSource } from '../..';
 import { Account } from '../models/Account';
@@ -25,14 +25,19 @@ router.post('/create', async (req: Request, res: Response) => {
     .where('account.userid = :userid', { userid: req.body.userId })
     .getOne();
 
-    var paymentIntent = await stripe.paymentIntents.create({
-        amount: req.body.amount,
-        currency: 'sgd',
-        payment_method_types: ['card'],
-    },{ stripeAccount: connected_account.id }
-    );
+    try {
+        var paymentIntent = await stripe.paymentIntents.create({
+            amount: req.body.amount,
+            currency: 'sgd',
+            payment_method_types: ['card'],
+        }
+        );
+        
+        res.status(OK).send({clientSecret: paymentIntent.client_secret})
+    } catch (e) {
+        res.status(INTERNAL_SERVER_ERROR).send(e)
+    }
 
-    res.status(OK).send({clientSecret: paymentIntent.client_secret})
 }); 
 
 /******************************************************************************
