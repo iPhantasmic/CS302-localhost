@@ -1,3 +1,7 @@
+variable "IMAGE_VERSION" {
+  type = string
+}
+
 variable "PORT" {
   type = string
 }
@@ -36,7 +40,7 @@ resource "aws_ecs_task_definition" "api-gateway" {
   container_definitions = jsonencode([
     {
       name = "api-gateway"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/api-gateway:latest"
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/api-gateway:${var.IMAGE_VERSION}"
       cpu = 512
       memory = 512
       essential = true
