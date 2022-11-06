@@ -18,7 +18,6 @@ const router = Router();
  *          Currency is SGD
  ******************************************************************************/
 router.post('/create', async (req: Request, res: Response) => {
-
     const connected_account = await AppDataSource.createQueryBuilder()
     .select('account')
     .from(Account, 'account')
@@ -29,15 +28,13 @@ router.post('/create', async (req: Request, res: Response) => {
         var paymentIntent = await stripe.paymentIntents.create({
             amount: req.body.amount,
             currency: 'sgd',
-            payment_method_types: ['card'],
-        }
-        );
-        
+          }, {
+              stripeAccount: connected_account.id,
+        });
         res.status(OK).send({clientSecret: paymentIntent.client_secret})
     } catch (e) {
         res.status(INTERNAL_SERVER_ERROR).send(e)
     }
-
 }); 
 
 /******************************************************************************
@@ -78,6 +75,7 @@ router.post('/create', async (req: Request, res: Response) => {
  *          Request body includes
  *          {   
  *              "bookingId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
+ *              "userId": "8812717d-09d4-4e9d-b686-1f333a47e7bc"
  *          }
  ******************************************************************************/
  router.post('/refund', async (req: Request, res: Response) => {
@@ -87,8 +85,10 @@ router.post('/create', async (req: Request, res: Response) => {
     .where('transaction.bookingid = :id', { id: req.body.bookingId })
     .getOne();
     const refund = await stripe.refunds.create({
-        charge: transaction.chargeid,
-      });
+      charge: transaction.chargeid,
+    }, {
+      stripeAccount: transaction.account.id,
+    });
 
     return res.status(OK).json({refund});
 }); 
