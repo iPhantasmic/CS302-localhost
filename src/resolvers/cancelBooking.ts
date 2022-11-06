@@ -1,6 +1,7 @@
-
 import BookingClient from '../services/booking/BookingClient'
 import SNSPublisher from '../services/email/booking_confirmed'
+import fetch from 'node-fetch'
+import { StatusCodes } from 'http-status-codes'
 
 const client = BookingClient()
 const email_client = new SNSPublisher()
@@ -11,8 +12,6 @@ export default (root: any, params: any) => {
         //Current: Refund -> DeleteBooking -> SNS
         //Ideal  : UpdateBookingStatus -> Refund -> SNS
         //Justification: It's easier to rollback failed bookingstatus than to roll back
-
-       
         client.GetBookingById(params.data, function (err: any, response: any) {
             if (err) {
                 console.log("err")
@@ -22,12 +21,18 @@ export default (root: any, params: any) => {
             booking_object["status"] = 3
             client.UpdateBookingById(
                 booking_object,
-                function (err: any, response: any) {
+                async function (err: any, response: any) {
                     if (err) {
                         return reject(err)
                     }
                     try {
-                        //Stripe Code
+                        const response = await fetch('http://13.229.65.90:420/api/payments/refund', {
+                            method: 'post',
+                            body: JSON.stringify({"bookingId": booking_object["id"]}),
+                        })
+                        const refund = await response.json()
+                        console.log(refund)
+                        resolve(refund)
                     } catch {
                         //Rollback SAGA
                         booking_object["status"] = 1
@@ -43,13 +48,11 @@ export default (root: any, params: any) => {
                     }
 
                     console.log("Sending Email")
-
-                
                     //Prepare message to send to SNS
                     //TODO: retrieve listing details from db
                     const test_data = {
                         data: {
-                            receiverEmail: 'nicholasong.2020@smu.edu.sg',
+                            receiverEmail: 'omerwai.2020@smu.edu.sg',
                             propertyName: 'Seminyak Kuta Utara',
                             refundDate: 'November 7, 2022',
                             unitPrice: 125.1,
