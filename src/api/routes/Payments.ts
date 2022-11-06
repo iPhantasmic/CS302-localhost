@@ -84,6 +84,12 @@ router.post('/create', async (req: Request, res: Response) => {
  *          }
  ******************************************************************************/
  router.post('/refund', async (req: Request, res: Response) => {
+    const account = await AppDataSource.createQueryBuilder()
+    .select('account')
+    .from(Account, 'account')
+    .where('account.userid = :id', { id: req.body.userId })
+    .getOne();
+
     const transaction = await AppDataSource.createQueryBuilder()
     .select('transaction')
     .from(Transaction, 'transaction')
@@ -94,7 +100,7 @@ router.post('/create', async (req: Request, res: Response) => {
       const refund = await stripe.refunds.create({
         charge: transaction.chargeid,
       }, {
-        stripeAccount: transaction.account.id,
+        stripeAccount: account.id,
       });
     
         return res.status(OK).json({refund});

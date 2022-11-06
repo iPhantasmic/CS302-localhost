@@ -5,7 +5,7 @@ PROJECT_NAME=payments
 build:
 	docker build \
     --build-arg GIT_COMMIT=${GIT_COMMIT} \
-	--platform linux/amd64 \
+	--platform linux/arm64 \
     -t $(PROJECT_NAME):latest \
     -t $(PROJECT_NAME):${GIT_COMMIT} \
     .
