@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "bookings-service" {
 
 resource "aws_ecs_service" "bookings-service" {
   name = "bookings-service"
-  cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302"
+  cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302-bookings"
   task_definition = aws_ecs_task_definition.bookings-service.arn
   desired_count = 1
 }
