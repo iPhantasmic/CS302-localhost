@@ -18,7 +18,7 @@ type Query {
   GetReview(data: GetReviewRequest): Review
   #
   GetListing(data: GetListingRequest): Listing
-  GetAllListings(data: String!): Listings #Please help to review this and think of a better way
+  GetAllListings: Listings #Please help to review this and think of a better way
   GetAvailableListings(data: FilterLocationRoomRequest): Listings
   #
   PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
