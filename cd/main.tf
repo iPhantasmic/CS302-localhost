@@ -45,8 +45,8 @@ resource "aws_ecs_task_definition" "listings-service" {
     {
       name = "listings-service"
       image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/listings:${var.IMAGE_VERSION}"
-      cpu = 1536
-      memory = 1536
+      cpu = 512
+      memory = 512
       essential = true
       portMappings = [{
         containerPort = 50051
