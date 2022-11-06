@@ -24,6 +24,8 @@ statuses = {
 def getTimeStamp_fromStr(str_time: str, from_db: bool = False) -> Timestamp:
     if from_db:
         str_time = str_time[:10] + "T" + str_time[11:]
+        if len(str_time) == 20: # Pad zeros
+            str_time = str_time[:-1] + "000000"
     else:
         str_time = str_time[:-4]
 
@@ -57,10 +59,10 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 booking_array.bookings.extend(
                     [
                         bookings_pb2.Booking(
-                            id=booking.id,
-                            user_id=booking.user_id,
-                            listing_id=booking.listing_id,
-                            host_id=booking.host_id,
+                            id=str(booking.id),
+                            user_id=str(booking.user_id),
+                            listing_id=str(booking.listing_id),
+                            host_id=str(booking.host_id),
                             start_date=start_date,
                             end_date=end_date,
                             status=bookings_pb2.Status.STATUS_ACTIVE,
@@ -130,7 +132,6 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             session.add(new_booking)
             session.commit()
             session.refresh(new_booking)
-            
 
             booking_request["id"] = str(new_booking.id)  # Convert UUID to str
             booking_request["start_date"] = getTimeStamp_fromStr(
