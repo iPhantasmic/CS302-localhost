@@ -159,6 +159,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         
         except Exception as e:
             logger.error(f"Error in booking creation: {e}")
+            session.rollback()
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Booking failed to be created")
             return bookings_pb2.Booking()
