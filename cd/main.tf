@@ -33,8 +33,8 @@ resource "aws_ecs_task_definition" "payments-service" {
     {
       name = "payments-service"
       image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/payments:${var.IMAGE_VERSION}"
-      cpu = 512
-      memory = 512
+      cpu = 1536
+      memory = 1536
       essential = true
       portMappings = [{
         containerPort = 4000
