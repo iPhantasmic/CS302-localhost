@@ -1,7 +1,6 @@
 import BookingClient from '../services/booking/BookingClient'
 import SNSPublisher from '../services/email/booking_confirmed'
 import fetch from 'node-fetch'
-import { StatusCodes } from 'http-status-codes'
 
 const client = BookingClient()
 const email_client = new SNSPublisher()
@@ -26,7 +25,7 @@ export default (root: any, params: any) => {
                         return reject(err)
                     }
                     try {
-                        const response = await fetch('http://13.229.65.90:420/api/payments/refund', {
+                        const response = await fetch(`http://${process.env.PAYMENTS_SVC_URL}/api/payments/refund`, {
                             method: 'post',
                             body: JSON.stringify({"bookingId": booking_object["id"]}),
                         })
