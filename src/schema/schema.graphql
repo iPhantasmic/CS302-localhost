@@ -136,7 +136,6 @@ input CreateBookingRequest {
   hostId: String
   startDate: ProtobufTimestamp
   endDate: ProtobufTimestamp
-  paymentId: String
 }
 
 input DeleteBookingRequest {
@@ -258,7 +257,6 @@ input MakeBookingRequest {
   hostId: String
   startDate: ProtobufTimestamp
   endDate: ProtobufTimestamp
-  paymentId: String
 }
 
 input CancelBookingRequest {
