@@ -1,3 +1,7 @@
+variable "IMAGE_VERSION" {
+  type = string
+}
+
 variable "HOST" {
   type = string
 }
@@ -32,7 +36,7 @@ resource "aws_ecs_task_definition" "bookings-service" {
   container_definitions = jsonencode([
     {
       name = "bookings-service"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/bookings:latest"
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/bookings:${var.IMAGE_VERSION}"
       cpu = 512
       memory = 512
       essential = true
