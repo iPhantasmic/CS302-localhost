@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "auth-service" {
 
 resource "aws_ecs_service" "auth-service" {
   name = "auth-service"
-  cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302"
+  cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302-auth"
   task_definition = aws_ecs_task_definition.auth-service.arn
   desired_count = 1
 }
