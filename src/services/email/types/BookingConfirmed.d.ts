@@ -14,7 +14,7 @@ type BookingConfirmedAttributes = {
 
 type BookingConfirmedRequestParams = {
     data: {
-        receiverEmail:String
+        receiverEmail: String
         propertyName: string
         receiptId: string
         paymentDate: string

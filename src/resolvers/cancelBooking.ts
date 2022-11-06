@@ -20,7 +20,7 @@ export default (root: any, params: any) => {
         }
         client.GetBookingById(params.data, function (err: any, response: any) {
             if (err) {
-                console.log("errrerer")
+                console.log("err")
                 return reject(err)
             }
             const booking_object = response
@@ -38,19 +38,15 @@ export default (root: any, params: any) => {
                         data: {
                             receiverEmail: 'nicholasong.2020@smu.edu.sg',
                             propertyName: 'Seminyak Kuta Utara',
-                            receiptId: 'RC4E4KBBHD',
-                            paymentDate: 'October 17, 2022',
-                            paymentTime: '11:00:21 PM GMT+8',
-                            bookingStartDate: 'Thu, Dec 8, 2022',
-                            bookingEndDate: 'Tue, Dec 13, 2022',
+                            refundDate: 'November 7, 2022',
                             unitPrice: 125.1,
                             numNights: 5,
                             subTotal: 625.5,
                             serviceFee: 95.5,
-                            totalPrice: 721.0,
+                            totalRefunded: 721.0,
                         },
                     }
-                    email_client.publish_message_booking_confirmed(test_data)
+                    email_client.publish_message_booking_cancelled(test_data)
 
                     resolve(response)
                 }

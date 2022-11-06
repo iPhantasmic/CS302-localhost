@@ -5,6 +5,7 @@ import UpdateUser from './updateUser';
 import DeleteUser from './deleteUser';
 import ValidateToken from './validateToken';
 import PublishBookingConfirmed from "./emailBookingConfirmed"
+import PublishBookingCancelled from "./emailBookingCancelled"
 import GetBookingByUser from './getBookingByUser';
 import MakeBooking from './makeBooking';
 import GetReview from './getReview';
@@ -32,6 +33,7 @@ const resolvers: any  = {
     GetAvailableListings,
     ValidateToken,
     PublishBookingConfirmed,
+    PublishBookingCancelled,
     GetBookingById,
     GetUnavailableListings,
     ViewListings //Composite
