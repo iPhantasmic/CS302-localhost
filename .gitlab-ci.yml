@@ -70,6 +70,8 @@ validate-terraform:
         TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
         TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
         TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
+        TF_VAR_SNS_ACCESS_KEY_ID: ${SNS_ACCESS_KEY_ID}
+        TF_VAR_SNS_SECRET_ACCESS_KEY: ${SNS_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform validate
 
@@ -91,6 +93,8 @@ plan-terraform:
         TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
         TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
         TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
+        TF_VAR_SNS_ACCESS_KEY_ID: ${SNS_ACCESS_KEY_ID}
+        TF_VAR_SNS_SECRET_ACCESS_KEY: ${SNS_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform plan
     - gitlab-terraform plan-json
@@ -119,6 +123,8 @@ apply-terraform:
         TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
         TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
         TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
+        TF_VAR_SNS_ACCESS_KEY_ID: ${SNS_ACCESS_KEY_ID}
+        TF_VAR_SNS_SECRET_ACCESS_KEY: ${SNS_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform apply
   environment:
@@ -146,6 +152,8 @@ destroy-terraform:
         TF_VAR_LISTINGS_SVC_URL: ${LISTINGS_SVC_URL}
         TF_VAR_REVIEWS_SVC_URL: ${REVIEWS_SVC_URL}
         TF_VAR_PAYMENTS_SVC_URL: ${PAYMENTS_SVC_URL}
+        TF_VAR_SNS_ACCESS_KEY_ID: ${SNS_ACCESS_KEY_ID}
+        TF_VAR_SNS_SECRET_ACCESS_KEY: ${SNS_SECRET_ACCESS_KEY}
   script:
     - gitlab-terraform destroy
   environment:
