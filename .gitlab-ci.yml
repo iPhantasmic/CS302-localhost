@@ -123,6 +123,7 @@ validate-terraform:
         TF_VAR_DB_HOST: ${DB_HOST}
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
   script:
     - gitlab-terraform validate
 
@@ -144,6 +145,7 @@ plan-terraform:
         TF_VAR_DB_HOST: ${DB_HOST}
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
   script:
     - gitlab-terraform plan
     - gitlab-terraform plan-json
@@ -172,6 +174,7 @@ apply-terraform:
         TF_VAR_DB_HOST: ${DB_HOST}
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
   script:
     - gitlab-terraform apply
   environment:
@@ -199,6 +202,7 @@ destroy-terraform:
         TF_VAR_DB_HOST: ${DB_HOST}
         TF_VAR_DB_PORT: ${DB_PORT}
         TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
   script:
     - gitlab-terraform destroy
   environment:
