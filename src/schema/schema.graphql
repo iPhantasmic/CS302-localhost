@@ -32,7 +32,7 @@ type Mutation {
   UpdateUser(data: UpdateUserRequest): User
   DeleteUser(data: DeleteUserRequest): Message
   #
-  CreateBooking(data: CreateBookingRequest): ReturnMessage
+  CreateBooking(data: CreateBookingRequest): CreateBookingResponse
   DeleteBookingById(data: DeleteBookingRequest): ReturnMessage
   #
   CreateReview(data: CreateReviewRequest): Review
@@ -137,6 +137,16 @@ input CreateBookingRequest {
   hostId: String
   startDate: ProtobufTimestamp
   endDate: ProtobufTimestamp
+}
+
+type CreateBookingResponse {
+  id: String
+  userId: String
+  listingId: String
+  hostId: String
+  status: String
+  startDate: ProtobufTimestampOutput
+  endDate: ProtobufTimestampOutput
 }
 
 input DeleteBookingRequest {
