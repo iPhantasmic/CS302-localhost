@@ -31,7 +31,8 @@ router.post('/create', async (req: Request, res: Response) => {
           }, {
               stripeAccount: connected_account.id,
         });
-        res.status(OK).send({clientSecret: paymentIntent.client_secret})
+        
+        res.status(OK).send({clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id})
     } catch (e) {
         res.status(INTERNAL_SERVER_ERROR).send(e)
     }
@@ -64,10 +65,14 @@ router.post('/create', async (req: Request, res: Response) => {
     transaction.bookingid = req.body.bookingId
     transaction.chargeid = paymentIntent_Confirmed.charges.data[0].id
     transaction.account = account
-    const transactionRepository = await AppDataSource.getRepository(Transaction)
-    await transactionRepository.save(transaction)
+    try {
+        const transactionRepository = await AppDataSource.getRepository(Transaction)
+        await transactionRepository.save(transaction)
+        return res.status(OK).json(transaction);
+    } catch (e) {
+        return res.status(INTERNAL_SERVER_ERROR).send(e)
+    }
    
-    return res.status(OK).json(transaction);
 });
 
 /******************************************************************************
@@ -84,13 +89,18 @@ router.post('/create', async (req: Request, res: Response) => {
     .from(Transaction, 'transaction')
     .where('transaction.bookingid = :id', { id: req.body.bookingId })
     .getOne();
-    const refund = await stripe.refunds.create({
-      charge: transaction.chargeid,
-    }, {
-      stripeAccount: transaction.account.id,
-    });
 
-    return res.status(OK).json({refund});
+    try {
+      const refund = await stripe.refunds.create({
+        charge: transaction.chargeid,
+      }, {
+        stripeAccount: transaction.account.id,
+      });
+    
+        return res.status(OK).json({refund});
+    } catch (e) {
+        return res.status(INTERNAL_SERVER_ERROR).send(e)
+    }
 }); 
 
 

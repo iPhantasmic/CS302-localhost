@@ -1,3 +1,7 @@
+variable "IMAGE_VERSION" {
+  type = string
+}
+
 variable "PORT" {
   type = string
 }
@@ -28,9 +32,9 @@ resource "aws_ecs_task_definition" "payments-service" {
   container_definitions = jsonencode([
     {
       name = "payments-service"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/payments:latest"
-      cpu = 512
-      memory = 512
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/payments:${var.IMAGE_VERSION}"
+      cpu = 1536
+      memory = 1536
       essential = true
       portMappings = [{
         containerPort = 4000
