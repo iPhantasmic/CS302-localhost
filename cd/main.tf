@@ -22,6 +22,14 @@ variable "PAYMENTS_SVC_URL" {
   type = string
 }
 
+variable "SNS_ACCESS_KEY_ID" {
+  type = string
+}
+
+variable "SNS_SECRET_ACCESS_KEY" {
+  type = string
+}
+
 resource "aws_ecs_task_definition" "api-gateway" {
   family = "api-gateway"
   execution_role_arn       = "arn:aws:iam::631945473733:role/ecsTaskExecutionRole"
@@ -42,7 +50,9 @@ resource "aws_ecs_task_definition" "api-gateway" {
         { name = "BOOKINGS_SVC_URL", value = var.BOOKINGS_SVC_URL },
         { name = "LISTINGS_SVC_URL", value = var.LISTINGS_SVC_URL },
         { name = "REVIEWS_SVC_URL", value = var.REVIEWS_SVC_URL },
-        { name = "PAYMENTS_SVC_URL", value = var.PAYMENTS_SVC_URL }
+        { name = "PAYMENTS_SVC_URL", value = var.PAYMENTS_SVC_URL },
+        { name = "SNS_ACCESS_KEY_ID", value = var.SNS_ACCESS_KEY_ID },
+        { name = "SNS_SECRET_ACCESS_KEY", value = var.SNS_SECRET_ACCESS_KEY }
       ]
       logConfiguration = {
         "logDriver" = "awslogs",
