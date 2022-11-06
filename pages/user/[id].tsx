@@ -33,6 +33,7 @@ import { gql } from "@apollo/client";
 import gqlclient from "../../GraphQL/graphQLClient";
 import { useEffect, useState } from "react";
 import MainContent from "../../components/MainContent";
+import { useToast } from "@chakra-ui/react";
 import {
   CalendarIcon,
   StarIcon,
@@ -40,12 +41,15 @@ import {
   ChatIcon,
   AtSignIcon,
 } from "@chakra-ui/icons";
+import axios from "axios";
 
 const Home: NextPage = () => {
   // console.log(query_data.launches)
   const router = useRouter();
+  const [dirty, setDirty] = useState(false);
   const [user, setUser] = useState({});
   const [bookings, setBookings] = useState([]);
+  const toast = useToast();
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -54,11 +58,43 @@ const Home: NextPage = () => {
     },
   });
 
+  function handleRefund(bookingId, userId) {
+    console.log(bookingId, userId);
+
+    toast({
+      title: "Processing",
+      description: "Please hold while we process your refund.",
+      status: "info",
+      duration: 9000,
+      isClosable: true,
+    });
+
+    // TODO: Swap on change PAYMENT SERVICE
+    axios
+      .post("http://18.142.238.58:420/api/payments/refund", {
+        bookingId: bookingId,
+        userId: userId,
+      })
+      .then((response) => {
+        toast({
+          title: "Success",
+          description: "We have processed your refund.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
   useEffect(() => {
     if (!session) {
       return;
     }
-    console.log(window.location.pathname);
+    // console.log(window.location.pathname);
     var data = { userId: session.userId };
 
     const userData = gqlclient.query({
@@ -104,13 +140,13 @@ const Home: NextPage = () => {
 
     bookingData
       .then((response) => {
-        console.log(response.data.GetBookingByUser.bookings);
+        // console.log(response.data.GetBookingByUser.bookings);
         setBookings(response.data.GetBookingByUser.bookings);
       })
       .catch((e) => {
         console.log(e);
       });
-  }, [session]);
+  }, [session, dirty]);
 
   return (
     <div>
@@ -185,7 +221,7 @@ const Home: NextPage = () => {
                                     <HStack>
                                       <Text>
                                         {new Date(
-                                          booking.startDate.seconds * 1000
+                                          booking.startDate.seconds.low * 1000
                                         ).toLocaleDateString("en-US", {
                                           weekday: "long",
                                           year: "numeric",
@@ -250,7 +286,7 @@ const Home: NextPage = () => {
                                       <HStack>
                                         <Text>
                                           {new Date(
-                                            booking.startDate.seconds * 1000
+                                            booking.startDate.seconds.low * 1000
                                           ).toLocaleDateString("en-US", {
                                             weekday: "long",
                                             year: "numeric",
@@ -275,7 +311,16 @@ const Home: NextPage = () => {
                                     exercitation ullamco laboris nisi ut aliquip
                                     ex ea commodo consequat.
                                   </Text>
-                                  <Button colorScheme="red" size="md">
+                                  <Button
+                                    colorScheme="red"
+                                    size="md"
+                                    onClick={() =>
+                                      handleRefund(
+                                        booking.id,
+                                        session?.user.userId
+                                      )
+                                    }
+                                  >
                                     Refund
                                   </Button>
                                 </AccordionPanel>
@@ -323,7 +368,7 @@ const Home: NextPage = () => {
                                       <HStack>
                                         <Text>
                                           {new Date(
-                                            booking.startDate.seconds * 1000
+                                            booking.startDate.seconds.low * 1000
                                           ).toLocaleDateString("en-US", {
                                             weekday: "long",
                                             year: "numeric",

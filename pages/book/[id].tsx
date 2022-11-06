@@ -144,7 +144,8 @@ const Listing: NextPage = () => {
         setStripePromise(loadStripe(publishableKey));
 
         try {
-          fetch("http://localhost:3001/api/payments/create", {
+          // TODO: Swap out on change PAYMENT SERVICE
+          fetch("http://18.142.238.58:420/api/payments/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

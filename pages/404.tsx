@@ -16,17 +16,17 @@ import {
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import Footer from "../../components/Footer";
+import Footer from "../components/Footer";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import Logo from "./../../public/localhost.png";
-import Jye from "./../../public/Jye.jpg";
-import Jianwei from "./../../public/Jianwei.jpg";
-import Justin from "./../../public/Justin.jpg";
-import Nich from "./../../public/Nich.jpg";
-import Omer from "./../../public/Omer.jpg";
-import LogoDark from "./../../public/localhost_dark.png";
-import MainContent from "../../components/MainContent";
+import Logo from "./../public/localhost.png";
+import Jye from "./../public/Jye.jpg";
+import Jianwei from "./../public/Jianwei.jpg";
+import Justin from "./../public/Justin.jpg";
+import Nich from "./../public/Nich.jpg";
+import Omer from "./../public/Omer.jpg";
+import LogoDark from "./../public/localhost_dark.png";
+import MainContent from "../components/MainContent";
 import Router from "next/router";
 
 const Failure: NextPage = () => {
@@ -63,11 +63,10 @@ const Failure: NextPage = () => {
                   letterSpacing="tight"
                   width="100%"
                 >
-                  Payment Failed
+                  Error
                 </Heading>
                 <Text fontSize="lg" letterSpacing="tight" color="red.500">
-                  Uh-oh Booking request was not set due to an error - please try
-                  again.
+                  Uh-oh an error has occured - please try again.
                 </Text>
               </VStack>
               <Heading fontSize="3xl" fontWeight="bold" color="red.500">

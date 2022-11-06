@@ -7,6 +7,7 @@ import { Box, Button } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import gqlclient from "../GraphQL/graphQLClient";
 import { gql } from "@apollo/client";
+import axios from "axios";
 
 export default function CheckoutForm(props) {
   const stripe = useStripe();
@@ -34,28 +35,63 @@ export default function CheckoutForm(props) {
       isClosable: true,
     });
 
+    const startDate = {
+      nanos: 2,
+      seconds: "10203129",
+    };
+
+    const endDate = {
+      nanos: 3,
+      seconds: "10921321",
+    };
+
     var data = {
       userId: props.userId,
       hostId: props.hostId,
-      startDate: props.startDate,
-      endDate: props.endDate,
+      startDate: startDate,
+      endDate: endDate,
       listingId: props.listingId,
     };
 
-    const request = gqlclient
+    gqlclient
       .mutate({
         mutation: gql`
-          mutation CreateBooking($data: MakeBookingRequest) {
+          mutation Mutation($data: MakeBookingRequest) {
             MakeBooking(data: $data) {
-              returnMessage
+              id
+              userId
+              listingId
+              hostId
+              status
+              startDate {
+                nanos
+                seconds
+              }
+              endDate {
+                nanos
+                seconds
+              }
             }
           }
         `,
         variables: { data },
       })
       .then((response) => {
-        // TODO: get id and post (id, payment_intent and userId) to stripe server
-        console.log(response);
+        console.log(response.data.CreateBooking.id);
+        // TODO: Swap out on change PAYMENT SERVICE
+        axios
+          .post(
+            "http://18.142.238.58:420/api/payments/confirm/" +
+              props.paymentIntentId,
+            {
+              paymentIntentId: props.paymentIntentId,
+              userId: props.userId,
+              bookingId: response.data.CreateBooking.id,
+            }
+          )
+          .then((response) => {
+            console.log(response);
+          });
       })
       .catch((e) => {
         console.log(e);
@@ -69,11 +105,11 @@ export default function CheckoutForm(props) {
       },
     });
 
-    // if (error.type === "card_error" || error.type === "validation_error") {
-    //     setMessage(error.message);
-    // } else {
-    //     setMessage("An unexpected error occured.");
-    // }
+    if (error.type === "card_error" || error.type === "validation_error") {
+      setMessage(error.message);
+    } else {
+      setMessage("An unexpected error occured.");
+    }
 
     setIsProcessing(false);
   };

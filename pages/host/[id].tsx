@@ -39,7 +39,6 @@ const Success: NextPage = () => {
     },
   ]);
 
-  // TODO: End point for adding listings
   return (
     <div>
       <Head>
