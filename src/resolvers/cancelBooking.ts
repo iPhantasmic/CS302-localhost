@@ -24,9 +24,9 @@ export default (root: any, params: any) => {
                 return reject(err)
             }
             const booking_object = response
-            console.log(booking_object)
-            client.DeleteBookingById(
-                params.data,
+            booking_object["status"] = 3
+            client.UpdateBookingById(
+                booking_object,
                 function (err: any, response: any) {
                     if (err) {
                         return reject(err)
