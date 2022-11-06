@@ -1,3 +1,7 @@
+variable "IMAGE_VERSION" {
+  type = string
+}
+
 variable "PORT" {
   type = string
 }
@@ -28,7 +32,7 @@ resource "aws_ecs_task_definition" "reviews-service" {
   container_definitions = jsonencode([
     {
       name = "reviews-service"
-      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/reviews:latest"
+      image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/reviews:${var.IMAGE_VERSION}"
       cpu = 512
       memory = 512
       essential = true
