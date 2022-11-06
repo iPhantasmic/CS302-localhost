@@ -2,11 +2,12 @@
 import { PublishCommand } from '@aws-sdk/client-sns'
 import { snsClient } from './libs/snsClient'
 import BookingConfirmedTemplate from './templateData/BookingConfirmed'
+import BookingCancelledTemplate from "./templateData/BookingCancelled"
 
 type SNSParams = {
     Message: string
     TopicArn: string
-    MessageAttributes?: BookingConfirmedAttributes
+    MessageAttributes?: BookingConfirmedAttributes | BookingCancelledAttributes
 }
 
 const params: SNSParams = {
@@ -33,6 +34,26 @@ class SNSPublisher {
         } catch (err) {
             console.log('Error', err.stack)
         }
+    }
+
+    publish_message_booking_cancelled = async (
+        data: BookingCancelledRequestAttributes
+    )=>{
+        params.Message = "BookingCancelled"
+        for (var key in data["data"]){
+            BookingCancelledTemplate[key]["StringValue"] = data['data'][key]
+        }
+
+        try {
+            params.MessageAttributes = BookingCancelledTemplate
+            const data = await snsClient.send(new PublishCommand(params))
+            console.log('Success.', data)
+            return data // For unit tests.
+        } catch (err) {
+            console.log('Error', err.stack)
+        }
+
+
     }
 
 }

@@ -22,6 +22,7 @@ type Query {
   GetAvailableListings(data: FilterLocationRoomRequest): Listings
   #
   PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+  PublishBookingCancelled(data: PublishBookingCancelledRequest): String
   #
   ViewListings(data:ViewListingsRequest):Listings
 }
@@ -289,4 +290,16 @@ input PublishBookingConfirmedRequest {
   subTotal: Float
   serviceFee: Float
   totalPrice: Float
+}
+
+# Email Service
+input PublishBookingCancelledRequest {
+  receiverEmail: String
+  propertyName: String
+  refundDate: String
+  unitPrice: Float
+  numNights: Int
+  subTotal: Float
+  serviceFee: Float
+  totalRefunded: Float
 }
