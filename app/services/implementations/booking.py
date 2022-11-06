@@ -107,7 +107,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 f"Bookings with listing id {request.listing_id} not found"
             )
             return bookings_pb2.GetBookingArrayResponse()
-
+    
     def CreateBooking(self, request, context):
         """Create a new booking given user_id, listing_id and host_id.
         Args:
@@ -118,19 +118,28 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_request = json_format.MessageToDict(
             request, preserving_proto_field_name=True
         )
+
+        request_start_datetime = datetime.fromtimestamp(int(request.start_date.seconds))
+        request_end_datetime = datetime.fromtimestamp(int(request.end_date.seconds))
+        booking_request["start_date"] = request_start_datetime
+        booking_request["end_date"] = request_end_datetime
         booking_request["status"] = statuses["STATUS_ACTIVE"]
+
         new_booking = models.Booking(**booking_request)
         try:
             session.add(new_booking)
             session.commit()
             session.refresh(new_booking)
+            
 
             booking_request["id"] = str(new_booking.id)  # Convert UUID to str
             booking_request["start_date"] = getTimeStamp_fromStr(
-                booking_request["start_date"]
+                str(new_booking.start_date), 
+                from_db=True
             )
             booking_request["end_date"] = getTimeStamp_fromStr(
-                booking_request["end_date"]
+                str(new_booking.end_date), 
+                from_db=True
             )
 
             context.set_code(grpc.StatusCode.OK)
@@ -138,7 +147,6 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
             return bookings_pb2.Booking(**booking_request)
         except Exception as e:
             logger.error(f"Error in booking creation: {e}")
-            session.rollback()
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Booking failed to be created")
             return bookings_pb2.Booking()
