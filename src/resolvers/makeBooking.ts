@@ -7,7 +7,7 @@ const email_client = new SNSPublisher()
 export default (root: any, params: any) => {
     return new Promise((resolve: any, reject: any) => {
         console.log(params)
-        client.CreateBooking(params.data, function (err: any, response: any) {
+        client.CreateBooking(params.data, async function (err: any, response: any) {
             if (err) {
                 return reject(err)
             }
@@ -20,6 +20,12 @@ export default (root: any, params: any) => {
 
             try {
                 // Stripe Code
+                const response = await fetch(`http://${process.env.PAYMENTS_SVC_URL}/api/payments/create`, {
+                    method: 'post',
+                    body: JSON.stringify({"amount": params.data.amount, "userId": params.data.userId}),
+                })
+                const paymentIntent = await response.json()
+                console.log(paymentIntent)
 
                 //Prepare message to send to SNS
                 //TODO: retrieve listing details from db
@@ -41,7 +47,7 @@ export default (root: any, params: any) => {
                 }
                 email_client.publish_message_booking_confirmed(test_data)
 
-                resolve(response)
+                resolve(paymentIntent)
             } catch {
                 //Rollback for booking in event payment fails
                 client.DeleteBookingById(
