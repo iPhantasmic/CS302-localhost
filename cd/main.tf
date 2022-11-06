@@ -41,8 +41,8 @@ resource "aws_ecs_task_definition" "api-gateway" {
     {
       name = "api-gateway"
       image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/api-gateway:${var.IMAGE_VERSION}"
-      cpu = 512
-      memory = 512
+      cpu = 1024
+      memory = 1024
       essential = true
       portMappings = [{
         containerPort = 6969
