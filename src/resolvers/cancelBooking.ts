@@ -12,12 +12,7 @@ export default (root: any, params: any) => {
         //Ideal  : UpdateBookingStatus -> Refund -> SNS
         //Justification: It's easier to rollback failed bookingstatus than to roll back
 
-        try {
-
-        } catch {
-            reject("Refunding Failed")
-            return
-        }
+       
         client.GetBookingById(params.data, function (err: any, response: any) {
             if (err) {
                 console.log("err")
@@ -31,7 +26,25 @@ export default (root: any, params: any) => {
                     if (err) {
                         return reject(err)
                     }
+                    try {
+                        //Stripe Code
+                    } catch {
+                        //Rollback SAGA
+                        booking_object["status"] = 1
+                        client.UpdateBookingById(
+                            booking_object,
+                            function (err: any, response: any) {
+                                if (err) {
+                                    return reject(err)
+                                }
+                            })
+                        reject("Refunding Failed")
+                        return
+                    }
 
+                    console.log("Sending Email")
+
+                
                     //Prepare message to send to SNS
                     //TODO: retrieve listing details from db
                     const test_data = {
