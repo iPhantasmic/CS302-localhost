@@ -222,5 +222,6 @@ destroy-terraform:
     name: production
   dependencies:
     - apply-terraform
+  when: manual
   only:
     - main
