@@ -13,10 +13,17 @@ logger = logging.getLogger(__name__)
 
 session = Session(engine)
 
-statuses = {
+intToStatus = {
+    0: "STATUS_UNSPECIFIED",
+    1: "STATUS_ACTIVE",
+    2: "STATUS_COMPLETED",
+    3: "STATUS_CANCELLED"
+}
+
+statusToInt = {
     "STATUS_UNSPECIFIED": 0,
-    "STATUS_ACTIVE": 1,
-    "STATUS_COMPLETED":2,
+    "STATUS_ACTIVE" : 1,
+    "STATUS_COMPLETED": 2,
     "STATUS_CANCELLED": 3
 }
 
@@ -24,8 +31,8 @@ statuses = {
 def getTimeStamp_fromStr(str_time: str, from_db: bool = False) -> Timestamp:
     if from_db:
         str_time = str_time[:10] + "T" + str_time[11:]
-        if len(str_time) == 20: # Pad zeros
-            str_time = str_time[:-1] + "000000"
+        if len(str_time) == 19: # Pad zeros
+            str_time = str_time[:-1] + ".000000"
     else:
         str_time = str_time[:-4]
 
@@ -65,7 +72,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             host_id=str(booking.host_id),
                             start_date=start_date,
                             end_date=end_date,
-                            status=bookings_pb2.Status.STATUS_ACTIVE,
+                            status=intToStatus[booking.status],
                         )
                     ]
                 )
@@ -95,9 +102,9 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                             user_id=str(booking.user_id),
                             listing_id=str(booking.listing_id),
                             host_id=str(booking.host_id),
-                            status=bookings_pb2.Status.STATUS_ACTIVE,
                             start_date=start_date,
                             end_date=end_date,
+                            status=intToStatus[booking.status]
                         )
                     ]
                 )
@@ -125,27 +132,31 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         request_end_datetime = datetime.fromtimestamp(int(request.end_date.seconds))
         booking_request["start_date"] = request_start_datetime
         booking_request["end_date"] = request_end_datetime
-        booking_request["status"] = statuses["STATUS_ACTIVE"]
+        booking_request["status"] = 1 # Active status
 
         new_booking = models.Booking(**booking_request)
         try:
             session.add(new_booking)
             session.commit()
             session.refresh(new_booking)
+            logger.info(f"Booking created: {new_booking}")
 
-            booking_request["id"] = str(new_booking.id)  # Convert UUID to str
-            booking_request["start_date"] = getTimeStamp_fromStr(
-                str(new_booking.start_date), 
-                from_db=True
-            )
-            booking_request["end_date"] = getTimeStamp_fromStr(
-                str(new_booking.end_date), 
-                from_db=True
+            start_date = getTimeStamp_fromStr(str(new_booking.start_date), from_db=True)
+            end_date = getTimeStamp_fromStr(str(new_booking.end_date), from_db=True)
+
+            created_booking = bookings_pb2.Booking(
+                    id=str(new_booking.id),
+                    user_id=str(new_booking.user_id),
+                    listing_id=str(new_booking.listing_id),
+                    host_id=str(new_booking.host_id),
+                    status=bookings_pb2.Status.STATUS_ACTIVE,
+                    start_date=start_date,
+                    end_date=end_date,
             )
 
             context.set_code(grpc.StatusCode.OK)
-            logger.info(f"Booking created: {booking_request}")
-            return bookings_pb2.Booking(**booking_request)
+            return created_booking
+        
         except Exception as e:
             logger.error(f"Error in booking creation: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
@@ -272,6 +283,12 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
         booking_dict = json_format.MessageToDict(
             request, preserving_proto_field_name=True
         )
+        print(booking_dict)
+        request_start_datetime = datetime.fromtimestamp(int(request.start_date.seconds))
+        request_end_datetime = datetime.fromtimestamp(int(request.end_date.seconds))
+        booking_dict["start_date"] = request_start_datetime
+        booking_dict["end_date"] = request_end_datetime
+        booking_dict["status"] = statusToInt[booking_dict["status"]]
 
         try:
             session.query(models.Booking).filter(
@@ -307,7 +324,7 @@ class BookingServicer(bookings_pb2_grpc.BookingServiceServicer):
                 host_id=str(booking.host_id),
                 start_date=start_date,
                 end_date=end_date,
-                status=booking.status
+                status=intToStatus[booking.status]
             )
             context.set_code(grpc.StatusCode.OK)
             return booking_returned
