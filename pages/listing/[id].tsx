@@ -94,7 +94,6 @@ const Listing: NextPage = (props: any) => {
     },
   ]);
 
-  //TODO: Change the endpoint for fetching available listings to GetAvailableListings
   useEffect(() => {
     const listingId = router.query.id;
 
@@ -442,7 +441,7 @@ const Listing: NextPage = (props: any) => {
                 <VStack>
                   <Button
                     width="100%"
-                    colorScheme="facebook"
+                    colorScheme="linkedin"
                     onClick={() =>
                       Router.push({
                         pathname: "/book/" + listing.listingId,
@@ -482,7 +481,7 @@ const Listing: NextPage = (props: any) => {
                 <Flex>
                   <Text fontSize="sm">Service fee</Text>
                   <Spacer />
-                  <Text fontSize="sm">$0 SGD</Text>
+                  <Text fontSize="sm">$20 SGD</Text>
                 </Flex>
                 <Divider py={2} />
                 <Flex mt={5}>
@@ -496,7 +495,8 @@ const Listing: NextPage = (props: any) => {
                       Math.ceil(
                         (state[0].endDate - state[0].startDate) /
                           (1000 * 60 * 60 * 24)
-                      )}{" "}
+                      ) +
+                      20}{" "}
                     SGD
                   </Text>
                 </Flex>

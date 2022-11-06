@@ -39,12 +39,11 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    const data = "null";
     gqlclient
       .query({
         query: gql`
-          query GetAllListings($data: String!) {
-            GetAllListings(data: $data) {
+          query GetAllListings {
+            GetAllListings {
               listings {
                 listingId
                 userId
@@ -68,7 +67,6 @@ const Home: NextPage = () => {
             }
           }
         `,
-        variables: { data },
       })
       .then((response) => {
         var list = response.data.GetAllListings.listings;
@@ -81,7 +79,7 @@ const Home: NextPage = () => {
   }, [toggle]);
 
   useEffect(() => {
-    console.log(router.query.country);
+    console.log(router.query);
     if (router.query.country === undefined || router.query.country === "") {
       setToggle(!toggle);
       return;

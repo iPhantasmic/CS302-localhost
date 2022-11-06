@@ -81,6 +81,7 @@ const Listing: NextPage = () => {
   const [listing, setListing] = useState({});
   const [stripePromise, setStripePromise] = useState(null);
   const [clientSecret, setClientSecret] = useState("");
+  const [paymentIntentId, setPaymentIntentId] = useState("");
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -98,32 +99,8 @@ const Listing: NextPage = () => {
   ]);
 
   useEffect(() => {
-    if (!session) {
+    if (!session || !router) {
       return;
-    }
-    // fetch("/config").then(async (r) => {
-    //     const { publishableKey } = await r.json()
-    //     setStripePromise(loadStripe(publishableKey))
-    // })
-    const publishableKey =
-      "pk_test_51LrWauIsHhSfq0KeqJE7D6ZgsRgVVdliAF9t1Uea7RUfrsWoXE2QJ8LcmcZSv3JhHArHS43wZVs1w3CM3Y0icE4i00T9A99wFq";
-    setStripePromise(loadStripe(publishableKey));
-
-    try {
-      fetch("http://localhost:3001/api/payments/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          // TODO: Add amount and currency based on calculations
-          amount: 1999,
-          userId: session.userId,
-        }),
-      }).then(async (r) => {
-        const { clientSecret } = await r.json();
-        setClientSecret(clientSecret);
-      });
-    } catch (e) {
-      console.log(e);
     }
 
     var data = { listingId: router.query.id };
@@ -157,11 +134,45 @@ const Listing: NextPage = () => {
       })
       .then((response) => {
         setListing(response.data.GetListing);
+
+        console.log(response.data.GetListing.price);
+        console.log(router.query.endDate);
+        console.log(router.query.startDate);
+
+        const publishableKey =
+          "pk_test_51LrWauIsHhSfq0KeqJE7D6ZgsRgVVdliAF9t1Uea7RUfrsWoXE2QJ8LcmcZSv3JhHArHS43wZVs1w3CM3Y0icE4i00T9A99wFq";
+        setStripePromise(loadStripe(publishableKey));
+
+        try {
+          fetch("http://localhost:3001/api/payments/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount:
+                (response.data.GetListing.price *
+                  Math.ceil(
+                    (new Date(router.query.endDate) -
+                      new Date(router.query.startDate)) /
+                      (1000 * 60 * 60 * 24)
+                  ) +
+                  20) *
+                100,
+              userId: session.userId,
+            }),
+          }).then(async (r) => {
+            const paymentData = await r.json();
+            console.log(paymentData);
+            setClientSecret(paymentData.clientSecret);
+            setPaymentIntentId(paymentData.paymentIntentId);
+          });
+        } catch (e) {
+          console.log(e);
+        }
       })
       .catch((e) => {
         console.log(e);
       });
-  }, [session]);
+  }, [session, router]);
 
   return (
     <div>
@@ -275,7 +286,14 @@ const Listing: NextPage = () => {
               </Heading>
               {stripePromise && clientSecret && (
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <CheckoutForm userId={session.userId} />
+                  <CheckoutForm
+                    userId={session.userId}
+                    paymentIntentId={paymentIntentId}
+                    hostId={listing.userId}
+                    listingId={listing.listingId}
+                    startDate={router.query.startDate}
+                    endDate={router.query.endDate}
+                  />
                 </Elements>
               )}
             </GridItem>
@@ -346,11 +364,24 @@ const Listing: NextPage = () => {
                 </Heading>
                 <Flex mt={5}>
                   <Text fontSize="md" letterSpacing="tight">
-                    $506.70 SGD x 7 nights
+                    ${listing.price} SGD x{" "}
+                    {Math.ceil(
+                      new Date(router.query.endDate) -
+                        new Date(router.query.startDate)
+                    ) /
+                      (1000 * 60 * 60 * 24)}{" "}
+                    nights
                   </Text>
                   <Spacer />
                   <Text fontSize="md" letterSpacing="tight">
-                    $3,551.00 SGD
+                    $
+                    {(listing.price *
+                      Math.ceil(
+                        new Date(router.query.endDate) -
+                          new Date(router.query.startDate)
+                      )) /
+                      (1000 * 60 * 60 * 24)}
+                    .00 SGD
                   </Text>
                 </Flex>
                 <Flex mt={2}>
@@ -359,7 +390,7 @@ const Listing: NextPage = () => {
                   </Text>
                   <Spacer />
                   <Text fontSize="md" letterSpacing="tight">
-                    $0.00 SGD
+                    $20.00 SGD
                   </Text>
                 </Flex>
                 <Divider py={2} />
@@ -373,7 +404,15 @@ const Listing: NextPage = () => {
                   </Text>
                   <Spacer />
                   <Text fontSize="md" letterSpacing="normal" fontWeight="bold">
-                    $3,551.00
+                    $
+                    {listing.price *
+                      Math.ceil(
+                        (new Date(router.query.endDate) -
+                          new Date(router.query.startDate)) /
+                          (1000 * 60 * 60 * 24)
+                      ) +
+                      20}
+                    .00
                   </Text>
                 </Flex>
               </Box>

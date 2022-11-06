@@ -10,6 +10,13 @@ import {
   VStack,
   Wrap,
   WrapItem,
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  Heading,
+  AccordionIcon,
+  AccordionButton,
+  Badge,
 } from "@chakra-ui/react";
 import type { GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
@@ -38,7 +45,7 @@ const Home: NextPage = () => {
   // console.log(query_data.launches)
   const router = useRouter();
   const [user, setUser] = useState({});
-  const [bookings, setBookings] = useState({});
+  const [bookings, setBookings] = useState([]);
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -48,8 +55,11 @@ const Home: NextPage = () => {
   });
 
   useEffect(() => {
+    if (!session) {
+      return;
+    }
     console.log(window.location.pathname);
-    var data = { userId: router.query.id };
+    var data = { userId: session.userId };
 
     const userData = gqlclient.query({
       query: gql`
@@ -69,16 +79,22 @@ const Home: NextPage = () => {
 
     const bookingData = gqlclient.query({
       query: gql`
-        query GetBookingByUser($data: BookingUserId) {
+        query GetBookingByUser($data: GetBookingsByUserRequest) {
           GetBookingByUser(data: $data) {
             bookings {
               id
               userId
               listingId
               hostId
-              startDate
-              endDate
-              paymentId
+              status
+              startDate {
+                nanos
+                seconds
+              }
+              endDate {
+                nanos
+                seconds
+              }
             }
           }
         }
@@ -86,10 +102,15 @@ const Home: NextPage = () => {
       variables: { data },
     });
 
-    bookingData.then((response) => {
-      // setBookings(response.data.GetUser);
-    });
-  });
+    bookingData
+      .then((response) => {
+        console.log(response.data.GetBookingByUser.bookings);
+        setBookings(response.data.GetBookingByUser.bookings);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [session]);
 
   return (
     <div>
@@ -102,9 +123,9 @@ const Home: NextPage = () => {
 
       <MainContent>
         <Container maxW="container.3xl" height="fit-content">
-          <HStack>
-            <Container>
-              <Box my="20" mx={14} boxShadow="lg" borderRadius="xl">
+          <HStack align="top" mb={20}>
+            <Container ml={20} mr={0} w={300}>
+              <Box mt="10" w={300} boxShadow="lg" borderRadius="xl">
                 <VStack px={12}>
                   <Wrap mt={5}>
                     <WrapItem>
@@ -122,36 +143,312 @@ const Home: NextPage = () => {
                   <Text fontSize="sm" pb={5}>
                     {session?.user.email}
                   </Text>
-                  <Button w="full">
-                    <CalendarIcon />
-                    &nbsp;Bookings
-                  </Button>
-                  <Button w="full">
-                    <AttachmentIcon />
-                    &nbsp;Promotions
-                  </Button>
-                  <Button w="full">
-                    <AtSignIcon />
-                    &nbsp;Credits
-                  </Button>
-                  <Button w="full">
-                    <StarIcon />
-                    &nbsp;Reviews
-                  </Button>
-                  <Button w="full">
-                    <ChatIcon />
-                    &nbsp;Gift cards
-                  </Button>
-
+                  <Button fontSize="sm">Refer a friend!</Button>
                   <Box py={2}></Box>
                 </VStack>
               </Box>
             </Container>
-            {/* TODO: Add view booking method */}
-            <Container></Container>
-            <Container>
-              Box
-              <Box my="20">Hello</Box>
+            <Container w={1000} pl={20} pt={10}>
+              <Heading mb={5} fontSize="2xl">
+                View Bookings
+              </Heading>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <h2>
+                    <AccordionButton
+                      _expanded={{ bg: "blue.600", color: "white" }}
+                    >
+                      <Box flex="1" textAlign="left">
+                        Future Bookings
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel>
+                    {bookings !== undefined
+                      ? bookings.map((booking, index) => {
+                          return booking.status == 1 ? (
+                            <Accordion
+                              allowToggle
+                              w={800}
+                              px={4}
+                              key={booking.id}
+                            >
+                              <AccordionItem>
+                                <h2>
+                                  <AccordionButton
+                                    _expanded={{
+                                      bg: "blue.600",
+                                      color: "white",
+                                    }}
+                                  >
+                                    <HStack>
+                                      <Text>
+                                        {new Date(
+                                          booking.startDate.seconds * 1000
+                                        ).toLocaleDateString("en-US", {
+                                          weekday: "long",
+                                          year: "numeric",
+                                          month: "long",
+                                          day: "numeric",
+                                        })}
+                                      </Text>
+                                      <Badge colorScheme="green">Active</Badge>
+                                    </HStack>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel>
+                                  Lorem ipsum dolor sit amet, consectetur
+                                  adipiscing elit, sed do eiusmod tempor
+                                  incididunt ut labore et dolore magna aliqua.
+                                  Ut enim ad minim veniam, quis nostrud
+                                  exercitation ullamco laboris nisi ut aliquip
+                                  ex ea commodo consequat.
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                          ) : (
+                            <></>
+                          );
+                        })
+                      : "Nothing here"}
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <h2>
+                    <AccordionButton
+                      _expanded={{ bg: "blue.600", color: "white" }}
+                    >
+                      <Box flex="1" textAlign="left">
+                        On-going Bookings
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel>
+                    {bookings !== undefined
+                      ? bookings.map((booking, index) => {
+                          return booking.status == 1 ? (
+                            <Accordion
+                              allowToggle
+                              w={800}
+                              px={4}
+                              key={booking.id}
+                            >
+                              <AccordionItem>
+                                <h2>
+                                  <AccordionButton
+                                    _expanded={{
+                                      bg: "blue.600",
+                                      color: "white",
+                                    }}
+                                  >
+                                    <Box flex="1" textAlign="left">
+                                      <HStack>
+                                        <Text>
+                                          {new Date(
+                                            booking.startDate.seconds * 1000
+                                          ).toLocaleDateString("en-US", {
+                                            weekday: "long",
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                          })}
+                                        </Text>
+                                        <Badge colorScheme="green">
+                                          Active
+                                        </Badge>
+                                      </HStack>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel>
+                                  <Text>
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit, sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua.
+                                    Ut enim ad minim veniam, quis nostrud
+                                    exercitation ullamco laboris nisi ut aliquip
+                                    ex ea commodo consequat.
+                                  </Text>
+                                  <Button colorScheme="red" size="md">
+                                    Refund
+                                  </Button>
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                          ) : (
+                            <></>
+                          );
+                        })
+                      : "Nothing here"}
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <h2>
+                    <AccordionButton
+                      _expanded={{ bg: "blue.600", color: "white" }}
+                    >
+                      <Box flex="1" textAlign="left">
+                        Past Bookings
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel>
+                    {bookings !== undefined
+                      ? bookings.map((booking, index) => {
+                          return booking.status == 3 ? (
+                            <Accordion
+                              allowToggle
+                              w={800}
+                              px={4}
+                              key={booking.id}
+                            >
+                              <AccordionItem>
+                                <h2>
+                                  <AccordionButton
+                                    _expanded={{
+                                      bg: "blue.600",
+                                      color: "white",
+                                    }}
+                                  >
+                                    <Box flex="1" textAlign="left">
+                                      <HStack>
+                                        <Text>
+                                          {new Date(
+                                            booking.startDate.seconds * 1000
+                                          ).toLocaleDateString("en-US", {
+                                            weekday: "long",
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                          })}
+                                        </Text>
+                                        <Badge colorScheme="red">
+                                          Cancelled
+                                        </Badge>
+                                      </HStack>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel>
+                                  Lorem ipsum dolor sit amet, consectetur
+                                  adipiscing elit, sed do eiusmod tempor
+                                  incididunt ut labore et dolore magna aliqua.
+                                  Ut enim ad minim veniam, quis nostrud
+                                  exercitation ullamco laboris nisi ut aliquip
+                                  ex ea commodo consequat.
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                          ) : (
+                            <></>
+                          );
+                        })
+                      : "Nothing here"}
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+
+              <Heading mb={5} mt={10} fontSize="2xl">
+                Profile Settings
+              </Heading>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Account details
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Email, Password and Contact
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Account Verification
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Connect to Facebook
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Account details
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
+
+              <Heading mb={5} mt={10} fontSize="2xl">
+                Payment Details
+              </Heading>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Add Credit/Deibt Card
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
+              <Accordion allowToggle w={800}>
+                <AccordionItem>
+                  <AccordionButton
+                    _expanded={{ bg: "blue.600", color: "white" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Add Receiving Bank Account
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </AccordionItem>
+              </Accordion>
             </Container>
           </HStack>
         </Container>

@@ -47,8 +47,6 @@ const Signup: NextPage = (query_data) => {
   const handleSubmit = async () => {
     if (email.current.value && password.current.value) {
       setIsLoading(true);
-      console.log(email.current.value);
-      console.log(password.current.value);
 
       var data = {
         email: email.current.value,

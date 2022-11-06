@@ -4,10 +4,14 @@ import { PaymentElement } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 import { Box, Button } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
+import gqlclient from "../GraphQL/graphQLClient";
+import { gql } from "@apollo/client";
 
-export default function CheckoutForm() {
+export default function CheckoutForm(props) {
   const stripe = useStripe();
   const elements = useElements();
+  const toast = useToast();
 
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -22,6 +26,40 @@ export default function CheckoutForm() {
     }
 
     setIsProcessing(true);
+    toast({
+      title: "Success.",
+      description: "We've received your payment for holding.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+
+    var data = {
+      userId: props.userId,
+      hostId: props.hostId,
+      startDate: props.startDate,
+      endDate: props.endDate,
+      listingId: props.listingId,
+    };
+
+    const request = gqlclient
+      .mutate({
+        mutation: gql`
+          mutation CreateBooking($data: MakeBookingRequest) {
+            MakeBooking(data: $data) {
+              returnMessage
+            }
+          }
+        `,
+        variables: { data },
+      })
+      .then((response) => {
+        // TODO: get id and post (id, payment_intent and userId) to stripe server
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -31,11 +69,11 @@ export default function CheckoutForm() {
       },
     });
 
-    if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(error.message);
-    } else {
-      setMessage("An unexpected error occured.");
-    }
+    // if (error.type === "card_error" || error.type === "validation_error") {
+    //     setMessage(error.message);
+    // } else {
+    //     setMessage("An unexpected error occured.");
+    // }
 
     setIsProcessing(false);
   };
@@ -50,6 +88,7 @@ export default function CheckoutForm() {
           id="submit"
           colorScheme="linkedin"
           mt={5}
+          w="full"
         >
           <span id="button-text">
             {isProcessing ? "Processing ... " : "Let's go lah"}
