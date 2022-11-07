@@ -130,6 +130,7 @@ export default function CheckoutForm(props) {
             {isProcessing ? "Processing ... " : "Let's go lah"}
           </span>
         </Button>
+        <div style={{ marginBottom: 24 }}></div>
       </form>
     </Box>
   );
