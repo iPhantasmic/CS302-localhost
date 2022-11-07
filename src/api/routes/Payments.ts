@@ -99,6 +99,7 @@ router.post('/create', async (req: Request, res: Response) => {
     try {
       const refund = await stripe.refunds.create({
         charge: transaction.chargeid,
+        refund_application_fee: true,
       }, {
         stripeAccount: account.id,
       });
