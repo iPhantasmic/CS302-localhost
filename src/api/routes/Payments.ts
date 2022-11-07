@@ -28,9 +28,11 @@ router.post('/create', async (req: Request, res: Response) => {
         var paymentIntent = await stripe.paymentIntents.create({
             amount: req.body.amount,
             currency: 'sgd',
-          }, {
-              stripeAccount: connected_account.id,
-        });
+          }, 
+        // {
+        //       stripeAccount: connected_account.id,
+        // }
+        );
         
         res.status(OK).send({clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id})
     } catch (e) {
@@ -47,10 +49,13 @@ router.post('/create', async (req: Request, res: Response) => {
  *              "bookingId": "8812717d-09d4-4e9d-b686-1f333a47e7bc" # UUID on Grpc end
  *          }
  ******************************************************************************/
- router.post('/confirm/:paymentIntent_Id' , async (req: Request, res: Response) => {
+ router.post('/confirm' , async (req: Request, res: Response) => {
     const paymentIntent_Confirmed = await stripe.paymentIntents.confirm(
-        req.body.paymentIntentId,
-        {payment_method: 'pm_card_visa'}
+      req.body.paymentIntentId,
+      {payment_method: 'pm_card_visa'}, 
+      // {
+      //  stripeAccount: req.body.userId,
+      // }
     );
 
     // Fetch the account this purchase is associated
