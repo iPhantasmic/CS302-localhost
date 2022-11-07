@@ -91,6 +91,8 @@ func (s *ReviewServer) DeleteReview(ctx context.Context, req *reviews_proto.Dele
 		return nil, status.Error(codes.NotFound, "Review not found")
 	}
 
+	fmt.Println(1/0)
+
 	s.H.DB.Delete(&review)
 
 	log.WithFields(log.Fields{
