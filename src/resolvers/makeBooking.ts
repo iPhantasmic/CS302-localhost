@@ -34,11 +34,11 @@ export default (root: any, params: any) => {
                         paymentTime: '11:00:21 PM GMT+8',
                         bookingStartDate: 'Thu, Dec 8, 2022',
                         bookingEndDate: 'Tue, Dec 13, 2022',
-                        unitPrice: 100,
+                        unitPrice: 100.0,
                         numNights: 5,
-                        subTotal: 500,
-                        serviceFee: 20,
-                        totalPrice: 520,
+                        subTotal: 500.0,
+                        serviceFee: 20.0,
+                        totalPrice: 520.0,
                     },
                 }
                 email_client.publish_message_booking_confirmed(test_data)
