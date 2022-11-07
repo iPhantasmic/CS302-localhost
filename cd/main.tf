@@ -45,8 +45,8 @@ resource "aws_ecs_task_definition" "listings-service" {
     {
       name = "listings-service"
       image = "631945473733.dkr.ecr.ap-southeast-1.amazonaws.com/listings:${var.IMAGE_VERSION}"
-      cpu = 512
-      memory = 512
+      cpu = 1536
+      memory = 1536
       essential = true
       portMappings = [{
         containerPort = 50051
@@ -80,5 +80,6 @@ resource "aws_ecs_service" "listings-service" {
   name = "listings-service"
   cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302-listings"
   task_definition = aws_ecs_task_definition.listings-service.arn
-  desired_count = 1
+  desired_count = 2
+  deployment_minimum_healthy_percent = 50
 }
