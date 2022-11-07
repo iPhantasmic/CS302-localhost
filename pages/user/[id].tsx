@@ -69,19 +69,15 @@ const Home: NextPage = () => {
       isClosable: true,
     });
 
-    var data = { bookingId: bookingId };
-
-    gqlclient
-      .mutate({
-        mutation: gql`
-          mutation Mutation($data: CancelBookingRequest) {
-            CancelBooking(data: $data) {
-              returnMessage
-            }
-          }
-        `,
-        variables: { data },
-      })
+    // TODO: Swap on change PAYMENT SERVICE
+    axios
+      .post(
+        "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/refund",
+        {
+          bookingId: bookingId,
+          userId: userId,
+        }
+      )
       .then((response) => {
         toast({
           title: "Success",
@@ -95,29 +91,6 @@ const Home: NextPage = () => {
       .catch((e) => {
         console.log(e);
       });
-
-    // TODO: Swap on change PAYMENT SERVICE
-    // axios
-    //   .post(
-    //     "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/refund",
-    //     {
-    //       bookingId: bookingId,
-    //       userId: userId,
-    //     }
-    //   )
-    // .then((response) => {
-    //   toast({
-    //     title: "Success",
-    //     description: "We have processed your refund.",
-    //     status: "success",
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    //   console.log(response);
-    // })
-    // .catch((e) => {
-    //   console.log(e);
-    // });
   }
 
   useEffect(() => {
