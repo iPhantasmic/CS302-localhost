@@ -71,10 +71,13 @@ const Home: NextPage = () => {
 
     // TODO: Swap on change PAYMENT SERVICE
     axios
-      .post("http://18.142.238.58:420/api/payments/refund", {
-        bookingId: bookingId,
-        userId: userId,
-      })
+      .post(
+        "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/refund",
+        {
+          bookingId: bookingId,
+          userId: userId,
+        }
+      )
       .then((response) => {
         toast({
           title: "Success",

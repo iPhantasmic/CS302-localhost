@@ -145,24 +145,20 @@ const Listing: NextPage = () => {
 
         try {
           // TODO: Swap out on change PAYMENT SERVICE
-          fetch("http://18.142.238.58:420/api/payments/create", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              amount:
-                (response.data.GetListing.price *
-                  Math.ceil(
-                    (new Date(router.query.endDate) -
-                      new Date(router.query.startDate)) /
-                      (1000 * 60 * 60 * 24)
-                  ) +
-                  20) *
-                100,
-              userId: session.userId,
-            }),
-          }).then(async (r) => {
+          fetch(
+            "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/create",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                amount: 720,
+                userId: session.userId,
+              }),
+            }
+          ).then(async (r) => {
             const paymentData = await r.json();
-            console.log(paymentData);
+            console.log(paymentData.clientSecret);
+            console.log(paymentData.paymentIntentId);
             setClientSecret(paymentData.clientSecret);
             setPaymentIntentId(paymentData.paymentIntentId);
           });
@@ -173,7 +169,7 @@ const Listing: NextPage = () => {
       .catch((e) => {
         console.log(e);
       });
-  }, [session, router]);
+  }, [session]);
 
   return (
     <div>
