@@ -81,7 +81,7 @@ export default function CheckoutForm(props) {
         // TODO: Swap out on change PAYMENT SERVICE
         axios
           .post(
-            "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/confirm/" +
+            "cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/confirm/" +
               props.paymentIntentId,
             {
               paymentIntentId: props.paymentIntentId,

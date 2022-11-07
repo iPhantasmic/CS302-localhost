@@ -72,7 +72,7 @@ const Home: NextPage = () => {
     // TODO: Swap on change PAYMENT SERVICE
     axios
       .post(
-        "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/refund",
+        "cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/refund",
         {
           bookingId: bookingId,
           userId: userId,

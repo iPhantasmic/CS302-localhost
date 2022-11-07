@@ -146,7 +146,7 @@ const Listing: NextPage = () => {
         try {
           // TODO: Swap out on change PAYMENT SERVICE
           fetch(
-            "http://cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/create",
+            "cs302-payments-1c6335cbb512fe7e.elb.ap-southeast-1.amazonaws.com:420/api/payments/create",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
