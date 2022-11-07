@@ -42,7 +42,7 @@ type Mutation {
   UpdateListing(data: UpdateListingRequest): Listing
   DeleteListing(data: DeleteListingRequest): Message
   #
-  MakeBooking(data: MakeBookingRequest): ReturnMessage
+  MakeBooking(data: MakeBookingRequest): CreateBookingResponse
   CancelBooking(data: CancelBookingRequest): ReturnMessage
 }
 
@@ -119,6 +119,7 @@ type Booking {
   userId: String
   listingId: String
   hostId: String
+  status: String
   startDate: ProtobufTimestampOutput
   endDate: ProtobufTimestampOutput
   paymentId: String
