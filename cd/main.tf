@@ -75,5 +75,6 @@ resource "aws_ecs_service" "api-gateway" {
   name = "api-gateway"
   cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302-api-gateway"
   task_definition = aws_ecs_task_definition.api-gateway.arn
-  desired_count = 1
+  desired_count = 2
+  deployment_minimum_healthy_percent = 50
 }
