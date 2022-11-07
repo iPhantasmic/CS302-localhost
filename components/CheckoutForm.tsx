@@ -18,6 +18,8 @@ export default function CheckoutForm(props) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = async (e) => {
+    const startDate = new Date(props.startDate);
+    const endDate = new Date(props.endDate);
     e.preventDefault();
 
     if (!stripe || !elements) {
@@ -35,21 +37,21 @@ export default function CheckoutForm(props) {
       isClosable: true,
     });
 
-    const startDate = {
+    const startDate1 = {
       nanos: 2,
-      seconds: "10203129",
+      seconds: startDate.getTime(),
     };
 
-    const endDate = {
+    const endDate1 = {
       nanos: 3,
-      seconds: "10921321",
+      seconds: endDate.getTime(),
     };
 
     var data = {
       userId: props.userId,
       hostId: props.hostId,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDate1,
+      endDate: endDate1,
       listingId: props.listingId,
     };
 

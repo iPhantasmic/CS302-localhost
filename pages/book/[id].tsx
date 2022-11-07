@@ -151,7 +151,15 @@ const Listing: NextPage = () => {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                amount: 720,
+                amount:
+                  (response.data.GetListing.price *
+                    Math.ceil(
+                      (new Date(router.query.endDate) -
+                        new Date(router.query.startDate)) /
+                        (1000 * 60 * 60 * 24)
+                    ) +
+                    20) *
+                  100,
                 userId: session.userId,
               }),
             }
