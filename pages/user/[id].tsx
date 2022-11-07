@@ -61,6 +61,17 @@ const Home: NextPage = () => {
   function handleRefund(bookingId, userId) {
     console.log(bookingId, userId);
 
+    var data = { bookingId: bookingId };
+    gqlclient.mutate({
+      mutation: gql`
+        mutation Mutation($data: CancelBookingRequest) {
+          CancelBooking(data: $data) {
+            returnMessage
+          }
+        }
+      `,
+      variables: { data },
+    });
     toast({
       title: "Processing",
       description: "Please hold while we process your refund.",
