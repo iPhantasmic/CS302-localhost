@@ -65,5 +65,6 @@ resource "aws_ecs_service" "reviews-service" {
   name = "reviews-service"
   cluster = "arn:aws:ecs:ap-southeast-1:631945473733:cluster/cs302-reviews"
   task_definition = aws_ecs_task_definition.reviews-service.arn
-  desired_count = 1
+  desired_count = 2
+  deployment_minimum_healthy_percent = 50
 }
