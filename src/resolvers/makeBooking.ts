@@ -20,8 +20,8 @@ export default (root: any, params: any) => {
 
             try {
                 // Stripe Code
-                const paymentIntent = await response.json()
-                console.log(paymentIntent)
+                // const paymentIntent = await response.json()
+                // console.log(paymentIntent)
 
                 //Prepare message to send to SNS
                 //TODO: retrieve listing details from db
@@ -43,7 +43,7 @@ export default (root: any, params: any) => {
                 }
                 email_client.publish_message_booking_confirmed(test_data)
 
-                resolve(paymentIntent)
+                resolve(response)
             } catch {
                 //Rollback for booking in event payment fails
                 client.DeleteBookingById(
