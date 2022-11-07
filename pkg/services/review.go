@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
@@ -70,9 +69,7 @@ func (s *ReviewServer) CreateReview(ctx context.Context, req *reviews_proto.Crea
 	log.WithFields(log.Fields{
 		"reviewId": review.UUID.String(),
 	}).Info("Review created")
-
-	fmt.Println(1 / 0)
-
+	
 	return &reviews_proto.CreateReviewResponse{
 		ReviewId:  review.UUID.String(),
 		UserId:    review.UserId,
