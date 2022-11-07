@@ -25,13 +25,14 @@ export default (root: any, params: any) => {
                         return reject(err)
                     }
                     try {
-                        const response = await fetch(`http://${process.env.PAYMENTS_SVC_URL}/api/payments/refund`, {
-                            method: 'post',
-                            body: JSON.stringify({"bookingId": booking_object["id"]}),
-                        })
-                        const refund = await response.json()
-                        console.log(refund)
-                        resolve(refund)
+                        // const response = await fetch(`http://${process.env.PAYMENTS_SVC_URL}/api/payments/refund`, {
+                        //     method: 'post',
+                        //     body: JSON.stringify({"bookingId": booking_object["id"]}),
+                        // })
+                        // const refund = await response.json()
+                        // console.log(refund)
+                        // resolve(refund)
+                        console.log("hi")
                     } catch {
                         //Rollback SAGA
                         booking_object["status"] = 1
