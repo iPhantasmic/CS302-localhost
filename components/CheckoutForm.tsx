@@ -44,16 +44,17 @@ export default function CheckoutForm(props) {
 
     const endDate1 = {
       nanos: 3,
-      seconds: endDate.getTime(),
+      seconds: "1672033501",
     };
 
     var data = {
       userId: props.userId,
       hostId: props.hostId,
       startDate: startDate1,
-      endDate: endDate1,
+      endDate: startDate1,
       listingId: props.listingId,
     };
+    console.log(data);
 
     gqlclient
       .mutate({
