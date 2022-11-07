@@ -22,6 +22,7 @@ import DeleteBookingById from './deleteBookingById';
 import GetBookingById from "./getBookingById"
 import ViewListings from "./viewListings"
 import GetUnavailableListings from "./getUnavailableListings";
+import CreateBooking from './createBooking';
 const resolvers: any  = {
   Query: {
     GetUser,
@@ -43,6 +44,7 @@ const resolvers: any  = {
     UpdateUser,
     DeleteUser,
     MakeBooking,
+    CreateBooking,
     CreateReview,
     DeleteReview,
     CreateListing,
