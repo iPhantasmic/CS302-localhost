@@ -250,14 +250,16 @@ const Home: NextPage = () => {
                                   >
                                     <HStack>
                                       <Text>
-                                        {new Date(
+                                        Shanghai, China - [8 Dec 2022 - 13 Dec
+                                        2022]
+                                        {/* {new Date(
                                           booking.startDate.seconds.low * 1000
                                         ).toLocaleDateString("en-US", {
                                           weekday: "long",
                                           year: "numeric",
                                           month: "long",
                                           day: "numeric",
-                                        })}
+                                        })} */}
                                       </Text>
                                       <Badge colorScheme="green">Active</Badge>
                                     </HStack>
@@ -265,12 +267,8 @@ const Home: NextPage = () => {
                                   </AccordionButton>
                                 </h2>
                                 <AccordionPanel>
-                                  Lorem ipsum dolor sit amet, consectetur
-                                  adipiscing elit, sed do eiusmod tempor
-                                  incididunt ut labore et dolore magna aliqua.
-                                  Ut enim ad minim veniam, quis nostrud
-                                  exercitation ullamco laboris nisi ut aliquip
-                                  ex ea commodo consequat.
+                                  Aura House Eco Bamboo House, Shanghai, China
+                                  (8 Dec 2022 - 13 Dec 2022)
                                 </AccordionPanel>
                               </AccordionItem>
                             </Accordion>
@@ -315,14 +313,16 @@ const Home: NextPage = () => {
                                     <Box flex="1" textAlign="left">
                                       <HStack>
                                         <Text>
-                                          {new Date(
+                                          Shanghai, China - [8 Dec 2022 - 13 Dec
+                                          2022]
+                                          {/* {new Date(
                                             booking.startDate.seconds.low * 1000
                                           ).toLocaleDateString("en-US", {
                                             weekday: "long",
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
-                                          })}
+                                          })} */}
                                         </Text>
                                         <Badge colorScheme="green">
                                           Active
@@ -334,12 +334,8 @@ const Home: NextPage = () => {
                                 </h2>
                                 <AccordionPanel>
                                   <Text>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit, sed do eiusmod tempor
-                                    incididunt ut labore et dolore magna aliqua.
-                                    Ut enim ad minim veniam, quis nostrud
-                                    exercitation ullamco laboris nisi ut aliquip
-                                    ex ea commodo consequat.
+                                    Aura House Eco Bamboo House, Shanghai, China
+                                    (8 Dec 2022 - 13 Dec 2022)
                                   </Text>
                                   <Button
                                     colorScheme="red"
@@ -397,14 +393,16 @@ const Home: NextPage = () => {
                                     <Box flex="1" textAlign="left">
                                       <HStack>
                                         <Text>
-                                          {new Date(
+                                          Shanghai, China - [8 Dec 2022 - 13 Dec
+                                          2022]
+                                          {/* {new Date(
                                             booking.startDate.seconds.low * 1000
                                           ).toLocaleDateString("en-US", {
                                             weekday: "long",
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
-                                          })}
+                                          })} */}
                                         </Text>
                                         <Badge colorScheme="red">
                                           Cancelled
@@ -415,12 +413,8 @@ const Home: NextPage = () => {
                                   </AccordionButton>
                                 </h2>
                                 <AccordionPanel>
-                                  Lorem ipsum dolor sit amet, consectetur
-                                  adipiscing elit, sed do eiusmod tempor
-                                  incididunt ut labore et dolore magna aliqua.
-                                  Ut enim ad minim veniam, quis nostrud
-                                  exercitation ullamco laboris nisi ut aliquip
-                                  ex ea commodo consequat.
+                                  Aura House Eco Bamboo House, Shanghai, China
+                                  (8 Dec 2022 - 13 Dec 2022)
                                 </AccordionPanel>
                               </AccordionItem>
                             </Accordion>

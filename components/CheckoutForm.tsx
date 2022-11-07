@@ -39,7 +39,7 @@ export default function CheckoutForm(props) {
 
     const startDate1 = {
       nanos: 2,
-      seconds: startDate.getTime(),
+      seconds: "1670482273",
     };
 
     const endDate1 = {
