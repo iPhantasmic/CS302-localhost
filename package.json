@@ -24,6 +24,7 @@
     "@apollo/server": "^4.0.2",
     "@aws-sdk/client-sns": "^3.194.0",
     "@grpc/grpc-js": "^1.7.3",
+    "date-fns": "^2.29.3",
     "graphql": "^16.6.0",
     "graphql-scalars": "^1.20.0",
     "node-fetch": "^3.2.10",

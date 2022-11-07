@@ -52,13 +52,13 @@ export default (root: any, params: any) => {
                     const test_data = {
                         data: {
                             receiverEmail: 'omerwai.2020@smu.edu.sg',
-                            propertyName: 'Seminyak Kuta Utara',
+                            propertyName: 'Aura House Eco Bamboo House',
                             refundDate: 'November 7, 2022',
-                            unitPrice: 125.1,
+                            unitPrice: 100.0,
                             numNights: 5,
-                            subTotal: 625.5,
-                            serviceFee: 95.5,
-                            totalRefunded: 721.0,
+                            subTotal: 500.0,
+                            serviceFee: 20.0,
+                            totalRefunded: 520.0,
                         },
                     }
                     email_client.publish_message_booking_cancelled(test_data)

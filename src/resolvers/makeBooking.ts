@@ -20,10 +20,6 @@ export default (root: any, params: any) => {
 
             try {
                 // Stripe Code
-                const response = await fetch(`http://${process.env.PAYMENTS_SVC_URL}/api/payments/create`, {
-                    method: 'post',
-                    body: JSON.stringify({"amount": params.data.amount, "userId": params.data.userId}),
-                })
                 const paymentIntent = await response.json()
                 console.log(paymentIntent)
 
@@ -31,18 +27,18 @@ export default (root: any, params: any) => {
                 //TODO: retrieve listing details from db
                 const test_data = {
                     data: {
-                        receiverEmail: 'nicholasong.2020@smu.edu.sg',
-                        propertyName: 'Seminyak Kuta Utara',
+                        receiverEmail: 'omerwai.2020@scis.smu.edu.sg',
+                        propertyName: 'Aura House Eco Bamboo House',
                         receiptId: 'RC4E4KBBHD',
-                        paymentDate: 'October 17, 2022',
+                        paymentDate: 'November 7, 2022',
                         paymentTime: '11:00:21 PM GMT+8',
                         bookingStartDate: 'Thu, Dec 8, 2022',
                         bookingEndDate: 'Tue, Dec 13, 2022',
-                        unitPrice: 125.1,
+                        unitPrice: 100,
                         numNights: 5,
-                        subTotal: 625.5,
-                        serviceFee: 95.5,
-                        totalPrice: 721.0,
+                        subTotal: 500,
+                        serviceFee: 20,
+                        totalPrice: 520,
                     },
                 }
                 email_client.publish_message_booking_confirmed(test_data)
