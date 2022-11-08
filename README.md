@@ -1,7 +1,7 @@
 # Bookings - Atomic Service
 
 ## Running locally
-The Makefile specifies various recipes that aided us in development. The main flow needed to run the service locally at Port 50051 is to build and compose up. 
+The Makefile specifies various recipes that aided us in development. The main flow needed to run the service locally at Port 50051 is to docker build and docker compose up. 
 
 This can be achieved by running the following commands at the root of the repository:
 
