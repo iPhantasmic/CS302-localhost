@@ -6,6 +6,7 @@ The Makefile specifies various recipes that aided us in development. The main fl
 This can be achieved by running the following commands at the root of the repository:
 
 `make build`
+
 `make up`
 
 This spins up the GRPC Service, along with a Postgres database and a PGAdmin GUI to administer said database.
