@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package bookings;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./bookings.proto";
+
+service BookingService {
+  rpc CreateBooking (CreateBookingRequest) returns (Booking){}
+  rpc GetBookingByUser (BookingByUserRequest)
+      returns (GetBookingArrayResponse) {}
+  rpc GetBookingByListing (BookingByListingRequest)
+      returns (GetBookingArrayResponse){}
+  rpc UpdateBookingById(UpdateBookingRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByUserId (BookingByUserRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByListingId(BookingByListingRequest)
+      returns (ReturnMessage){}
+  rpc DeleteBookingById(BookingByIdRequest)
+      returns (ReturnMessage){}
+  rpc GetAvailableListings (GetAvailableListingsRequest)
+      returns (GetAvailableListingsResponse){}
+}
+
+message Booking {
+  string id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string host_id = 4;
+  google.protobuf.Timestamp start_date = 5;
+  google.protobuf.Timestamp end_date = 6;
+  string payment_id = 7;
+}
+
+message GetAvailableListingsRequest {
+  repeated string listing_ids = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+
+message GetAvailableListingsResponse {
+  repeated string listing_ids = 1;
+}
+
+message CreateBookingRequest {
+  string user_id = 1;
+  string listing_id = 2;
+  string host_id = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+  string payment_id = 6;
+}
+
+message GetBookingArrayResponse{
+  repeated Booking bookings = 1;
+}
+
+message BookingByListingRequest{
+  string listing_id = 1;
+}
+
+message BookingByUserRequest{
+  string user_id = 1;
+}
+
+message BookingByIdRequest{
+  string booking_id = 1;
+}
+
+message UpdateBookingRequest{
+  string id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string host_id = 4;
+  google.protobuf.Timestamp start_date = 5;
+  google.protobuf.Timestamp end_date = 6;
+  string payment_id = 7;
+}
+
+message ReturnMessage{
+  string return_message = 1;
+}

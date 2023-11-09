@@ -1,3 +1,0 @@
-[submodule "pkg/pb"]
-	path = pkg/pb
-	url = ../../protobuf_schemas.git
