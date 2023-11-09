@@ -1,0 +1,29 @@
+stages:
+    - archiving
+    - deploy
+
+archive:
+    stage: archiving
+    only:
+        - main
+    image: ubuntu
+    when:
+        on_success
+    before_script:
+        - apt-get update
+        - apt-get install zip -y
+    script:
+        - zip -r $CI_PROJECT_NAME.zip lambda_function.py packages ellipticcurve python_http_client
+    artifacts:
+        paths:
+        - $CI_PROJECT_NAME.zip
+
+deploy:
+    stage: deploy
+    image:
+        name: amazon/aws-cli
+        entrypoint: [""]
+    script:
+        - aws --version
+        - aws configure set region ap-southeast-1
+        - aws lambda update-function-code --function-name localhost_consumer --zip-file fileb://$CI_PROJECT_NAME.zip
