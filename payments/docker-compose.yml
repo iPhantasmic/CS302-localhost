@@ -1,0 +1,41 @@
+version: "3.1"
+
+services:
+  postgres:
+    image: postgres:14.5
+    networks:
+      default:
+        aliases:
+          - postgres_db
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: localhost_payments
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: localhost
+    ports:
+      - "5431:80"
+
+  payments_service:
+    image: payments
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - payments_service
+    environment:
+      PORT: 4000
+      TYPEORM_HOST: postgres_db
+      TYPEORM_USERNAME: test_user
+      TYPEORM_PASSWORD: test123
+      TYPEORM_DATABASE: localhost_payments
+    ports:
+      - "4000:4000"

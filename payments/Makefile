@@ -1,0 +1,19 @@
+GIT_COMMIT=$(shell git rev-parse --verify HEAD)
+PROJECT_NAME=payments
+
+.PHONY: build
+build:
+	docker build \
+    --build-arg GIT_COMMIT=${GIT_COMMIT} \
+	--platform linux/arm64 \
+    -t $(PROJECT_NAME):latest \
+    -t $(PROJECT_NAME):${GIT_COMMIT} \
+    .
+
+.PHONY: up
+up:
+	docker compose up -d
+
+.PHONY: down
+down:
+	docker compose down
