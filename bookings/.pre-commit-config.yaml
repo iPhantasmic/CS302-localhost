@@ -1,0 +1,19 @@
+repos:
+    - repo: https://github.com/ambv/black
+      rev: stable
+      hooks:
+        - id: black
+    - repo: https://github.com/PyCQA/pylint
+      rev: pylint-2.7.2  # Use the sha / tag you want to point at
+      hooks:
+      - id: pylint
+        name: pylint
+        exclude: app/services/pb/
+        language: system
+        args:
+          [
+            "--rcfile=.pylintrc", # Link to your config file
+            "--load-plugins=pylint_protobuf", # Load an extension
+            --fail-under=9
+          ]
+    

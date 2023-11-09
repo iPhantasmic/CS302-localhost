@@ -1,0 +1,208 @@
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/cd
+  DOCKER_REGISTRY: 631945473733.dkr.ecr.ap-southeast-1.amazonaws.com
+  AWS_DEFAULT_REGION: ap-southeast-1
+  APP_NAME: bookings
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+stages:
+  - lint
+  - test
+  - build
+  - prep-deploy
+  - deploy
+
+flake8:
+  stage: lint
+  image: python:3.10-slim
+  before_script:
+    - python -V
+    - python -m pip install pyflakes
+  script:
+    - pyflakes app/ | tee pyflakes_report.txt
+  artifacts:
+    when: on_failure
+    paths:
+      - pyflakes_report.txt
+
+sast:
+  stage: test
+  variables:
+    SAST_EXCLUDED_ANALYZERS: brakeman, eslint, flawfinder, gosec, kubesec, nodejs-scan,
+      phpcs-security-audit, pmd-apex, security-code-scan, sobelow, spotbugs
+include:
+- template: Security/SAST.gitlab-ci.yml
+
+semgrep:
+  stage: test
+  image: returntocorp/semgrep
+  # Run the "semgrep ci" command on the command line of the docker image.
+  script: semgrep ci || true
+  variables:
+    # Add the rules that Semgrep uses by setting the SEMGREP_RULES environment variable.
+    SEMGREP_RULES: p/default p/python p/r2c-security-audit # See more at semgrep.dev/explore.
+
+sonarqube-check:
+  stage: test
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script: 
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - main # or the name of your main branch
+
+publish:
+  stage: build
+  image: 
+    name: docker:latest
+  services:
+    - docker:19-dind
+  before_script:
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME .
+    - docker push $DOCKER_REGISTRY/$APP_NAME
+    - docker tag $DOCKER_REGISTRY/$APP_NAME $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+init-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  script:
+    - gitlab-terraform init
+
+validate-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_HOST: ${HOST}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
+  script:
+    - gitlab-terraform validate
+
+plan-terraform:
+  stage: prep-deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_HOST: ${HOST}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
+  script:
+    - gitlab-terraform plan
+    - gitlab-terraform plan-json
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+
+apply-terraform:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_HOST: ${HOST}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
+  script:
+    - gitlab-terraform apply
+  environment:
+    name: production
+  dependencies:
+    - plan-terraform
+  only:
+    - main
+
+destroy-terraform:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  cache:
+    key: production
+    paths:
+    - ${TF_ROOT}/.terraform
+  before_script:
+    - cd ${TF_ROOT}
+  variables:
+        TF_VAR_ACCESS_ID: ${ACCESS_ID}
+        TF_VAR_SECRET_KEY: ${SECRET_KEY}
+        TF_VAR_HOST: ${HOST}
+        TF_VAR_PORT: ${PORT}
+        TF_VAR_DB_USER: ${DB_USER}
+        TF_VAR_DB_PASSWORD: ${DB_PASSWORD}
+        TF_VAR_DB_HOST: ${DB_HOST}
+        TF_VAR_DB_PORT: ${DB_PORT}
+        TF_VAR_DB_SCHEMA: ${DB_SCHEMA}
+        TF_VAR_IMAGE_VERSION: $CI_PIPELINE_IID
+  script:
+    - gitlab-terraform destroy
+  environment:
+    name: production
+  dependencies:
+    - apply-terraform
+  when: manual
+  only:
+    - main

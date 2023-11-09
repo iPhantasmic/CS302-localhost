@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package bookings;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./bookings.proto";
+
+service BookingService {
+  rpc CreateBooking (CreateBookingRequest) returns (Booking){}
+  rpc GetBookingById(BookingByIdRequest) returns (Booking){}
+  rpc GetBookingByUser (BookingByUserRequest)
+      returns (GetBookingArrayResponse) {}
+  rpc GetBookingByListing (BookingByListingRequest)
+      returns (GetBookingArrayResponse){}
+  rpc UpdateBookingById(UpdateBookingRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByUserId (BookingByUserRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByListingId(BookingByListingRequest)
+      returns (ReturnMessage){}
+  rpc DeleteBookingById(BookingByIdRequest)
+      returns (ReturnMessage){}
+  rpc GetUnavailableListings (GetUnavailableListingsRequest)
+      returns (GetUnavailableListingsResponse){}
+}
+
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_ACTIVE = 1;
+  STATUS_COMPLETED = 2;
+  STATUS_CANCELLED = 3;
+}
+
+message Booking {
+  string id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string host_id = 4;
+  Status status = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
+}
+
+message GetUnavailableListingsRequest {
+  google.protobuf.Timestamp start_date = 1;
+  google.protobuf.Timestamp end_date = 2;
+}
+
+message GetUnavailableListingsResponse {
+  repeated string listing_ids = 1;
+}
+
+message CreateBookingRequest {
+  string user_id = 1;
+  string listing_id = 2;
+  string host_id = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+}
+
+message GetBookingArrayResponse{
+  repeated Booking bookings = 1;
+}
+
+message BookingByListingRequest{
+  string listing_id = 1;
+}
+
+message BookingByUserRequest{
+  string user_id = 1;
+}
+
+message BookingByIdRequest{
+  string booking_id = 1;
+}
+
+message UpdateBookingRequest{
+  string id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string host_id = 4;
+  Status status = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
+}
+
+message ReturnMessage{
+  string return_message = 1;
+}

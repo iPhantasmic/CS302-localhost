@@ -1,0 +1,27 @@
+[MASTER]
+
+extension-pkg-whitelist=grpc._cython.cygrpc
+load-plugins=pylint_protobuf
+[DESIGN]
+
+# NOTE(nathaniel): Not particularly attached to this value; it just seems to
+# be what works for us at the moment (excepting the dead-code-walking Beta
+# API).
+max-args=14
+max-parents=8
+
+
+[TYPECHECK]
+ignored-classes=app.services.pb.bookings.bookings_pb2,app.services.pb.health.health_pb2
+
+
+[MESSAGES CONTROL]
+
+disable=
+	import-error,
+	invalid-name,
+	missing-docstring,
+	no-name-in-module,
+    consider-using-f-string,
+	no-else-return,
+	wrong-import-order,
