@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package listings;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./listings.proto";
+
+service ListingService {
+  rpc GetListing(GetListingRequest) returns (Listing) {}
+  rpc GetAllListings(google.protobuf.Empty) returns (Listings) {}
+  rpc GetAvailableListings(FilterLocationRoomRequest) returns (Listings) {}
+  rpc CreateListing(CreateListingRequest) returns (Listing) {}
+  rpc UpdateListing(UpdateListingRequest) returns (Listing) {}
+  rpc DeleteListing(DeleteListingRequest) returns (google.protobuf.Empty) {}
+}
+
+enum Type {
+  TYPE_UNSPECIFIED = 0;
+  TYPE_ROOM = 1;
+  TYPE_APARTMENT = 2;
+  TYPE_HOTEL_ROOM = 3;
+}
+
+// Get Listing
+message GetListingRequest {
+  string listing_id = 1;
+}
+
+message Listing {
+  string listing_id = 1;
+  string user_id = 2;
+  string title = 3;
+  uint32 price = 4;
+  repeated string images = 5;
+  Type type = 6;
+  string address = 7;
+  string country = 8;
+  string city = 9;
+  uint32 rooms = 10;
+  google.protobuf.Timestamp start_date = 11;
+  google.protobuf.Timestamp created_at = 12;
+}
+//
+
+// Get all Listings
+message Listings {
+  repeated Listing listings = 1;
+}
+//
+
+// Filter by Location and Rooms
+message FilterLocationRoomRequest {
+  string country = 1;
+  string city = 2;
+  uint32 rooms = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+}
+//
+
+// Create Listing
+message CreateListingRequest {
+  message Image {
+    string filename = 1;
+    bytes data = 2;
+  }
+
+  string user_id = 1;
+  string title = 2;
+  uint32 price = 3;
+  repeated Image images = 4;
+  Type type = 5;
+  string address = 6;
+  string country = 7;
+  string city = 8;
+  uint32 rooms = 9;
+  google.protobuf.Timestamp start_date = 10;
+}
+//
+
+// Update Listing
+message UpdateListingRequest {
+  message Image {
+    string filename = 1;
+    bytes data = 2;
+  }
+
+  string listing_id = 1;
+  string title = 2;
+  uint32 price = 3;
+  repeated Image images = 4;
+  Type type = 5;
+  string address = 6;
+  string country = 7;
+  string city = 8;
+  uint32 rooms = 9;
+  google.protobuf.Timestamp start_date = 10;
+}
+//
+
+// Delete Listing
+message DeleteListingRequest {
+  string listing_id = 1;
+}
+//

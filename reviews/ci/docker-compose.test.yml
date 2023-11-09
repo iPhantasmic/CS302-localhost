@@ -1,0 +1,45 @@
+version: "3.1"
+
+services:
+  postgres:
+    image: postgres:14.5
+    networks:
+      default:
+        aliases:
+          - postgres_db
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: localhost_reviews
+    ports:
+      - "5432:5432"
+
+  review_service:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - review_service
+    environment:
+      PORT: 0.0.0.0:50051
+      DB_USER: test_user
+      DB_PASSWORD: test123
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_SCHEMA: localhost_reviews
+    ports:
+      - "50051:50051"
+
+  reviews_test:
+    build:
+      context: ../
+      dockerfile: ci/Dockerfile
+    depends_on:
+      - review_service
+    environment:
+      DB_CONN: postgres://test_user:test123@postgres_db:5432/localhost_reviews
+      REVIEW_SVC: review_service:50051
