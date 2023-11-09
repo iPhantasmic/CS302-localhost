@@ -1,0 +1,103 @@
+version: "3.1"
+services:
+  postgres:
+    image: postgres:14.5
+    volumes:
+      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
+    networks:
+      default:
+        aliases:
+          - postgres_db
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=localhost_listings,localhost_reviews,localhost_users,localhost_bookings
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test123
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@cs302.com
+      PGADMIN_DEFAULT_PASSWORD: cs302_password
+    ports:
+      - "5431:80"
+
+  listings_service:
+    image: listings
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - listing_service
+    environment:
+      PORT: 0.0.0.0:50051
+      DB_USER: test_user
+      DB_PASSWORD: test123
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_SCHEMA: localhost_listings
+      AWS_BUCKET_NAME: cs302-localhost
+      AWS_ACCESS_KEY_ID: TEST
+      AWS_SECRET_ACCESS_KEY: TEST
+    ports:
+      - "50052:50051"
+
+  bookings_service:
+    image: bookings
+    depends_on:
+      - postgres
+    environment:
+      # must bind to [::] for port forwarding to work properly
+      - HOST=[::]
+      - PORT=50051
+      - DB_USER=test_user
+      - DB_PASSWORD=test123
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_SCHEMA=localhost_bookings
+    networks:
+      default:
+        aliases:
+          - bookings_service
+    ports:
+      - "50051:50051"
+
+  auth_service:
+    image: auth_user
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - auth_service
+    environment:
+      PORT: 0.0.0.0:50051
+      DB_USER: test_user
+      DB_PASSWORD: test123
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_SCHEMA: localhost_users
+      JWT_SECRET_KEY: test_secret
+    ports:
+      - "50053:50051"
+
+  reviews_service:
+    image: reviews
+    depends_on:
+      - postgres
+    networks:
+      default:
+        aliases:
+          - review_service
+    environment:
+      PORT: 0.0.0.0:50051
+      DB_USER: test_user
+      DB_PASSWORD: test123
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_SCHEMA: localhost_reviews
+    ports:
+      - "50054:50051"

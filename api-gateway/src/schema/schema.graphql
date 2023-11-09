@@ -1,0 +1,314 @@
+scalar BigInt
+
+# Setup
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  GetUser(data: GetUserRequest): User
+  LoginUser(data: LoginRequest): LoginResponse
+  ValidateToken(data: ValidateRequest): ValidateResponse
+  #
+  GetBookingById(data:GetBookingRequest) : Booking
+  GetBookingByUser(data: GetBookingsByUserRequest): Bookings
+  GetUnavailableListings(data:GetUnavailableListingsRequest) : ListingIdArray
+  #
+  GetReview(data: GetReviewRequest): Review
+  #
+  GetListing(data: GetListingRequest): Listing
+  GetAllListings: Listings 
+  GetAvailableListings(data: FilterLocationRoomRequest): Listings
+  #
+  PublishBookingConfirmed(data: PublishBookingConfirmedRequest): String
+  PublishBookingCancelled(data: PublishBookingCancelledRequest): String
+  #
+  ViewListings(data:ViewListingsRequest):Listings
+}
+
+type Mutation {
+  RegisterUser(data: RegisterRequest): Message
+  UpdateUser(data: UpdateUserRequest): User
+  DeleteUser(data: DeleteUserRequest): Message
+  #
+  CreateBooking(data: CreateBookingRequest): CreateBookingResponse
+  DeleteBookingById(data: DeleteBookingRequest): ReturnMessage
+  #
+  CreateReview(data: CreateReviewRequest): Review
+  DeleteReview(data: DeleteReviewRequest): Message
+  #
+  CreateListing(data: CreateListingRequest): Listing
+  UpdateListing(data: UpdateListingRequest): Listing
+  DeleteListing(data: DeleteListingRequest): Message
+  #
+  MakeBooking(data: MakeBookingRequest): CreateBookingResponse
+  CancelBooking(data: CancelBookingRequest): ReturnMessage
+}
+
+# ------------------------------------------------------------------------------
+
+# Common Data Types
+input ProtobufTimestamp {
+  nanos: Int
+  seconds: BigInt
+}
+
+type ProtobufTimestampOutput {
+  nanos: Int
+  seconds: BigInt
+}
+
+type Message {
+  message: String
+}
+
+# ------------------------------------------------------------------------------
+
+# User Service
+type User {
+  userId: String
+  email: String
+}
+input GetUserRequest {
+  userId: String
+}
+
+input UpdateUserRequest {
+  userId: String
+  email: String
+  password: String
+}
+
+input DeleteUserRequest {
+  userId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Auth Service
+input RegisterRequest {
+  email: String
+  password: String
+}
+
+input LoginRequest {
+  email: String
+  password: String
+}
+type LoginResponse {
+  userId: String
+  token: String
+}
+
+input ValidateRequest {
+  token: String
+}
+type ValidateResponse {
+  userId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Bookings Service
+input GetBookingRequest {
+  bookingId: String
+}
+type Booking {
+  id: String
+  userId: String
+  listingId: String
+  hostId: String
+  status: String
+  startDate: ProtobufTimestampOutput
+  endDate: ProtobufTimestampOutput
+  paymentId: String
+}
+
+input GetBookingsByUserRequest {
+  userId: String
+}
+type Bookings {
+  bookings: [Booking]
+}
+
+input CreateBookingRequest {
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestamp
+  endDate: ProtobufTimestamp
+}
+
+type CreateBookingResponse {
+  id: String
+  userId: String
+  listingId: String
+  hostId: String
+  status: String
+  startDate: ProtobufTimestampOutput
+  endDate: ProtobufTimestampOutput
+}
+
+input DeleteBookingRequest {
+  bookingId: String
+}
+type ReturnMessage {
+  returnMessage: String
+}
+
+input GetUnavailableListingsRequest{
+  startDate: ProtobufTimestamp
+  endDate:ProtobufTimestamp
+}
+
+type ListingIdArray{
+  listingIds:[String]
+}
+
+# ------------------------------------------------------------------------------
+
+# Reviews Service
+input GetReviewRequest {
+  reviewId: String
+}
+type Review {
+  reviewId: String
+  userId: String
+  listingId: String
+  rating: Int
+  review: String
+  createdAt: ProtobufTimestampOutput
+}
+
+input CreateReviewRequest {
+  userId: String
+  listingId: String
+  rating: Int
+  review: String
+}
+
+input DeleteReviewRequest {
+  reviewId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Listings Service
+input GetListingRequest {
+  listingId: String
+}
+type Listing {
+  listingId: String
+  userId: String
+  title: String
+  price: Int
+  images: [String]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestampOutput
+  createdAt: ProtobufTimestampOutput
+}
+
+input FilterLocationRoomRequest {
+  listings: [String]
+  country: String
+  city: String
+  rooms: Int
+}
+type Listings {
+  listings: [Listing]
+}
+
+input ListingImage {
+  filename: String
+  data: String
+}
+
+input CreateListingRequest {
+  userId: String
+  title: String
+  price: Int
+  images: [ListingImage]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestamp
+}
+
+input UpdateListingRequest {
+  listingId: String
+  title: String
+  price: Int
+  images: [ListingImage]
+  type: String
+  address: String
+  country: String
+  city: String
+  rooms: Int
+  startDate: ProtobufTimestamp
+}
+
+input DeleteListingRequest {
+  listingId: String
+}
+
+# ------------------------------------------------------------------------------
+
+# Composite Service
+# We need to figure out how to do the composite requests here, this isn't correct
+
+input MakeBookingRequest {
+  userId: String
+  listingId: String
+  hostId: String
+  startDate: ProtobufTimestamp
+  endDate: ProtobufTimestamp
+}
+
+input CancelBookingRequest {
+  bookingId: String
+}
+
+input ViewListingsRequest {
+  country: String
+  city:String
+  rooms:Int
+  startDate:ProtobufTimestamp
+  endDate:ProtobufTimestamp
+}
+
+# ------------------------------------------------------------------------------
+
+# Email Service
+input PublishBookingConfirmedRequest {
+  receiverEmail: String
+  propertyName: String
+  receiptId: String
+  paymentDate: String
+  paymentTime: String
+  bookingStartDate: String
+  bookingEndDate: String
+  unitPrice: Float
+  numNights: Int
+  subTotal: Float
+  serviceFee: Float
+  totalPrice: Float
+}
+
+# Email Service
+input PublishBookingCancelledRequest {
+  receiverEmail: String
+  propertyName: String
+  refundDate: String
+  unitPrice: Float
+  numNights: Int
+  subTotal: Float
+  serviceFee: Float
+  totalRefunded: Float
+}

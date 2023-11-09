@@ -1,0 +1,37 @@
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "compile": "tsc",
+    "build": "npx tsc",
+    "start": "npm run build && node --experimental-specifier-resolution=node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/cs302-2022/g2-team3/api-gateway.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/cs302-2022/g2-team3/api-gateway/issues"
+  },
+  "homepage": "https://gitlab.com/cs302-2022/g2-team3/api-gateway#readme",
+  "dependencies": {
+    "@apollo/server": "^4.0.2",
+    "@aws-sdk/client-sns": "^3.194.0",
+    "@grpc/grpc-js": "^1.7.3",
+    "date-fns": "^2.29.3",
+    "graphql": "^16.6.0",
+    "graphql-scalars": "^1.20.0",
+    "node-fetch": "^3.2.10",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.3",
+    "typescript": "^4.8.4"
+  }
+}

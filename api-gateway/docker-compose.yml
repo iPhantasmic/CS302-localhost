@@ -1,0 +1,13 @@
+version: "3.1"
+services:
+  api-gateway:
+    image: api-gateway
+    environment:
+      PORT: 6969
+      AUTH_SVC_URL: 18.136.101.143:50051
+      BOOKINGS_SVC_URL: 18.139.117.2:50051
+      LISTINGS_SVC_URL: 18.141.24.30:50051
+      REVIEWS_SVC_URL: 18.142.238.109:50051
+      PAYMENTS_SVC_URL: 18.136.101.143:420
+    ports:
+      - "6969:6969"
