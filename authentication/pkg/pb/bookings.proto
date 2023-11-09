@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package bookings;
+
+service BookingService {
+  rpc CreateBooking (CreateBookingRequest) returns (Booking){}
+  rpc GetBookingByUser (BookingByUserRequest)
+      returns (GetBookingArrayResponse) {}
+  rpc GetBookingByListing (BookingByListingRequest)
+      returns (GetBookingArrayResponse){}
+  rpc UpdateBookingById(UpdateBookingRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByUserId (BookingByUserRequest) returns (ReturnMessage){}
+  rpc DeleteBookingByListingId(BookingByListingRequest)
+      returns (ReturnMessage){}
+}
+
+message Booking {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 listing_id = 3;
+  int32 host_id = 4;
+  string start_date = 5;
+  string end_date = 6;
+  // Status status = 7;
+  int32 payment_id = 7;
+}
+
+message CreateBookingRequest {
+  int32 user_id = 1;
+  int32 listing_id = 2;
+  int32 host_id = 3;
+  string start_date = 4;
+  string end_date = 5;
+  // Status status = 6;
+  int32 payment_id = 6;
+}
+
+message GetBookingArrayResponse{
+  repeated Booking bookings = 1;
+}
+
+message BookingByListingRequest{
+  int32 listing_id = 1;
+}
+
+message BookingByUserRequest{
+  int32 user_id = 1;
+}
+
+message UpdateBookingRequest{
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 listing_id = 3;
+  int32 host_id = 4;
+  string start_date = 5;
+  string end_date = 6;
+  int32 payment_id = 7;
+}
+
+message ReturnMessage{
+  string return_message = 1;
+}
+
+// enum Status{
+//     ACTIVE = 0;
+//     COMPLETED = 1;
+//     REFUNDED = 2;
+//     CANCELLED = 4;
+// }
+  
