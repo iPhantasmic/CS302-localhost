@@ -1,3 +1,0 @@
-[submodule "src/services/pb"]
-	path = src/services/pb
-	url = ../protobuf_schemas.git
